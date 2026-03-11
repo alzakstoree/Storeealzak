@@ -819,4 +819,146 @@ body.light-mode .google-login-btn {
     background: #1a1a1a;
     border-radius: 10px;
     margin-bottom: 5px;
+}/* تنسيقات الأقسام الجديدة */
+.main-cat-card {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.main-cat-card:hover {
+    border-color: #fbbf24;
+    transform: translateY(-3px);
+}
+
+.cat-icon {
+    width: 50px;
+    height: 50px;
+    background: #fbbf24;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cat-icon i {
+    font-size: 24px;
+    color: #000;
+}
+
+.cat-name {
+    font-size: 18px;
+    font-weight: 700;
+    flex: 1;
+    margin-right: 15px;
+}
+
+.cat-arrow i {
+    color: #fbbf24;
+    font-size: 20px;
+}
+
+/* الفئات الفرعية */
+.sub-cat-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.sub-cat-card:hover {
+    border-color: #fbbf24;
+}
+
+.sub-header {
+    padding: 15px;
+    border-bottom: 2px solid #fbbf24;
+    margin-bottom: 15px;
+}
+
+.sub-header h3 {
+    color: #fbbf24;
+}
+
+/* منتجات */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px;
+}
+
+.product-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+}
+
+.product-card .product-name {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.product-card .product-price {
+    color: #fbbf24;
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.buy-small {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* مسار التنقل */
+.breadcrumb {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #333;
+}
+
+.breadcrumb i {
+    color: #fbbf24;
+    cursor: pointer;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+    color: #fbbf24;
+}
+
+.breadcrumb span:last-child {
+    color: #fff;
+    cursor: default;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
 }
