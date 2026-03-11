@@ -1,6 +1,6 @@
 // ==================== نظام تسجيل الدخول ====================
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-const ADMIN_EMAIL = 'alolao45y@gmail.com'; // بريد المدير الخاص بك
+const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
 // فتح نافذة تسجيل الدخول
 function showAuthModal() {
@@ -19,12 +19,11 @@ function login() {
     
     let users = JSON.parse(localStorage.getItem('users')) || [];
     
-    // إذا أول مرة يشغل الموقع، نضيف حساب المدير تلقائياً
     if (users.length === 0) {
         users.push({
             name: 'المدير',
             email: ADMIN_EMAIL,
-            password: 'admin123', // غيرها بعدين من لوحة المدير
+            password: 'admin123',
             isAdmin: true
         });
         localStorage.setItem('users', JSON.stringify(users));
@@ -38,11 +37,6 @@ function login() {
         closeModal('authModal');
         updateUI();
         showToast(`مرحباً ${user.name}`);
-        
-        // إذا كان المدير، نجهز لوحة التحكم لكن لا نظهرها إلا بطلب منه
-        if (user.email === ADMIN_EMAIL) {
-            prepareAdminPanel();
-        }
     } else {
         showToast('بريد أو كلمة سر خطأ', 'error');
     }
@@ -67,10 +61,8 @@ function register() {
     }
     
     const newUser = {
-        name,
-        email,
-        password,
-        isAdmin: email === ADMIN_EMAIL, // إذا البريد هو بريدك يصير أدمن
+        name, email, password,
+        isAdmin: email === ADMIN_EMAIL,
         createdAt: new Date().toISOString()
     };
     
@@ -103,7 +95,6 @@ function updateUI() {
         userMenu.style.display = 'flex';
         userName.textContent = currentUser.name;
         
-        // رابط لوحة المدير يظهر فقط للمدير نفسه
         if (currentUser.email === ADMIN_EMAIL) {
             adminLink.style.display = 'block';
         } else {
@@ -115,20 +106,18 @@ function updateUI() {
     }
 }
 
-// إظهار لوحة المدير (للمدير فقط)
+// إظهار لوحة المدير
 function showAdminPanel() {
     if (currentUser?.email === ADMIN_EMAIL) {
         document.getElementById('adminPanel').style.display = 'block';
-        loadAdminData(); // تحميل البيانات في لوحة المدير
+        if (typeof loadAdminData === 'function') loadAdminData();
     }
 }
 
-// إخفاء لوحة المدير
 function hideAdminPanel() {
     document.getElementById('adminPanel').style.display = 'none';
 }
 
-// عرض نافذة التسجيل
 function showRegister() {
     closeModal('authModal');
     document.getElementById('registerModal').style.display = 'flex';
