@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ALZAK STORE | متجر شحن الألعاب</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- ملفات CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- مؤشر التحميل -->
+    <div id="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p style="margin-top: 10px;">جاري المعالجة...</p>
+    </div>
+
+    <!-- شريط المدير -->
+    <div class="admin-bar">
+        <span><i class="fas fa-crown" style="color: #fbbf24;"></i> لوحة المدير</span>
+        <div>
+            <button class="admin-btn" onclick="toggleTheme()" style="margin-left: 10px;">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="admin-btn" onclick="showAdminLogin()">
+                <i class="fas fa-lock"></i> دخول المدير
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة دخول المدير -->
+    <div id="adminLogin" class="admin-login">
+        <h4 style="color: #fbbf24; text-align: center;">🔐 دخول المدير</h4>
+        <input type="password" id="adminPassword" placeholder="كلمة السر" value="">
+        <div class="admin-login-buttons">
+            <button class="admin-btn" onclick="checkAdminPassword()">دخول</button>
+            <button class="admin-btn" onclick="closeAdminLogin()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم المدير -->
+    <div id="adminPanel" class="admin-panel">
+        <!-- المحتوى يتعبأ تلقائياً من JavaScript -->
+    </div>
+
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="secure">
+            <i class="fas fa-shield-alt"></i>
+            <span>تسوق آمن</span>
+        </div>
+        <div class="secure">
+            <i class="fas fa-bolt"></i>
+            <span>شحن فوري</span>
+        </div>
+    </div>
+
+    <!-- الهيدر -->
+    <div class="header">
+        <div class="logo">
+            <h1>ALZAK STORE</h1>
+            <span>متجر الشحن الرسمي</span>
+        </div>
+        <div class="icons">
+            <i class="far fa-heart" onclick="showToast('المفضلة قريباً')"></i>
+            <i class="fas fa-shopping-cart" onclick="showMyOrders()">
+                <span class="badge" id="cartBadge">0</span>
+            </i>
+        </div>
+    </div>
+
+    <!-- قسم العروض -->
+    <div class="offers-section" id="dailyOffer">
+        <h3 style="text-align: center;">🔥 عرض اليوم 🔥</h3>
+        <p style="text-align: center;">خصم 20% على جميع باقات PUBG</p>
+        <div class="countdown" id="countdown">
+            <div class="countdown-item"><span id="hours">00</span> ساعة</div>
+            <div class="countdown-item"><span id="minutes">00</span> دقيقة</div>
+            <div class="countdown-item"><span id="seconds">00</span> ثانية</div>
+        </div>
+    </div>
+
+    <!-- الفئات -->
+    <div class="categories">
+        <div class="cat active" onclick="filterGames('all', this)">الكل</div>
+        <div class="cat" onclick="filterGames('pubg', this)">PUBG</div>
+        <div class="cat" onclick="filterGames('freefire', this)">Free Fire</div>
+    </div>
+
+    <!-- مربع البحث -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن لعبة أو باقة...">
+    </div>
+
+    <!-- شبكة الألعاب -->
+    <div class="games-grid">
+        <!-- PUBG -->
+        <div class="game-card" onclick="showPacks('pubg')">
+            <div class="game-image">
+                <img src="https://img.redbull.com/images/c_fill,g_auto,w_450,h_750/q_auto,f_auto/redbullcom/2017/07/18/2dd60382-b4b5-41ff-8ff4-bf364f301fa2/pubg-pro-players.jpg.jpg" alt="PUBG Mobile">
+            </div>
+            <div class="game-info">
+                <h3>PUBG Mobile</h3>
+                <div class="game-stats">
+                    <span class="rating"><i class="fas fa-star"></i> 4.9 (1.2k+)</span>
+                    <span class="packs-count">6 باقات</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free Fire -->
+        <div class="game-card" onclick="showPacks('freefire')">
+            <div class="game-image">
+                <img src="https://images.hindustantimes.com/tech/img/2022/06/23/414x233/54f31449f5f91cf0cc223cc635cd5952jpg_1655955051259_1655955067513.jpeg" alt="Free Fire">
+            </div>
+            <div class="game-info">
+                <h3>Free Fire</h3>
+                <div class="game-stats">
+                    <span class="rating"><i class="fas fa-star"></i> 4.8 (856)</span>
+                    <span class="packs-count">6 باقات</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- باقات PUBG -->
+    <div id="pubgPacks" class="packs-section">
+        <div class="packs-header">
+            <h3><i class="fas fa-crosshairs" style="color: #fbbf24;"></i> باقات PUBG Mobile</h3>
+            <button class="close-btn" onclick="hidePacks('pubg')">✕</button>
+        </div>
+        <div class="packs-grid" id="pubgPacksGrid"></div>
+    </div>
+
+    <!-- باقات Free Fire -->
+    <div id="freefirePacks" class="packs-section">
+        <div class="packs-header">
+            <h3><i class="fas fa-fire" style="color: #fbbf24;"></i> باقات Free Fire</h3>
+            <button class="close-btn" onclick="hidePacks('freefire')">✕</button>
+        </div>
+        <div class="packs-grid" id="freefirePacksGrid"></div>
+    </div>
+
+    <!-- نافذة الشراء -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">✕</div>
+            <h3 style="text-align: center; color: #fbbf24;">إتمام الطلب</h3>
+            
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>اللعبة:</span>
+                    <span id="modalGameName" style="color: #fbbf24;"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>الباقة:</span>
+                    <span id="modalGamePack" style="color: #fbbf24;"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px;">
+                    <span>المبلغ:</span>
+                    <span id="modalGamePrice" style="color: #fbbf24; font-size: 20px; font-weight: 900;"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                    <span>بعد الخصم:</span>
+                    <span id="finalPrice" style="color: #22c55e; font-size: 18px; font-weight: 900;"></span>
+                </div>
+            </div>
+
+            <!-- شريط التقدم -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+
+            <input type="text" class="modal-input" id="playerId" placeholder="أدخل معرف اللعبة (UID)" value="">
+
+            <!-- قسم الكوبونات -->
+            <div class="coupon-section">
+                <div class="coupon-input">
+                    <input type="text" id="couponCode" placeholder="أدخل كود الخصم">
+                    <button class="apply-coupon" onclick="applyCoupon()">تطبيق</button>
+                </div>
+            </div>
+
+            <div class="payment-info">
+                <h4 style="color: #fbbf24; margin-bottom: 15px;">الدفع عبر شام كاش</h4>
+                
+                <div class="wallet-row">
+                    <span>رقم المحفظة:</span>
+                    <span style="color: #fbbf24; font-size: 12px;">053b8f0d907772543d262622121d6df2</span>
+                    <button class="copy-btn" onclick="copyToClipboard('053b8f0d907772543d262622121d6df2')">نسخ</button>
+                </div>
+
+                <div class="wallet-row">
+                    <span>الاسم:</span>
+                    <span style="color: #fbbf24;">اسحاق وسام الاسماعيل</span>
+                    <button class="copy-btn" onclick="copyToClipboard('اسحاق وسام الاسماعيل')">نسخ</button>
+                </div>
+
+                <div class="wallet-row">
+                    <span>واتساب:</span>
+                    <span style="color: #fbbf24;">+963 098 225 1929</span>
+                    <button class="copy-btn" onclick="copyToClipboard('+9630982251929')">نسخ</button>
+                </div>
+
+                <div style="background: #000; border-radius: 10px; padding: 15px; margin: 15px 0;">
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin: 5px 0;">
+                        <span style="background: #fbbf24; color: #000; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900;">1</span>
+                        <span>انسخ رقم المحفظة</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin: 10px 0;">
+                        <span style="background: #fbbf24; color: #000; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900;">2</span>
+                        <span>حول المبلغ عبر شام كاش</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: center;">
+                        <span style="background: #fbbf24; color: #000; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900;">3</span>
+                        <span>صور وأرسل على واتساب</span>
+                    </div>
+                </div>
+
+                <button class="whatsapp-btn" onclick="sendToWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> أرسل الإيصال على واتساب
+                </button>
+            </div>
+
+            <button class="buy-btn" onclick="confirmOrder()">تأكيد الطلب</button>
+        </div>
+    </div>
+
+    <!-- نافذة طلباتي -->
+    <div id="myOrdersModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeMyOrders()">✕</div>
+            <h3 style="text-align: center; color: #fbbf24;">📦 طلباتي السابقة</h3>
+            <div id="myOrdersList" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- إشعار -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- ملفات JavaScript -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
