@@ -1,4 +1,4 @@
-// ==================== الأقسام والفئات مع روابط صور صحيحة ====================
+// ==================== الأقسام والفئات ====================
 const storeData = {
     sections: [
         {
@@ -84,7 +84,10 @@ const storeData = {
     ]
 };
 
-// عرض الأقسام الرئيسية بالصور
+// متغير عام للطلب الحالي
+let currentPurchase = null;
+
+// عرض الأقسام الرئيسية
 function showMainCategories() {
     const container = document.getElementById('mainCategories');
     if (!container) return;
@@ -110,7 +113,7 @@ function showMainCategories() {
     updateBreadcrumb([{ name: 'الرئيسية' }]);
 }
 
-// عرض الفئات (PUBG, Free Fire, شاهد, نتفلكس...)
+// عرض الفئات
 function showCategories(sectionId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     const container = document.getElementById('subContent');
@@ -136,7 +139,7 @@ function showCategories(sectionId) {
     ]);
 }
 
-// عرض المنتجات (الباقات)
+// عرض المنتجات
 function showProducts(sectionId, categoryId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     const category = section.categories.find(c => c.id === categoryId);
@@ -166,56 +169,17 @@ function showProducts(sectionId, categoryId) {
 }
 
 // فتح نافذة الشراء
-let currentPurchase = null;
 function openPurchaseModal(productName, price, categoryName) {
     currentPurchase = { productName, price, categoryName };
-    const purchaseDetails = document.getElementById('purchaseDetails');
-    if (purchaseDetails) {
-        purchaseDetails.innerHTML = `
+    const details = document.getElementById('purchaseDetails');
+    if (details) {
+        details.innerHTML = `
             <p>المنتج: ${productName}</p>
             <p>السعر: ${price} $</p>
         `;
     }
     const modal = document.getElementById('purchaseModal');
     if (modal) modal.style.display = 'flex';
-}
-
-// تأكيد الشراء (يتم ربطها مع wallet.js)
-function confirmPurchase() {
-    if (!currentPurchase) return;
-    
-    const playerId = document.getElementById('playerId')?.value;
-    if (!playerId) {
-        showToast('أدخل معرف اللعبة', 'error');
-        return;
-    }
-    
-    // حفظ الطلب في localStorage
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push({
-        product: currentPurchase.productName,
-        price: currentPurchase.price,
-        category: currentPurchase.categoryName,
-        userEmail: currentUser?.email || 'زائر',
-        playerId: playerId,
-        date: new Date().toISOString(),
-        status: 'pending'
-    });
-    
-    localStorage.setItem('orders', JSON.stringify(orders));
-    
-    // تحديث عداد السلة
-    const cartBadge = document.getElementById('cartBadge');
-    if (cartBadge) cartBadge.textContent = orders.length;
-    
-    showToast('تم تأكيد الطلب');
-    
-    const modal = document.getElementById('purchaseModal');
-    if (modal) modal.style.display = 'none';
-    
-    // فتح واتساب لتأكيد الدفع
-    const message = `🛍️ طلب جديد\nالمنتج: ${currentPurchase.productName}\nالسعر: ${currentPurchase.price}$\nمعرف: ${playerId}`;
-    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
 }
 
 // مسار التنقل
@@ -235,10 +199,36 @@ function updateBreadcrumb(path) {
     });
 }
 
-// دالة مؤقتة للتوست (إذا مش موجودة)
-function showToast(message, type = 'success') {
-    console.log(message);
-    alert(message); // مؤقتاً
+// تأكيد الشراء
+function confirmPurchase() {
+    if (!currentPurchase) return;
+    
+    const playerId = document.getElementById('playerId')?.value;
+    if (!playerId) {
+        showToast('أدخل معرف اللعبة', 'error');
+        return;
+    }
+    
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push({
+        product: currentPurchase.productName,
+        price: currentPurchase.price,
+        category: currentPurchase.categoryName,
+        playerId: playerId,
+        date: new Date().toISOString(),
+        status: 'pending'
+    });
+    
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    const badge = document.getElementById('cartBadge');
+    if (badge) badge.textContent = orders.length;
+    
+    showToast('تم تأكيد الطلب');
+    document.getElementById('purchaseModal').style.display = 'none';
+    
+    const message = `طلب جديد: ${currentPurchase.productName}\nالسعر: ${currentPurchase.price}$\nمعرف: ${playerId}`;
+    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
 }
 
 // تهيئة الصفحة
