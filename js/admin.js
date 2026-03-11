@@ -1,237 +1,258 @@
-// ==================== لوحة المدير المتكاملة (مع تعديل فعلي) ====================
+// ==================== لوحة المدير - نسخة الجوال المتكاملة ====================
 const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
 // تحميل بيانات لوحة المدير
 function loadAdminData() {
     if (currentUser?.email !== ADMIN_EMAIL) return;
-    
     loadProductsManager();
     loadOrdersManager();
     loadChargesManager();
     loadStatsManager();
 }
 
-// ========== إدارة المنتجات (تعديل فعلي) ==========
+// ========== إدارة المنتجات (بتصميم كروت مناسب للجوال) ==========
 function loadProductsManager() {
     const container = document.getElementById('adminProducts');
     if (!container) return;
-    
-    let html = '<h3>إدارة المنتجات</h3>';
-    
-    // جلب البيانات من storeData (الموجود في categories.js)
-    if (!window.storeData) {
-        container.innerHTML = '<p>خطأ: بيانات المتجر غير متوفرة</p>';
-        return;
-    }
-    
+
+    let html = '<h3 style="color: #fbbf24; margin-bottom: 15px;">📦 تعديل المنتجات</h3>';
+
     storeData.sections.forEach((section, sectionIndex) => {
-        html += `<div style="margin: 20px 0;"><h4 style="color: #fbbf24;">${section.name}</h4>`;
-        
+        html += `<div style="margin: 20px 0; background: #1a1a1a; border-radius: 15px; padding: 15px;">`;
+        html += `<h4 style="color: #fbbf24; margin-bottom: 10px;">📌 ${section.name}</h4>`;
+
         section.categories.forEach((category, catIndex) => {
-            html += `<div style="margin-right: 20px; margin-bottom: 15px;">`;
-            html += `<strong style="display: block; margin-bottom: 10px;">${category.name}</strong>`;
-            
+            html += `<div style="margin: 15px 0 10px 10px;">`;
+            html += `<strong style="display: block; margin-bottom: 10px;">🔹 ${category.name}</strong>`;
+
             category.products.forEach((product, prodIndex) => {
                 html += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px; border-radius: 8px; margin-bottom: 5px;">
-                        <div>
-                            <input type="text" id="prod_name_${sectionIndex}_${catIndex}_${prodIndex}" value="${product.name}" style="background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 5px; padding: 5px; margin-left: 10px;">
-                            <input type="number" id="prod_price_${sectionIndex}_${catIndex}_${prodIndex}" value="${product.price}" step="0.01" style="background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 5px; padding: 5px; width: 80px;">
+                    <div style="background: #333; border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="prod_name_${sectionIndex}_${catIndex}_${prodIndex}" 
+                                value="${product.name}" 
+                                style="flex: 2; background: #444; color: #fff; border: 1px solid #fbbf24; border-radius: 8px; padding: 10px; font-size: 14px;">
+                            <input type="number" id="prod_price_${sectionIndex}_${catIndex}_${prodIndex}" 
+                                value="${product.price}" step="0.01" 
+                                style="flex: 1; background: #444; color: #fff; border: 1px solid #fbbf24; border-radius: 8px; padding: 10px; font-size: 14px;">
                         </div>
-                        <div>
-                            <button onclick="updateProduct(${sectionIndex}, ${catIndex}, ${prodIndex})" style="background: #22c55e; color: #fff; border: none; border-radius: 5px; padding: 5px 10px; margin-left: 5px; cursor: pointer;">💾 حفظ</button>
-                            <button onclick="deleteProduct(${sectionIndex}, ${catIndex}, ${prodIndex})" style="background: #ef4444; color: #fff; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">🗑️ حذف</button>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="updateProduct(${sectionIndex}, ${catIndex}, ${prodIndex})" 
+                                style="flex: 1; background: #22c55e; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700;">
+                                💾 حفظ
+                            </button>
+                            <button onclick="deleteProduct(${sectionIndex}, ${catIndex}, ${prodIndex})" 
+                                style="flex: 1; background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700;">
+                                🗑️ حذف
+                            </button>
                         </div>
                     </div>
                 `;
             });
-            
-            // زر إضافة منتج جديد لهذه الفئة
+
+            // حقل إضافة منتج جديد
             html += `
-                <div style="margin-top: 10px;">
-                    <input type="text" id="new_prod_name_${sectionIndex}_${catIndex}" placeholder="اسم المنتج الجديد" style="background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 5px; padding: 5px; margin-left: 5px;">
-                    <input type="number" id="new_prod_price_${sectionIndex}_${catIndex}" placeholder="السعر" step="0.01" style="background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 5px; padding: 5px; width: 80px; margin-left: 5px;">
-                    <button onclick="addProduct(${sectionIndex}, ${catIndex})" style="background: #fbbf24; color: #000; border: none; border-radius: 5px; padding: 5px 15px; cursor: pointer;">➕ إضافة</button>
+                <div style="background: #222; border-radius: 10px; padding: 15px; margin-top: 15px;">
+                    <p style="color: #fbbf24; margin-bottom: 10px;">➕ إضافة منتج جديد:</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="new_prod_name_${sectionIndex}_${catIndex}" 
+                            placeholder="اسم المنتج" 
+                            style="flex: 2; background: #444; color: #fff; border: 1px solid #fbbf24; border-radius: 8px; padding: 10px; font-size: 14px;">
+                        <input type="number" id="new_prod_price_${sectionIndex}_${catIndex}" 
+                            placeholder="السعر" step="0.01" 
+                            style="flex: 1; background: #444; color: #fff; border: 1px solid #fbbf24; border-radius: 8px; padding: 10px; font-size: 14px;">
+                    </div>
+                    <button onclick="addProduct(${sectionIndex}, ${catIndex})" 
+                        style="width: 100%; background: #fbbf24; color: #000; border: none; border-radius: 8px; padding: 12px; font-size: 16px; font-weight: 700;">
+                        ✅ إضافة المنتج
+                    </button>
                 </div>
             `;
-            
+
             html += `</div>`; // إغلاق div.category
         });
-        
+
         html += `</div>`; // إغلاق div.section
     });
-    
+
     container.innerHTML = html;
 }
 
-// ========== دوال التعديل الفعلية ==========
-
-// تحديث منتج
+// ========== دوال التعديل (بنفس الطريقة لكن مع رسائل أوضح) ==========
 function updateProduct(sectionIndex, catIndex, prodIndex) {
     const nameInput = document.getElementById(`prod_name_${sectionIndex}_${catIndex}_${prodIndex}`);
     const priceInput = document.getElementById(`prod_price_${sectionIndex}_${catIndex}_${prodIndex}`);
-    
+
     if (!nameInput || !priceInput) return;
-    
+
     const newName = nameInput.value.trim();
     const newPrice = parseFloat(priceInput.value);
-    
-    if (!newName || isNaN(newPrice)) {
-        showToast('الرجاء إدخال اسم وسعر صحيح', 'error');
+
+    if (!newName || isNaN(newPrice) || newPrice <= 0) {
+        showToast('❌ اسم المنتج أو السعر غير صحيح', 'error');
         return;
     }
-    
-    // التعديل في البيانات الأصلية
+
     storeData.sections[sectionIndex].categories[catIndex].products[prodIndex].name = newName;
     storeData.sections[sectionIndex].categories[catIndex].products[prodIndex].price = newPrice;
-    
-    // حفظ في localStorage عشان البيانات ما تضيع
+
     localStorage.setItem('storeData', JSON.stringify(storeData));
-    
     showToast('✅ تم تعديل المنتج بنجاح');
-    loadProductsManager(); // إعادة تحميل الصفحة
+    loadProductsManager();
 }
 
-// حذف منتج
 function deleteProduct(sectionIndex, catIndex, prodIndex) {
-    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
-    
-    // الحذف من البيانات
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا المنتج نهائياً؟')) return;
+
     storeData.sections[sectionIndex].categories[catIndex].products.splice(prodIndex, 1);
-    
-    // حفظ في localStorage
     localStorage.setItem('storeData', JSON.stringify(storeData));
-    
+
     showToast('✅ تم حذف المنتج');
     loadProductsManager();
 }
 
-// إضافة منتج جديد
 function addProduct(sectionIndex, catIndex) {
     const nameInput = document.getElementById(`new_prod_name_${sectionIndex}_${catIndex}`);
     const priceInput = document.getElementById(`new_prod_price_${sectionIndex}_${catIndex}`);
-    
+
     if (!nameInput || !priceInput) return;
-    
+
     const newName = nameInput.value.trim();
     const newPrice = parseFloat(priceInput.value);
-    
-    if (!newName || isNaN(newPrice)) {
-        showToast('الرجاء إدخال اسم وسعر صحيح', 'error');
+
+    if (!newName || isNaN(newPrice) || newPrice <= 0) {
+        showToast('❌ اسم المنتج أو السعر غير صحيح', 'error');
         return;
     }
-    
-    // إضافة للبيانات
-    const newProduct = {
+
+    storeData.sections[sectionIndex].categories[catIndex].products.push({
         name: newName,
         price: newPrice
-    };
-    
-    storeData.sections[sectionIndex].categories[catIndex].products.push(newProduct);
-    
-    // حفظ في localStorage
+    });
+
     localStorage.setItem('storeData', JSON.stringify(storeData));
-    
-    // تفريغ الحقول
+
     nameInput.value = '';
     priceInput.value = '';
-    
+
     showToast('✅ تم إضافة المنتج');
     loadProductsManager();
 }
 
-// ========== إدارة الطلبات (مع إمكانية تغيير الحالة) ==========
+// ========== إدارة الطلبات (بتصميم بطاقات مناسب للجوال) ==========
 function loadOrdersManager() {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const container = document.getElementById('adminOrders');
     if (!container) return;
-    
+
     if (orders.length === 0) {
-        container.innerHTML = '<p>لا توجد طلبات</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">لا توجد طلبات بعد</p>';
         return;
     }
-    
-    let html = '<h3>إدارة الطلبات</h3>';
-    
+
+    let html = '<h3 style="color: #fbbf24; margin-bottom: 15px;">📋 الطلبات</h3>';
+
     orders.reverse().forEach((order, index) => {
         html += `
-            <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong>${order.product || 'منتج'}</strong> - ${order.price || 0}$
-                        <div style="font-size: 12px; color: #666;">${order.playerId || ''} | ${new Date(order.date).toLocaleDateString()}</div>
-                    </div>
-                    <div>
-                        <select id="order_status_${index}" onchange="updateOrderStatus(${index})" style="background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 5px; padding: 5px;">
-                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ قيد الانتظار</option>
-                            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>✅ مكتمل</option>
-                        </select>
-                    </div>
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <strong>🛒 ${order.product || 'منتج'}</strong>
+                    <span style="color: #fbbf24; font-weight: 900;">${order.price || 0}$</span>
+                </div>
+                <div style="font-size: 13px; color: #888; margin-bottom: 10px;">
+                    ${order.playerId ? `🆔 ${order.playerId}` : ''}
+                </div>
+                <div style="font-size: 12px; color: #666; margin-bottom: 15px;">
+                    📅 ${new Date(order.date).toLocaleDateString()}
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <select id="order_status_${index}" onchange="updateOrderStatus(${index})" 
+                        style="flex: 2; background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 8px; padding: 10px; font-size: 14px;">
+                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ قيد الانتظار</option>
+                        <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>✅ مكتمل</option>
+                    </select>
+                    <button onclick="deleteOrder(${index})" 
+                        style="flex: 0 0 50px; background: #ef4444; color: #fff; border: none; border-radius: 8px; font-size: 20px;">
+                        🗑️
+                    </button>
                 </div>
             </div>
         `;
     });
-    
+
     container.innerHTML = html;
 }
 
 function updateOrderStatus(index) {
     const select = document.getElementById(`order_status_${index}`);
     if (!select) return;
-    
+
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders[index].status = select.value;
     localStorage.setItem('orders', JSON.stringify(orders));
-    
+
     showToast('✅ تم تحديث حالة الطلب');
 }
 
-// ========== إدارة طلبات الشحن (مع إمكانية التأكيد) ==========
+function deleteOrder(index) {
+    if (!confirm('⚠️ حذف الطلب؟')) return;
+
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.splice(index, 1);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    showToast('✅ تم حذف الطلب');
+    loadOrdersManager();
+    loadStatsManager();
+}
+
+// ========== إدارة طلبات الشحن ==========
 function loadChargesManager() {
     const charges = JSON.parse(localStorage.getItem('charges')) || [];
     const container = document.getElementById('adminCharges');
     if (!container) return;
-    
+
     if (charges.length === 0) {
-        container.innerHTML = '<p>لا توجد طلبات شحن</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">لا توجد طلبات شحن</p>';
         return;
     }
-    
-    let html = '<h3>طلبات الشحن</h3>';
-    
+
+    let html = '<h3 style="color: #fbbf24; margin-bottom: 15px;">💰 طلبات الشحن</h3>';
+
     charges.reverse().forEach((charge, index) => {
         html += `
-            <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong>${charge.userEmail || 'مستخدم'}</strong> - ${charge.amount || 0}$
-                        <div style="font-size: 12px; color: #666;">${new Date(charge.date).toLocaleDateString()}</div>
-                    </div>
-                    <div>
-                        ${charge.status === 'pending' ? 
-                            `<button onclick="confirmCharge(${index})" style="background: #22c55e; color: #fff; border: none; border-radius: 5px; padding: 5px 15px; cursor: pointer;">تأكيد الشحن</button>` : 
-                            '<span style="color: #22c55e;">✅ مكتمل</span>'}
-                    </div>
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <strong>👤 ${charge.userEmail || 'مستخدم'}</strong>
+                    <span style="color: #fbbf24; font-weight: 900;">${charge.amount || 0}$</span>
                 </div>
+                <div style="font-size: 12px; color: #666; margin-bottom: 15px;">
+                    📅 ${new Date(charge.date).toLocaleDateString()}
+                </div>
+                ${charge.status === 'pending' ? 
+                    `<button onclick="confirmCharge(${index})" 
+                        style="width: 100%; background: #22c55e; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 16px; font-weight: 700;">
+                        ✅ تأكيد وصول المبلغ
+                    </button>` : 
+                    '<span style="display: block; text-align: center; color: #22c55e;">✅ تم التأكيد</span>'}
             </div>
         `;
     });
-    
+
     container.innerHTML = html;
 }
 
 function confirmCharge(index) {
     let charges = JSON.parse(localStorage.getItem('charges')) || [];
     let wallets = JSON.parse(localStorage.getItem('wallets')) || {};
-    
+
     const charge = charges[index];
     if (!charge) return;
-    
-    // إضافة الرصيد للمستخدم
+
     if (!wallets[charge.userEmail]) {
         wallets[charge.userEmail] = { balance: 0, transactions: [] };
     }
-    
+
     wallets[charge.userEmail].balance += charge.amount;
     wallets[charge.userEmail].transactions.push({
         type: 'charge',
@@ -239,13 +260,12 @@ function confirmCharge(index) {
         description: 'شحن رصيد',
         date: new Date().toISOString()
     });
-    
-    // تحديث حالة طلب الشحن
+
     charges[index].status = 'completed';
-    
+
     localStorage.setItem('wallets', JSON.stringify(wallets));
     localStorage.setItem('charges', JSON.stringify(charges));
-    
+
     showToast('✅ تم تأكيد الشحن وإضافة الرصيد');
     loadChargesManager();
     loadStatsManager();
@@ -255,18 +275,29 @@ function confirmCharge(index) {
 function loadStatsManager() {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    const charges = JSON.parse(localStorage.getItem('charges')) || [];
-    
+
     const totalSales = orders.reduce((sum, o) => sum + (o.price || 0), 0);
-    const totalCharges = charges.filter(c => c.status === 'completed').reduce((sum, c) => sum + (c.amount || 0), 0);
-    
+    const pendingOrders = orders.filter(o => o.status === 'pending').length;
+
     document.getElementById('adminStats').innerHTML = `
-        <h3>الإحصائيات</h3>
-        <div class="stats-grid">
-            <div class="stat-card"><span class="stat-value">${orders.length}</span><span>إجمالي الطلبات</span></div>
-            <div class="stat-card"><span class="stat-value">${users.length}</span><span>العملاء</span></div>
-            <div class="stat-card"><span class="stat-value">${totalSales}$</span><span>مبيعات</span></div>
-            <div class="stat-card"><span class="stat-value">${totalCharges}$</span><span>شحن رصيد</span></div>
+        <h3 style="color: #fbbf24; margin-bottom: 15px;">📊 الإحصائيات</h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; text-align: center;">
+                <div style="font-size: 28px; color: #fbbf24; font-weight: 900;">${orders.length}</div>
+                <div style="font-size: 12px;">إجمالي الطلبات</div>
+            </div>
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; text-align: center;">
+                <div style="font-size: 28px; color: #fbbf24; font-weight: 900;">${pendingOrders}</div>
+                <div style="font-size: 12px;">قيد الانتظار</div>
+            </div>
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; text-align: center;">
+                <div style="font-size: 28px; color: #fbbf24; font-weight: 900;">${users.length}</div>
+                <div style="font-size: 12px;">العملاء</div>
+            </div>
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; text-align: center;">
+                <div style="font-size: 28px; color: #fbbf24; font-weight: 900;">${totalSales}$</div>
+                <div style="font-size: 12px;">إجمالي المبيعات</div>
+            </div>
         </div>
     `;
 }
@@ -275,14 +306,7 @@ function loadStatsManager() {
 function showAdminTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.admin-tab-content').forEach(tab => tab.classList.remove('active'));
-    
+
     event.target.classList.add('active');
     document.getElementById(`admin${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
-}
-
-// تهيئة لوحة المدير عند تحميلها
-function prepareAdminPanel() {
-    if (currentUser?.email === ADMIN_EMAIL) {
-        console.log('Admin panel ready');
-    }
 }
