@@ -1,4 +1,4 @@
-// نظام المحفظة
+// ==================== نظام المحفظة ====================
 let wallets = JSON.parse(localStorage.getItem('wallets')) || {};
 
 // عرض المحفظة
@@ -9,16 +9,19 @@ function showWallet() {
         return;
     }
     
-    const wallet = wallets[currentUser.email] || { balance: 0, transactions: [] };
+    if (!wallets[currentUser.email]) {
+        wallets[currentUser.email] = { balance: 0, transactions: [] };
+    }
     
+    const wallet = wallets[currentUser.email];
     document.getElementById('walletBalance').textContent = wallet.balance + ' $';
     
     let transactionsHtml = '';
-    wallet.transactions.slice(-5).reverse().forEach(t => {
+    wallet.transactions.slice(-10).reverse().forEach(t => {
         transactionsHtml += `
             <div class="transaction ${t.type}">
                 <span>${t.description}</span>
-                <span>${t.amount} $</span>
+                <span>${t.type === 'charge' ? '+' : '-'} ${Math.abs(t.amount)}$</span>
             </div>
         `;
     });
@@ -27,76 +30,71 @@ function showWallet() {
     document.getElementById('walletModal').style.display = 'flex';
 }
 
-// شحن الرصيد
+// طلب شحن الرصيد
 function chargeWallet(amount) {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
         return;
     }
     
-    if (!wallets[currentUser.email]) {
-        wallets[currentUser.email] = { balance: 0, transactions: [] };
-    }
-    
-    // هنا تضيف طلب الشحن للمدير
     let charges = JSON.parse(localStorage.getItem('charges')) || [];
     charges.push({
-        user: currentUser.email,
+        userEmail: currentUser.email,
         amount: amount,
         date: new Date().toISOString(),
         status: 'pending'
     });
+    
     localStorage.setItem('charges', JSON.stringify(charges));
     
-    showToast('طلب شحن قيد المراجعة');
+    showToast('تم إرسال طلب الشحن، انتظر تأكيد المدير');
     closeModal('walletModal');
     
-    // إرسال إشعار للمدير
-    if (currentUser.email !== 'admin@alzak.com') {
-        // رسالة واتساب للمدير
-        const message = `طلب شحن جديد\nالمستخدم: ${currentUser.email}\nالمبلغ: ${amount}$`;
-        window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
-    }
+    // إرسال إشعار واتساب للمدير
+    const message = `🔔 طلب شحن جديد\nالمستخدم: ${currentUser.email}\nالمبلغ: ${amount}$`;
+    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// تأكيد الشحن (للمدير)
-function confirmCharge(userEmail, amount) {
-    if (currentUser?.email !== 'admin@alzak.com') return;
+// تأكيد الشراء
+function confirmPurchase() {
+    if (!currentPurchase) return;
     
-    if (!wallets[userEmail]) {
-        wallets[userEmail] = { balance: 0, transactions: [] };
+    const playerId = document.getElementById('playerId').value;
+    if (!playerId) {
+        showToast('أدخل معرف اللعبة', 'error');
+        return;
     }
     
-    wallets[userEmail].balance += amount;
-    wallets[userEmail].transactions.push({
-        type: 'charge',
-        amount: amount,
-        description: 'شحن رصيد',
-        date: new Date().toISOString()
+    // حفظ الطلب
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push({
+        product: currentPurchase.productName,
+        price: currentPurchase.price,
+        category: currentPurchase.categoryName,
+        userEmail: currentUser?.email || 'زائر',
+        playerId: playerId,
+        date: new Date().toISOString(),
+        status: 'pending'
     });
     
-    localStorage.setItem('wallets', JSON.stringify(wallets));
-    showToast('تم تأكيد الشحن');
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // تحديث عداد السلة
+    document.getElementById('cartBadge').textContent = orders.length;
+    
+    showToast('تم تأكيد الطلب');
+    closeModal('purchaseModal');
+    
+    // فتح واتساب لتأكيد الدفع
+    const message = `🛍️ طلب جديد\nالمنتج: ${currentPurchase.productName}\nالسعر: ${currentPurchase.price}$\nمعرف: ${playerId}`;
+    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// الشراء من المحفظة
-function purchaseWithWallet(amount, item) {
-    if (!currentUser) return false;
+// عرض طلبات المستخدم
+function showOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const userOrders = orders.filter(o => o.userEmail === currentUser?.email);
     
-    const wallet = wallets[currentUser.email];
-    if (!wallet || wallet.balance < amount) {
-        showToast('الرصيد غير كافٍ', 'error');
-        return false;
-    }
-    
-    wallet.balance -= amount;
-    wallet.transactions.push({
-        type: 'purchase',
-        amount: -amount,
-        description: 'شراء ' + item,
-        date: new Date().toISOString()
-    });
-    
-    localStorage.setItem('wallets', JSON.stringify(wallets));
-    return true;
+    // يمكن عرضها في نافذة منبثقة أو صفحة منفصلة
+    alert('عدد طلباتك: ' + userOrders.length);
 }
