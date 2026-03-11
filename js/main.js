@@ -222,4 +222,32 @@ function showMyOrders() {
     const myOrdersList = document.getElementById('myOrdersList');
     
     if (orders.length === 0) {
-        myOrdersList.innerHTML = '<p style
+        myOrdersList.innerHTML = '<p style="text-align: center; color: #666;">لا توجد طلبات سابقة</p>';
+    } else {
+        myOrdersList.innerHTML = orders.slice(-5).reverse().map(o => `
+            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #fbbf24;">${o.game}</span>
+                    <span class="status ${o.status}">${o.status === 'pending' ? '⏳ قيد الانتظار' : '✅ مكتمل'}</span>
+                </div>
+                <div style="margin-top: 5px;">الباقة: ${o.pack}</div>
+                <div>المعرف: ${o.playerId}</div>
+                <div>المبلغ: $${o.finalPrice || o.price}</div>
+                <div style="font-size: 11px; color: #666; margin-top: 5px;">${o.date}</div>
+            </div>
+        `).join('');
+    }
+    
+    document.getElementById('myOrdersModal').classList.add('show');
+}
+
+function closeMyOrders() {
+    document.getElementById('myOrdersModal').classList.remove('show');
+}
+
+window.onbeforeunload = function() {
+    const playerId = document.getElementById('playerId')?.value;
+    if (playerId) {
+        localStorage.setItem('lastPlayerId', playerId);
+    }
+};
