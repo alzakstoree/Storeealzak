@@ -1,167 +1,141 @@
-// نظام الأقسام حسب تصميمك
-const categoriesSystem = {
-    categories: [
-        // ===== الأقسام الرئيسية =====
-        { id: 'cocco', name: 'Cocco', icon: 'fa-gem', level: 1, parentId: null },
-        { id: 'mtn', name: 'MTN', icon: 'fa-signal', level: 1, parentId: null },
-        { id: 'visa', name: 'VISA', icon: 'fa-credit-card', level: 1, parentId: null },
-        
-        // ===== فئات Cocco =====
-        { id: 'cocco_apps', name: 'قسم التطبيقات', level: 2, parentId: 'cocco' },
-        { id: 'cocco_games', name: 'قسم الألعاب', level: 2, parentId: 'cocco' },
-        { id: 'cocco_help', name: 'قسم التعليمات', level: 2, parentId: 'cocco' },
-        
-        // ===== فئات MTN =====
-        { id: 'mtn_balance', name: 'الرصيد والعمليات', level: 2, parentId: 'mtn' },
-        { id: 'mtn_numbers', name: 'قسم الأرقام', level: 2, parentId: 'mtn' },
-        { id: 'mtn_digital', name: 'قسم الرقميات', level: 2, parentId: 'mtn' },
-        
-        // ===== فئات VISA =====
-        { id: 'visa_backup', name: 'التوثيق الاحتياطي', level: 2, parentId: 'visa' },
-        { id: 'visa_accounts', name: 'توثيق الحسابات', level: 2, parentId: 'visa' },
-        { id: 'visa_electronic', name: 'توثيق إلكترونية', level: 2, parentId: 'visa' },
-        
-        // ===== منتجات (أمثلة) =====
-        // Cocco - تطبيقات
-        { id: 'prod_app_netflix', name: 'نتفليكس', price: '5.00', level: 3, parentId: 'cocco_apps' },
-        { id: 'prod_app_spotify', name: 'سبوتيفاي', price: '3.00', level: 3, parentId: 'cocco_apps' },
-        
-        // Cocco - ألعاب
-        { id: 'prod_game_pubg', name: 'PUBG UC', price: '10.00', level: 3, parentId: 'cocco_games' },
-        { id: 'prod_game_freefire', name: 'Free Fire', price: '8.00', level: 3, parentId: 'cocco_games' },
-        
-        // MTN - رصيد
-        { id: 'prod_mtn_5000', name: 'رصيد 5000 ليرة', price: '5.00', level: 3, parentId: 'mtn_balance' },
-        { id: 'prod_mtn_10000', name: 'رصيد 10000 ليرة', price: '9.00', level: 3, parentId: 'mtn_balance' },
-        
-        // MTN - أرقام
-        { id: 'prod_mtn_number', name: 'رقم مميز', price: '15.00', level: 3, parentId: 'mtn_numbers' },
-        
-        // VISA - توثيق
-        { id: 'prod_visa_verify', name: 'توثيق فيزا', price: '20.00', level: 3, parentId: 'visa_accounts' }
+// بيانات الأقسام حسب طلبك
+const categoriesData = {
+    main: [
+        {
+            id: 'cocco',
+            name: 'Cocco',
+            icon: 'fa-gem',
+            sub: [
+                { id: 'cocco_apps', name: 'قسم التطبيقات' },
+                { id: 'cocco_games', name: 'قسم الألعاب' },
+                { id: 'cocco_help', name: 'قسم التعليمات' }
+            ]
+        },
+        {
+            id: 'mtn',
+            name: 'MTN',
+            icon: 'fa-signal',
+            sub: [
+                { id: 'mtn_balance', name: 'الرصيد والعمليات' },
+                { id: 'mtn_numbers', name: 'قسم الأرقام' },
+                { id: 'mtn_digital', name: 'قسم الرقميات' }
+            ]
+        },
+        {
+            id: 'visa',
+            name: 'VISA',
+            icon: 'fa-credit-card',
+            sub: [
+                { id: 'visa_backup', name: 'التوثيق الاحتياطي' },
+                { id: 'visa_accounts', name: 'توثيق الحسابات' },
+                { id: 'visa_electronic', name: 'توثيق إلكترونية' }
+            ]
+        }
     ],
     
-    // دالة جلب الأقسام حسب المستوى
-    getCategoriesByLevel: function(level, parentId = null) {
-        return this.categories.filter(c => c.level === level && c.parentId === parentId);
-    },
-    
-    // دالة جلب الفروع لوالد معين
-    getChildren: function(parentId) {
-        return this.categories.filter(c => c.parentId === parentId);
-    },
-    
-    // دالة جلب مسار القسم
-    getPath: function(categoryId) {
-        const path = [];
-        let current = this.categories.find(c => c.id === categoryId);
-        
-        while (current) {
-            path.unshift(current);
-            current = this.categories.find(c => c.id === current.parentId);
-        }
-        
-        return path;
+    products: {
+        cocco_apps: [
+            { name: 'نتفليكس', price: 5 },
+            { name: 'سبوتيفاي', price: 3 },
+            { name: 'شاهد VIP', price: 4 }
+        ],
+        cocco_games: [
+            { name: 'PUBG - 60 UC', price: 1 },
+            { name: 'PUBG - 300 UC', price: 5 },
+            { name: 'Free Fire - 100', price: 2 }
+        ],
+        mtn_balance: [
+            { name: 'رصيد 5000', price: 5 },
+            { name: 'رصيد 10000', price: 9 },
+            { name: 'رصيد 25000', price: 20 }
+        ],
+        visa_accounts: [
+            { name: 'توثيق فيزا', price: 15 },
+            { name: 'توثيق ماستركارد', price: 15 }
+        ]
     }
 };
 
 // عرض الأقسام الرئيسية
-function renderMainCategories() {
-    const mainCats = categoriesSystem.getCategoriesByLevel(1);
+function showMainCategories() {
     const container = document.getElementById('mainCategories');
-    if (!container) return;
+    const subContainer = document.getElementById('subContent');
     
     container.innerHTML = '';
-    mainCats.forEach(cat => {
+    subContainer.innerHTML = '';
+    
+    categoriesData.main.forEach(cat => {
         container.innerHTML += `
-            <div class="main-cat-card" onclick="loadSubCategories('${cat.id}')">
-                <div class="cat-icon">
-                    <i class="fas ${cat.icon || 'fa-folder'}"></i>
-                </div>
-                <div class="cat-name">${cat.name}</div>
-                <div class="cat-arrow">
-                    <i class="fas fa-chevron-left"></i>
-                </div>
+            <div class="category-card" onclick="showSubCategories('${cat.id}')">
+                <i class="fas ${cat.icon}"></i>
+                <h3>${cat.name}</h3>
             </div>
         `;
     });
+    
+    updateBreadcrumb([{ name: 'الرئيسية' }]);
 }
 
 // عرض الفئات الفرعية
-function loadSubCategories(parentId) {
-    const children = categoriesSystem.getChildren(parentId);
-    const parent = categoriesSystem.categories.find(c => c.id === parentId);
+function showSubCategories(mainId) {
+    const mainCat = categoriesData.main.find(c => c.id === mainId);
+    const container = document.getElementById('subContent');
     
-    // تحديث مسار التنقل
-    updateBreadcrumb(parentId);
+    container.innerHTML = '<h2>' + mainCat.name + '</h2>';
     
-    const container = document.getElementById('subCategoriesContainer');
-    if (!container) return;
-    
-    if (children.length === 0 || children[0].level === 4) {
-        // إذا كانت المنتجات النهائية
-        showProducts(parentId);
-        return;
-    }
-    
-    container.innerHTML = `
-        <div class="sub-header">
-            <h3>${parent.name}</h3>
-        </div>
-    `;
-    
-    children.forEach(child => {
-        const hasChildren = categoriesSystem.getChildren(child.id).length > 0;
+    mainCat.sub.forEach(sub => {
         container.innerHTML += `
-            <div class="sub-cat-card" onclick="loadSubCategories('${child.id}')">
-                <span>${child.name}</span>
-                ${hasChildren ? '<i class="fas fa-chevron-left"></i>' : ''}
-                ${child.price ? `<span class="price">$${child.price}</span>` : ''}
+            <div class="sub-card" onclick="showProducts('${sub.id}', '${sub.name}')">
+                <span>${sub.name}</span>
+                <i class="fas fa-chevron-left"></i>
             </div>
         `;
     });
+    
+    updateBreadcrumb([
+        { name: 'الرئيسية', onclick: 'showMainCategories()' },
+        { name: mainCat.name }
+    ]);
 }
 
 // عرض المنتجات
-function showProducts(categoryId) {
-    const products = categoriesSystem.getChildren(categoryId);
-    const category = categoriesSystem.categories.find(c => c.id === categoryId);
+function showProducts(subId, subName) {
+    const products = categoriesData.products[subId] || [];
+    const container = document.getElementById('subContent');
     
-    const container = document.getElementById('subCategoriesContainer');
+    if (products.length === 0) {
+        container.innerHTML = '<p class="no-products">لا توجد منتجات</p>';
+        return;
+    }
     
-    container.innerHTML = `
-        <div class="sub-header">
-            <h3>${category.name}</h3>
-        </div>
-        <div class="products-grid">
-    `;
+    let html = '<h2>' + subName + '</h2><div class="products-grid">';
     
-    products.forEach(prod => {
-        container.innerHTML += `
-            <div class="product-card" onclick="openPurchaseModal('${prod.name}', '${prod.price}')">
-                <div class="product-name">${prod.name}</div>
-                <div class="product-price">$${prod.price}</div>
-                <button class="buy-small">اشتري</button>
+    products.forEach(p => {
+        html += `
+            <div class="product-card" onclick="openPurchaseModal('${p.name}', ${p.price})">
+                <h4>${p.name}</h4>
+                <p class="price">${p.price} $</p>
+                <button class="buy-btn">اشتري</button>
             </div>
         `;
     });
     
-    container.innerHTML += '</div>';
+    html += '</div>';
+    container.innerHTML = html;
 }
 
-// مسار التنقل
-function updateBreadcrumb(categoryId) {
-    const path = categoriesSystem.getPath(categoryId);
+// تحديث مسار التنقل
+function updateBreadcrumb(path) {
     const breadcrumb = document.getElementById('breadcrumb');
-    if (!breadcrumb) return;
+    breadcrumb.innerHTML = '';
     
-    breadcrumb.innerHTML = '<i class="fas fa-home" onclick="renderMainCategories()"></i>';
-    
-    path.forEach((cat, index) => {
-        if (index === path.length - 1) {
-            breadcrumb.innerHTML += `<span>${cat.name}</span>`;
+    path.forEach((item, index) => {
+        if (item.onclick) {
+            breadcrumb.innerHTML += `<span onclick="${item.onclick}">${item.name}</span>`;
         } else {
-            breadcrumb.innerHTML += `<span onclick="loadSubCategories('${cat.id}')">${cat.name}</span>`;
+            breadcrumb.innerHTML += `<span>${item.name}</span>`;
+        }
+        if (index < path.length - 1) {
             breadcrumb.innerHTML += `<i class="fas fa-chevron-left"></i>`;
         }
     });
@@ -169,10 +143,5 @@ function updateBreadcrumb(categoryId) {
 
 // تهيئة الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    renderMainCategories();
+    showMainCategories();
 });
-
-// دالة مؤقتة لفتح نافذة الشراء (لأن main.js ممكن يكون مش شغال)
-window.openPurchaseModal = function(productName, price) {
-    alert(`شراء: ${productName}\nالسعر: $${price}\nهنا رح تفتح نافذة الشراء`);
-};
