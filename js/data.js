@@ -25,4 +25,3 @@ const coupons = {
     'FREE10': 10
 };
 
-const ADMIN_PASSWORD = '1234';
