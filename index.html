@@ -3,156 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>ALZAK STORE | مدير المتجر</title>
+    <title>ALZAK STORE | متجر الألعاب والتطبيقات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
-        body { background: #0a0a0a; color: #fff; padding: 15px; }
-        
+        body { background: #0a0a0a; color: #fff; }
+
         /* الهيدر */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #fbbf24; }
+        .header { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #fbbf24; }
         .logo h1 { font-size: 24px; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .icons { display: flex; gap: 20px; align-items: center; }
-        .icons i { font-size: 22px; cursor: pointer; }
-        #userMenu { display: flex; align-items: center; gap: 10px; cursor: pointer; background: #1a1a1a; padding: 5px 15px; border-radius: 30px; }
+        .icons i { font-size: 22px; cursor: pointer; position: relative; }
+        .badge { position: absolute; top: -8px; right: -8px; background: #fbbf24; color: #000; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: 700; }
         
-        /* لوحة المدير - تصميم كامل للجوال */
-        .admin-panel { background: #111; border: 2px solid #fbbf24; border-radius: 25px; padding: 20px; margin-top: 20px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .admin-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 20px; }
-        .tab-btn { flex: 1; min-width: 80px; background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px 5px; border-radius: 30px; font-size: 13px; cursor: pointer; }
+        /* قائمة المستخدم */
+        #userSection { position: relative; }
+        #userMenu { display: flex; align-items: center; gap: 10px; cursor: pointer; background: #1a1a1a; padding: 8px 15px; border-radius: 30px; }
+        .dropdown { position: absolute; top: 50px; left: 0; background: #1a1a1a; border: 2px solid #fbbf24; border-radius: 15px; padding: 10px; min-width: 150px; display: none; z-index: 1000; }
+        #userMenu:hover .dropdown { display: block; }
+        .dropdown a { display: block; padding: 10px; color: #fff; text-decoration: none; border-radius: 10px; }
+        .dropdown a:hover { background: #fbbf24; color: #000; }
+
+        /* مسار التنقل */
+        .breadcrumb { padding: 15px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #333; flex-wrap: wrap; }
+        .breadcrumb i { color: #fbbf24; cursor: pointer; }
+        .breadcrumb span { cursor: pointer; color: #fbbf24; }
+        .breadcrumb span:last-child { color: #fff; cursor: default; }
+
+        /* الأقسام الرئيسية */
+        .main-categories { display: flex; flex-direction: column; gap: 15px; padding: 15px; }
+        .section-card { width: 100%; height: 150px; border-radius: 20px; overflow: hidden; cursor: pointer; position: relative; }
+        .section-image { width: 100%; height: 100%; background-size: cover; background-position: center; }
+        .section-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 24px; }
+        .section-overlay i { color: #fbbf24; font-size: 30px; }
+
+        /* الفئات */
+        .category-card { width: 100%; height: 100px; border-radius: 15px; overflow: hidden; margin-bottom: 15px; cursor: pointer; }
+        .category-image { width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; }
+        .category-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+        /* المنتجات */
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
+        .product-card { background: #1a1a1a; border: 2px solid #333; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .product-card:hover { border-color: #fbbf24; }
+        .product-card .price { color: #fbbf24; font-size: 20px; font-weight: 900; margin: 10px 0; }
+        .buy-btn { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 30px; font-weight: 700; width: 100%; cursor: pointer; }
+
+        /* لوحة المدير - تصميم جوال */
+        .admin-panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; height: 85vh; background: #111; border: 3px solid #fbbf24; border-radius: 25px; padding: 15px; z-index: 10000; overflow-y: auto; display: none; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .admin-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 15px; }
+        .tab-btn { flex: 1; min-width: 70px; background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px 5px; border-radius: 30px; font-size: 13px; cursor: pointer; }
         .tab-btn.active { background: #fbbf24; color: #000; font-weight: 700; }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
-        
-        /* كروت المنتجات */
-        .product-card { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-        .product-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .product-row input { flex: 1; background: #333; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; color: #fff; font-size: 16px; }
-        .product-actions { display: flex; gap: 5px; }
-        .product-actions button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
+
+        /* كروت تعديل المنتجات */
+        .product-edit-card { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        .product-edit-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .product-edit-row input { flex: 1; background: #333; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; color: #fff; font-size: 16px; }
+        .product-edit-actions { display: flex; gap: 5px; }
+        .product-edit-actions button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
         .save-btn { background: #22c55e; color: #fff; }
         .delete-btn { background: #ef4444; color: #fff; }
-        .add-btn { width: 100%; background: #fbbf24; color: #000; border: none; border-radius: 10px; padding: 15px; font-weight: 700; font-size: 16px; margin-top: 10px; cursor: pointer; }
-        
-        /* الطلبات */
-        .order-card { background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .order-status { display: flex; gap: 10px; margin: 10px 0; }
-        .order-status select { flex: 2; background: #333; color: #fff; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; font-size: 14px; }
-        .order-status button { flex: 0 0 50px; background: #ef4444; border: none; border-radius: 10px; color: #fff; font-size: 20px; cursor: pointer; }
-        
-        /* الإحصائيات */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .stat-card { background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: center; }
-        .stat-value { font-size: 32px; color: #fbbf24; font-weight: 900; }
-        
+        .add-btn { width: 100%; background: #fbbf24; color: #000; border: none; border-radius: 10px; padding: 15px; font-weight: 700; margin-top: 10px; cursor: pointer; }
+
         /* النوافذ المنبثقة */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 20px; z-index: 9999; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 15px; z-index: 9999; }
         .modal-content { background: #111; border: 2px solid #fbbf24; border-radius: 25px; padding: 25px; width: 100%; max-width: 400px; }
         .modal-content input { width: 100%; background: #333; border: 1px solid #fbbf24; border-radius: 10px; padding: 15px; margin: 10px 0; color: #fff; font-size: 16px; }
-        .modal-content button { width: 100%; background: #fbbf24; color: #000; border: none; border-radius: 10px; padding: 15px; font-weight: 700; font-size: 16px; margin: 5px 0; cursor: pointer; }
-        .close { position: absolute; top: 20px; left: 25px; font-size: 28px; color: #fbbf24; cursor: pointer; }
-        
-        .toast { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #111; border: 2px solid #fbbf24; padding: 15px; border-radius: 30px; text-align: center; transform: translateY(200%); transition: 0.3s; z-index: 10000; }
+        .modal-content button { width: 100%; background: #fbbf24; color: #000; border: none; border-radius: 10px; padding: 15px; font-weight: 700; margin: 5px 0; cursor: pointer; }
+        .close { position: absolute; top: 15px; left: 20px; font-size: 28px; color: #fbbf24; cursor: pointer; }
+
+        .toast { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #111; border: 2px solid #fbbf24; padding: 15px; border-radius: 30px; text-align: center; transform: translateY(200%); transition: 0.3s; z-index: 10001; }
         .toast.show { transform: translateY(0); }
+
+        @media (max-width: 480px) { .products-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <!-- الهيدر -->
     <div class="header">
-        <div class="logo"><h1>ALZAK STORE</h1></div>
+        <div class="logo"><h1>ALZAK STORE</h1><span style="font-size:12px;">المتجر الرسمي</span></div>
         <div class="icons">
             <i class="fas fa-wallet" onclick="showWallet()"></i>
-            <div id="userMenu" style="display:none" onclick="toggleUserMenu()">
-                <span id="userName"></span>
-                <i class="fas fa-chevron-down"></i>
-                <div id="adminLink" style="display:none; position:absolute; top:60px; left:10px; background:#1a1a1a; border:2px solid #fbbf24; border-radius:15px; padding:10px;">
-                    <a href="#" onclick="showAdminPanel()" style="color:#fff; text-decoration:none;">🔧 لوحة المدير</a>
+            <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
+            <div id="userSection">
+                <i class="fas fa-user" onclick="showAuthModal()" id="loginIcon"></i>
+                <div id="userMenu" style="display: none;" onclick="toggleDropdown()">
+                    <span id="userName"></span>
+                    <i class="fas fa-chevron-down"></i>
+                    <div class="dropdown" id="userDropdown">
+                        <a href="#" onclick="showWallet()">محفظتي</a>
+                        <a href="#" onclick="showMyOrders()">طلباتي</a>
+                        <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">🔧 لوحة المدير</a>
+                        <a href="#" onclick="logout()">تسجيل خروج</a>
+                    </div>
                 </div>
             </div>
-            <i class="fas fa-user" id="loginIcon" onclick="showAuthModal()"></i>
         </div>
     </div>
 
+    <!-- مسار التنقل -->
+    <div class="breadcrumb" id="breadcrumb"><i class="fas fa-home" onclick="showMainCategories()"></i></div>
+
+    <!-- الأقسام الرئيسية -->
+    <div id="mainCategories" class="main-categories"></div>
+
+    <!-- الفئات الفرعية والمنتجات -->
+    <div id="subContent" class="sub-content"></div>
+
     <!-- لوحة المدير -->
-    <div id="adminPanel" class="admin-panel" style="display:none;">
+    <div id="adminPanel" class="admin-panel">
         <div class="admin-header">
             <h2 style="color:#fbbf24;">🔧 لوحة التحكم</h2>
             <i class="fas fa-times" onclick="hideAdminPanel()" style="font-size:24px; cursor:pointer;"></i>
         </div>
-        
         <div class="admin-tabs">
-            <button class="tab-btn active" onclick="showTab('products')">المنتجات</button>
-            <button class="tab-btn" onclick="showTab('orders')">الطلبات</button>
-            <button class="tab-btn" onclick="showTab('charges')">الشحن</button>
-            <button class="tab-btn" onclick="showTab('stats')">الإحصائيات</button>
+            <button class="tab-btn active" onclick="showAdminTab('products')">المنتجات</button>
+            <button class="tab-btn" onclick="showAdminTab('orders')">الطلبات</button>
+            <button class="tab-btn" onclick="showAdminTab('charges')">الشحن</button>
+            <button class="tab-btn" onclick="showAdminTab('stats')">الإحصائيات</button>
         </div>
-
-        <div id="tabProducts" class="admin-tab-content active"></div>
-        <div id="tabOrders" class="admin-tab-content"></div>
-        <div id="tabCharges" class="admin-tab-content"></div>
-        <div id="tabStats" class="admin-tab-content"></div>
+        <div id="adminProducts" class="admin-tab-content active"></div>
+        <div id="adminOrders" class="admin-tab-content"></div>
+        <div id="adminCharges" class="admin-tab-content"></div>
+        <div id="adminStats" class="admin-tab-content"></div>
     </div>
-
-    <!-- باقي المحتوى (يظهر للزبائن) -->
-    <div id="storeContent"></div>
 
     <!-- النوافذ المنبثقة -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('authModal')">&times;</span>
-            <h2 style="color:#fbbf24; text-align:center;">تسجيل الدخول</h2>
+            <h2 style="text-align:center;">تسجيل الدخول</h2>
             <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" value="alolao45y@gmail.com">
             <input type="password" id="loginPassword" placeholder="كلمة المرور" value="admin123">
             <button onclick="login()">دخول</button>
         </div>
     </div>
 
-    <div id="walletModal" class="modal">
+    <div id="purchaseModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('walletModal')">&times;</span>
-            <h2 style="color:#fbbf24;">محفظتي</h2>
-            <div style="font-size:36px; color:#fbbf24; text-align:center; margin:20px 0;" id="walletBalance">0$</div>
+            <span class="close" onclick="closeModal('purchaseModal')">&times;</span>
+            <h2 style="text-align:center;">تأكيد الشراء</h2>
+            <div id="purchaseDetails" style="margin:15px 0;"></div>
+            <input type="text" id="playerId" placeholder="معرف اللعبة / الحساب">
+            <button onclick="confirmPurchase()">تأكيد الشراء</button>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
 
     <script>
-        // ==================== البيانات ====================
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        const ADMIN_EMAIL = 'alolao45y@gmail.com';
-        
-        // بيانات المتجر
+        // ==================== بيانات المتجر ====================
         let storeData = JSON.parse(localStorage.getItem('storeData')) || {
             sections: [
-                { name: 'الألعاب', categories: [
-                    { name: 'PUBG', products: [
-                        { name: '60 UC', price: 0.99 },
-                        { name: '300 UC', price: 4.99 }
-                    ]}
-                ]}
+                { id: 'games', name: 'الألعاب', icon: 'fa-gamepad', image: 'https://i.ibb.co/vc4DVH2C/Screenshot-20260312-002402.png',
+                    categories: [
+                        { id: 'pubg', name: 'PUBG', image: 'https://i.ibb.co/vc4DVH2C/Screenshot-20260312-002402.png',
+                            products: [
+                                { name: '60 UC', price: 0.99 },
+                                { name: '300 UC + 25', price: 4.99 },
+                                { name: '600 UC + 60', price: 9.99 }
+                            ]
+                        },
+                        { id: 'freefire', name: 'Free Fire', image: 'https://i.ibb.co/vc4DVH2C/Screenshot-20260312-002402.png',
+                            products: [
+                                { name: '100 جوهرة', price: 1.50 },
+                                { name: '341 جوهرة', price: 3.99 }
+                            ]
+                        }
+                    ]
+                },
+                { id: 'apps', name: 'التطبيقات', icon: 'fa-mobile-alt', image: 'https://i.ibb.co/dpjQfMPQ/Screenshot-20260312-001846.png',
+                    categories: [
+                        { id: 'shahid', name: 'شاهد VIP', image: 'https://i.ibb.co/dpjQfMPQ/Screenshot-20260312-001846.png',
+                            products: [
+                                { name: 'شهر واحد', price: 5.99 },
+                                { name: '3 شهور', price: 15.99 }
+                            ]
+                        },
+                        { id: 'netflix', name: 'نتفلكس', image: 'https://i.ibb.co/dpjQfMPQ/Screenshot-20260312-001846.png',
+                            products: [
+                                { name: 'شهر واحد', price: 7.99 },
+                                { name: '3 شهور', price: 21.99 }
+                            ]
+                        }
+                    ]
+                },
+                { id: 'cards', name: 'بطاقات جوجل', icon: 'fa-google', image: 'https://i.ibb.co/qF95JZfM/Screenshot-20260312-002552.png',
+                    categories: [
+                        { id: 'google', name: 'بطاقات جوجل بلاي', image: 'https://i.ibb.co/qF95JZfM/Screenshot-20260312-002552.png',
+                            products: [
+                                { name: 'بطاقة 10$', price: 10.00 },
+                                { name: 'بطاقة 25$', price: 25.00 }
+                            ]
+                        }
+                    ]
+                }
             ]
         };
 
-        // ==================== دوال تسجيل الدخول ====================
+        // ==================== المتغيرات العامة ====================
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentPurchase = null;
+        const ADMIN_EMAIL = 'alolao45y@gmail.com';
+        let currentSection = null, currentCategory = null;
+
+        // ==================== دوال الأقسام والمنتجات ====================
+        function showMainCategories() {
+            const container = document.getElementById('mainCategories');
+            container.innerHTML = '';
+            storeData.sections.forEach(section => {
+                container.innerHTML += `
+                    <div class="section-card" onclick="showCategories('${section.id}')">
+                        <div class="section-image" style="background-image: url('${section.image}')">
+                            <div class="section-overlay"><i class="fas ${section.icon}"></i><h3>${section.name}</h3></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('subContent').innerHTML = '';
+            updateBreadcrumb([{ name: 'الرئيسية' }]);
+        }
+
+        function showCategories(sectionId) {
+            const section = storeData.sections.find(s => s.id === sectionId);
+            currentSection = section;
+            const container = document.getElementById('subContent');
+            container.innerHTML = `<h2 class="section-title" style="color:#fbbf24; text-align:center; margin:15px;">${section.name}</h2>`;
+            section.categories.forEach(cat => {
+                container.innerHTML += `
+                    <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
+                        <div class="category-image" style="background-image: url('${cat.image}')">
+                            <div class="category-overlay"><h4>${cat.name}</h4></div>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBreadcrumb([{ name: 'الرئيسية', onclick: 'showMainCategories()' }, { name: section.name }]);
+        }
+
+        function showProducts(sectionId, categoryId) {
+            const section = storeData.sections.find(s => s.id === sectionId);
+            const category = section.categories.find(c => c.id === categoryId);
+            currentCategory = category;
+            const container = document.getElementById('subContent');
+            let html = `<h2 class="section-title" style="color:#fbbf24; text-align:center; margin:15px;">${category.name}</h2><div class="products-grid">`;
+            category.products.forEach(prod => {
+                html += `
+                    <div class="product-card" onclick="openPurchaseModal('${prod.name}', ${prod.price})">
+                        <h4>${prod.name}</h4>
+                        <p class="price">${prod.price} $</p>
+                        <button class="buy-btn">اشتري</button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+            updateBreadcrumb([
+                { name: 'الرئيسية', onclick: 'showMainCategories()' },
+                { name: section.name, onclick: `showCategories('${section.id}')` },
+                { name: category.name }
+            ]);
+        }
+
+        function updateBreadcrumb(path) {
+            const bc = document.getElementById('breadcrumb');
+            bc.innerHTML = '<i class="fas fa-home" onclick="showMainCategories()"></i>';
+            path.forEach((item, i) => {
+                if (item.onclick) bc.innerHTML += `<span onclick="${item.onclick}">${item.name}</span>`;
+                else bc.innerHTML += `<span>${item.name}</span>`;
+                if (i < path.length-1) bc.innerHTML += `<i class="fas fa-chevron-left"></i>`;
+            });
+        }
+
+        function openPurchaseModal(name, price) {
+            currentPurchase = { name, price };
+            document.getElementById('purchaseDetails').innerHTML = `<p>المنتج: ${name}</p><p>السعر: ${price}$</p>`;
+            document.getElementById('purchaseModal').style.display = 'flex';
+        }
+
+        function confirmPurchase() {
+            const pid = document.getElementById('playerId').value;
+            if (!pid) { showToast('أدخل المعرف', 'error'); return; }
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push({ product: currentPurchase.name, price: currentPurchase.price, playerId: pid, date: new Date().toISOString(), status: 'pending' });
+            localStorage.setItem('orders', JSON.stringify(orders));
+            document.getElementById('cartBadge').textContent = orders.length;
+            showToast('✅ تم تأكيد الطلب');
+            document.getElementById('purchaseModal').style.display = 'none';
+            const msg = `طلب جديد: ${currentPurchase.name}\nالسعر: ${currentPurchase.price}$\nمعرف: ${pid}`;
+            window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // ==================== نظام تسجيل الدخول ====================
         function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function toggleDropdown() { 
+            const d = document.getElementById('userDropdown');
+            d.style.display = d.style.display === 'none' ? 'block' : 'none';
+        }
 
         function login() {
             const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (email === ADMIN_EMAIL && password === 'admin123') {
+            const pass = document.getElementById('loginPassword').value;
+            if (email === ADMIN_EMAIL && pass === 'admin123') {
                 currentUser = { email: ADMIN_EMAIL, name: 'المدير' };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 closeModal('authModal');
                 updateUI();
                 showToast('مرحباً المدير');
-            } else {
-                showToast('بيانات خطأ', 'error');
-            }
+            } else showToast('بيانات خطأ', 'error');
         }
 
         function logout() {
@@ -167,9 +329,7 @@
                 document.getElementById('loginIcon').style.display = 'none';
                 document.getElementById('userMenu').style.display = 'flex';
                 document.getElementById('userName').textContent = 'المدير';
-                if (currentUser.email === ADMIN_EMAIL) {
-                    document.getElementById('adminLink').style.display = 'block';
-                }
+                if (currentUser.email === ADMIN_EMAIL) document.getElementById('adminLink').style.display = 'block';
             } else {
                 document.getElementById('loginIcon').style.display = 'block';
                 document.getElementById('userMenu').style.display = 'none';
@@ -177,51 +337,40 @@
         }
 
         // ==================== لوحة المدير ====================
-        function showAdminPanel() {
-            document.getElementById('adminPanel').style.display = 'block';
-            loadProductsTab();
-        }
+        function showAdminPanel() { document.getElementById('adminPanel').style.display = 'block'; loadAdminProducts(); }
+        function hideAdminPanel() { document.getElementById('adminPanel').style.display = 'none'; }
 
-        function hideAdminPanel() {
-            document.getElementById('adminPanel').style.display = 'none';
-        }
-
-        function showTab(tabName) {
+        function showAdminTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
             event.target.classList.add('active');
-            document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
-            
-            if (tabName === 'products') loadProductsTab();
-            if (tabName === 'orders') loadOrdersTab();
-            if (tabName === 'stats') loadStatsTab();
+            document.getElementById('admin' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            if (tab === 'products') loadAdminProducts();
+            if (tab === 'orders') loadAdminOrders();
+            if (tab === 'stats') loadAdminStats();
         }
 
-        // تبويب المنتجات
-        function loadProductsTab() {
+        function loadAdminProducts() {
             let html = '';
             storeData.sections.forEach((section, s) => {
                 section.categories.forEach((category, c) => {
-                    html += `<div style="background:#1a1a1a; border-radius:15px; padding:15px; margin-bottom:20px;">`;
-                    html += `<h3 style="color:#fbbf24; margin-bottom:15px;">${category.name}</h3>`;
-                    
+                    html += `<div style="margin-bottom:20px;"><h3 style="color:#fbbf24;">${category.name}</h3>`;
                     category.products.forEach((product, p) => {
                         html += `
-                            <div class="product-card">
-                                <div class="product-row">
+                            <div class="product-edit-card">
+                                <div class="product-edit-row">
                                     <input type="text" id="name_${s}_${c}_${p}" value="${product.name}">
                                     <input type="number" id="price_${s}_${c}_${p}" value="${product.price}" step="0.01">
                                 </div>
-                                <div class="product-actions">
+                                <div class="product-edit-actions">
                                     <button class="save-btn" onclick="updateProduct(${s},${c},${p})">💾 حفظ</button>
                                     <button class="delete-btn" onclick="deleteProduct(${s},${c},${p})">🗑️ حذف</button>
                                 </div>
                             </div>
                         `;
                     });
-                    
                     html += `
-                        <div style="margin-top:15px;">
+                        <div style="margin-top:10px;">
                             <input type="text" id="new_name_${s}_${c}" placeholder="اسم المنتج الجديد" style="width:100%; background:#333; border:1px solid #fbbf24; border-radius:10px; padding:12px; margin-bottom:10px; color:#fff;">
                             <input type="number" id="new_price_${s}_${c}" placeholder="السعر" step="0.01" style="width:100%; background:#333; border:1px solid #fbbf24; border-radius:10px; padding:12px; margin-bottom:10px; color:#fff;">
                             <button class="add-btn" onclick="addProduct(${s},${c})">➕ إضافة منتج</button>
@@ -230,114 +379,93 @@
                     html += `</div>`;
                 });
             });
-            document.getElementById('tabProducts').innerHTML = html;
+            document.getElementById('adminProducts').innerHTML = html;
         }
 
-        window.updateProduct = function(s, c, p) {
+        window.updateProduct = function(s,c,p) {
             const name = document.getElementById(`name_${s}_${c}_${p}`).value;
             const price = parseFloat(document.getElementById(`price_${s}_${c}_${p}`).value);
             if (!name || isNaN(price)) return showToast('بيانات غير صحيحة', 'error');
-            
             storeData.sections[s].categories[c].products[p].name = name;
             storeData.sections[s].categories[c].products[p].price = price;
             localStorage.setItem('storeData', JSON.stringify(storeData));
             showToast('✅ تم التعديل');
         };
 
-        window.deleteProduct = function(s, c, p) {
-            if (!confirm('حذف؟')) return;
-            storeData.sections[s].categories[c].products.splice(p, 1);
+        window.deleteProduct = function(s,c,p) {
+            if (!confirm('حذف المنتج؟')) return;
+            storeData.sections[s].categories[c].products.splice(p,1);
             localStorage.setItem('storeData', JSON.stringify(storeData));
-            loadProductsTab();
+            loadAdminProducts();
             showToast('✅ تم الحذف');
         };
 
-        window.addProduct = function(s, c) {
+        window.addProduct = function(s,c) {
             const name = document.getElementById(`new_name_${s}_${c}`).value;
             const price = parseFloat(document.getElementById(`new_price_${s}_${c}`).value);
             if (!name || isNaN(price)) return showToast('بيانات غير صحيحة', 'error');
-            
             storeData.sections[s].categories[c].products.push({ name, price });
             localStorage.setItem('storeData', JSON.stringify(storeData));
             document.getElementById(`new_name_${s}_${c}`).value = '';
             document.getElementById(`new_price_${s}_${c}`).value = '';
-            loadProductsTab();
+            loadAdminProducts();
             showToast('✅ تمت الإضافة');
         };
 
-        // تبويب الطلبات
-        function loadOrdersTab() {
+        function loadAdminOrders() {
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
             let html = '';
-            orders.reverse().forEach((order, i) => {
-                html += `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span>${order.product || 'منتج'}</span>
-                            <span style="color:#fbbf24;">${order.price || 0}$</span>
-                        </div>
-                        <div class="order-status">
-                            <select id="order_status_${i}">
-                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>⏳ قيد الانتظار</option>
-                                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>✅ مكتمل</option>
-                            </select>
-                            <button onclick="deleteOrder(${i})">🗑️</button>
-                        </div>
-                        <button onclick="updateOrderStatus(${i})" style="width:100%; background:#fbbf24; color:#000; border:none; border-radius:10px; padding:12px; font-weight:700;">تحديث الحالة</button>
-                    </div>
-                `;
+            orders.reverse().forEach((o, i) => {
+                html += `<div style="background:#1a1a1a; border-radius:15px; padding:15px; margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between;"> <span>${o.product}</span> <span style="color:#fbbf24;">${o.price}$</span> </div>
+                    <div style="margin:10px 0;"><select id="order_${i}" style="width:100%; background:#333; color:#fff; border:1px solid #fbbf24; border-radius:10px; padding:12px;">
+                        <option value="pending" ${o.status==='pending'?'selected':''}>⏳ قيد الانتظار</option>
+                        <option value="completed" ${o.status==='completed'?'selected':''}>✅ مكتمل</option>
+                    </select></div>
+                    <button onclick="updateOrderStatus(${i})" style="width:100%; background:#fbbf24; color:#000; border:none; border-radius:10px; padding:12px;">تحديث الحالة</button>
+                </div>`;
             });
-            document.getElementById('tabOrders').innerHTML = html || '<p style="text-align:center;">لا توجد طلبات</p>';
+            document.getElementById('adminOrders').innerHTML = html || '<p style="text-align:center;">لا توجد طلبات</p>';
         }
 
         window.updateOrderStatus = function(i) {
-            const select = document.getElementById(`order_status_${i}`);
-            if (!select) return;
             let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders[i].status = select.value;
+            const select = document.getElementById(`order_${i}`);
+            if (select) orders[i].status = select.value;
             localStorage.setItem('orders', JSON.stringify(orders));
             showToast('✅ تم التحديث');
         };
 
-        window.deleteOrder = function(i) {
-            if (!confirm('حذف الطلب؟')) return;
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.splice(i, 1);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            loadOrdersTab();
-            showToast('✅ تم الحذف');
-        };
-
-        // تبويب الإحصائيات
-        function loadStatsTab() {
+        function loadAdminStats() {
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            const total = orders.reduce((s, o) => s + (o.price || 0), 0);
-            document.getElementById('tabStats').innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card"><span class="stat-value">${orders.length}</span><span>الطلبات</span></div>
-                    <div class="stat-card"><span class="stat-value">${total}$</span><span>المبيعات</span></div>
+            const total = orders.reduce((s,o) => s + (o.price||0), 0);
+            document.getElementById('adminStats').innerHTML = `
+                <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;">
+                    <div style="background:#1a1a1a; border-radius:15px; padding:20px; text-align:center;">
+                        <div style="font-size:32px; color:#fbbf24;">${orders.length}</div>
+                        <div>الطلبات</div>
+                    </div>
+                    <div style="background:#1a1a1a; border-radius:15px; padding:20px; text-align:center;">
+                        <div style="font-size:32px; color:#fbbf24;">${total}$</div>
+                        <div>المبيعات</div>
+                    </div>
                 </div>
             `;
         }
 
-        // دوال مساعدة
-        function showToast(m, t = 'success') {
+        // ==================== دوال مساعدة ====================
+        function showToast(m, t='success') {
             const toast = document.getElementById('toast');
             toast.textContent = m;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        function showWallet() {
-            showToast('المحفظة قريباً');
-        }
-
-        function toggleUserMenu() {
-            const link = document.getElementById('adminLink');
-            link.style.display = link.style.display === 'none' ? 'block' : 'none';
-        }
+        function showWallet() { showToast('المحفظة قريباً'); }
+        function showMyOrders() { showToast('طلباتك قريباً'); }
 
         // تهيئة الصفحة
+        showMainCategories();
         updateUI();
     </script>
 </body>
