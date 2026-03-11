@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <!-- الهيدر -->
+    <!-- الهيدر مع أيقونات المستخدم والمحفظة -->
     <div class="header">
         <div class="logo">
             <h1>ALZAK STORE</h1>
@@ -66,10 +66,36 @@
         </div>
         <div class="icons">
             <i class="far fa-heart" onclick="showToast('المفضلة قريباً')"></i>
+            
+            <!-- أيقونة المحفظة (جديد) -->
+            <i class="fas fa-wallet" onclick="showWalletPage()" style="margin-left: 15px;"></i>
+            
             <i class="fas fa-shopping-cart" onclick="showMyOrders()">
                 <span class="badge" id="cartBadge">0</span>
             </i>
+            
+            <!-- أيقونة المستخدم (تظهر بعد تسجيل الدخول) -->
+            <div id="loginBtn" class="login-btn" onclick="showAuthModal()">
+                <i class="fas fa-user"></i>
+            </div>
+            
+            <!-- قائمة المستخدم (تظهر بعد تسجيل الدخول) -->
+            <div id="userMenu" class="user-menu" style="display: none;">
+                <img id="userPhoto" src="" alt="" onerror="this.src='https://via.placeholder.com/30'">
+                <span id="userName"></span>
+                <div class="user-dropdown">
+                    <a href="#" onclick="showWalletPage()">محفظتي</a>
+                    <a href="#" onclick="showMyOrders()">طلباتي</a>
+                    <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">لوحة المدير</a>
+                    <a href="#" onclick="logout()">تسجيل خروج</a>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- مسار التنقل (Breadcrumb) - جديد -->
+    <div id="breadcrumb" class="breadcrumb">
+        <!-- يتعبأ تلقائياً من JavaScript -->
     </div>
 
     <!-- قسم العروض -->
@@ -83,21 +109,33 @@
         </div>
     </div>
 
-    <!-- الفئات -->
+    <!-- الأقسام الرئيسية (جديد) -->
+    <div class="main-categories" id="mainCategories">
+        <!-- تتعبأ تلقائياً من JavaScript -->
+    </div>
+
+    <!-- الفئات الفرعية والمنتجات (جديد) -->
+    <div id="subCategoriesContainer" class="sub-categories">
+        <!-- تتعبأ تلقائياً من JavaScript -->
+    </div>
+
+    <!-- الفئات القديمة (مؤقتاً - رح نستبدلها) -->
+    <!--
     <div class="categories">
         <div class="cat active" onclick="filterGames('all', this)">الكل</div>
         <div class="cat" onclick="filterGames('pubg', this)">PUBG</div>
         <div class="cat" onclick="filterGames('freefire', this)">Free Fire</div>
     </div>
+    -->
 
     <!-- مربع البحث -->
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 ابحث عن لعبة أو باقة...">
     </div>
 
-    <!-- شبكة الألعاب -->
+    <!-- شبكة الألعاب (مؤقتاً - رح نستبدلها) -->
+    <!--
     <div class="games-grid">
-        <!-- PUBG -->
         <div class="game-card" onclick="showPacks('pubg')">
             <div class="game-image">
                 <img src="https://img.redbull.com/images/c_fill,g_auto,w_450,h_750/q_auto,f_auto/redbullcom/2017/07/18/2dd60382-b4b5-41ff-8ff4-bf364f301fa2/pubg-pro-players.jpg.jpg" alt="PUBG Mobile">
@@ -111,7 +149,6 @@
             </div>
         </div>
 
-        <!-- Free Fire -->
         <div class="game-card" onclick="showPacks('freefire')">
             <div class="game-image">
                 <img src="https://images.hindustantimes.com/tech/img/2022/06/23/414x233/54f31449f5f91cf0cc223cc635cd5952jpg_1655955051259_1655955067513.jpeg" alt="Free Fire">
@@ -125,8 +162,9 @@
             </div>
         </div>
     </div>
+    -->
 
-    <!-- باقات PUBG -->
+    <!-- باقات PUBG (قديمة) -->
     <div id="pubgPacks" class="packs-section">
         <div class="packs-header">
             <h3><i class="fas fa-crosshairs" style="color: #fbbf24;"></i> باقات PUBG Mobile</h3>
@@ -135,7 +173,7 @@
         <div class="packs-grid" id="pubgPacksGrid"></div>
     </div>
 
-    <!-- باقات Free Fire -->
+    <!-- باقات Free Fire (قديمة) -->
     <div id="freefirePacks" class="packs-section">
         <div class="packs-header">
             <h3><i class="fas fa-fire" style="color: #fbbf24;"></i> باقات Free Fire</h3>
@@ -175,6 +213,16 @@
             </div>
 
             <input type="text" class="modal-input" id="playerId" placeholder="أدخل معرف اللعبة (UID)" value="">
+
+            <!-- خيارات الدفع (جديد) -->
+            <div style="display: flex; gap: 10px; margin: 15px 0;">
+                <button class="buy-btn" onclick="purchaseWithWalletOption()" style="background: #22c55e;">
+                    <i class="fas fa-wallet"></i> ادفع من رصيدي
+                </button>
+                <button class="buy-btn" onclick="sendToWhatsApp()" style="background: #25D366;">
+                    <i class="fab fa-whatsapp"></i> واتساب
+                </button>
+            </div>
 
             <!-- قسم الكوبونات -->
             <div class="coupon-section">
@@ -244,10 +292,17 @@
         <span id="toastMessage"></span>
     </div>
 
-    <!-- ملفات JavaScript -->
+    <!-- ملفات JavaScript - الترتيب مهم -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/admin.js"></script>
+    
+    <!-- الملفات الجديدة -->
+    <script type="module" src="js/auth.js"></script>
+    <script src="js/categories.js"></script>
+    <script src="js/wallet.js"></script>
+    
+    <!-- الملف الرئيسي (يأتي آخر شيء) -->
     <script src="js/main.js"></script>
 </body>
 </html>
