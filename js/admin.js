@@ -1,113 +1,243 @@
-function showAdminLogin() {
-    document.getElementById('adminLogin').classList.add('show');
-}
+// ==================== لوحة المدير المتكاملة ====================
+const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
-function closeAdminLogin() {
-    document.getElementById('adminLogin').classList.remove('show');
-    document.getElementById('adminPassword').value = '';
-}
-
-function checkAdminPassword() {
-    const password = document.getElementById('adminPassword').value;
-    if (password === ADMIN_PASSWORD) {
-        closeAdminLogin();
-        toggleAdminPanel();
-        showToast('✅ مرحباً بالمدير');
-    } else {
-        showToast('❌ كلمة سر خطأ', 'error');
-    }
-}
-
-function toggleAdminPanel() {
-    document.getElementById('adminPanel').classList.toggle('show');
-    if (document.getElementById('adminPanel').classList.contains('show')) {
-        updateAdminPanel();
-    }
-}
-
-function updateAdminPanel() {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+// تحميل بيانات لوحة المدير
+function loadAdminData() {
+    if (currentUser?.email !== ADMIN_EMAIL) return;
     
-    let adminPanelHTML = `
-        <h3 style="color: #fbbf24; margin-bottom: 15px;">📊 إحصائيات المتجر</h3>
-        <div class="admin-stats">
-            <div class="stat-box">
-                <div class="number" id="totalOrders">${orders.length}</div>
-                <div>إجمالي الطلبات</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="pendingOrders">${orders.filter(o => o.status === 'pending').length}</div>
-                <div>قيد الانتظار</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="totalRevenue">$${orders.reduce((sum, o) => sum + parseFloat(o.finalPrice || o.price), 0).toFixed(2)}</div>
-                <div>الإيرادات</div>
-            </div>
-        </div>
-    `;
+    loadProductsManager();
+    loadOrdersManager();
+    loadChargesManager();
+    loadUsersManager();
+    loadStatsManager();
+}
 
-    const today = new Date().toDateString();
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const monthAgo = new Date();
-    monthAgo.setMonth(monthAgo.getMonth() - 1);
+// ========== إدارة المنتجات ==========
+function loadProductsManager() {
+    const container = document.getElementById('productsManager');
+    let html = '<button class="admin-add-btn" onclick="addNewProduct()"><i class="fas fa-plus"></i> إضافة منتج جديد</button>';
+    
+    storeData.sections.forEach(section => {
+        html += `<h4>${section.name}</h4>`;
+        section.categories.forEach(category => {
+            html += `<div class="admin-category"><strong>${category.name}</strong>`;
+            category.products.forEach((product, index) => {
+                html += `
+                    <div class="admin-product-item">
+                        <span>${product.name} - ${product.price}$</span>
+                        <div>
+                            <button onclick="editProduct('${section.id}', '${category.id}', ${index})"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteProduct('${section.id}', '${category.id}', ${index})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        });
+    });
+    
+    container.innerHTML = html;
+}
 
-    adminPanelHTML += `
-        <div class="admin-stats">
-            <div class="stat-box">
-                <div class="number">${orders.filter(o => new Date(o.date).toDateString() === today).length}</div>
-                <div>طلبات اليوم</div>
-            </div>
-            <div class="stat-box">
-                <div class="number">${orders.filter(o => new Date(o.date) >= weekAgo).length}</div>
-                <div>هذا الأسبوع</div>
-            </div>
-            <div class="stat-box">
-                <div class="number">${orders.filter(o => new Date(o.date) >= monthAgo).length}</div>
-                <div>هذا الشهر</div>
-            </div>
-        </div>
+// إضافة منتج جديد
+function addNewProduct() {
+    const name = prompt('اسم المنتج:');
+    if (!name) return;
+    const price = parseFloat(prompt('السعر:'));
+    if (isNaN(price)) return;
+    
+    // هنا تحط الكود اللي يختار القسم والفئة
+    showToast('تمت الإضافة (يطور لاحقاً)');
+}
 
-        <h4 style="color: #fbbf24; margin: 15px 0;">📋 آخر الطلبات</h4>
-        <div class="orders-table" id="ordersTable">
-            <div class="order-row header">
-                <span>اللعبة</span>
-                <span>الباقة</span>
-                <span>المعرف</span>
-                <span>المبلغ</span>
-                <span>الحالة</span>
-            </div>
-            <div id="ordersList">
-    `;
+// تعديل منتج
+function editProduct(sectionId, categoryId, productIndex) {
+    const section = storeData.sections.find(s => s.id === sectionId);
+    const category = section.categories.find(c => c.id === categoryId);
+    const product = category.products[productIndex];
+    
+    const newName = prompt('تعديل اسم المنتج:', product.name);
+    if (newName) product.name = newName;
+    
+    const newPrice = parseFloat(prompt('تعديل السعر:', product.price));
+    if (!isNaN(newPrice)) product.price = newPrice;
+    
+    localStorage.setItem('storeData', JSON.stringify(storeData));
+    loadProductsManager();
+    showToast('تم التعديل');
+}
 
-    orders.slice(-5).reverse().forEach(o => {
-        adminPanelHTML += `
-            <div class="order-row" onclick="markAsCompleted('${o.date}')" style="cursor: pointer;">
-                <span>${o.game}</span>
-                <span>${o.pack}</span>
-                <span>${o.playerId}</span>
-                <span>$${o.finalPrice || o.price}</span>
-                <span class="status ${o.status}">${o.status === 'pending' ? '⏳' : '✅'}</span>
-            </div>
+// حذف منتج
+function deleteProduct(sectionId, categoryId, productIndex) {
+    if (!confirm('متأكد من الحذف؟')) return;
+    
+    const section = storeData.sections.find(s => s.id === sectionId);
+    const category = section.categories.find(c => c.id === categoryId);
+    category.products.splice(productIndex, 1);
+    
+    localStorage.setItem('storeData', JSON.stringify(storeData));
+    loadProductsManager();
+    showToast('تم الحذف');
+}
+
+// ========== إدارة الطلبات ==========
+function loadOrdersManager() {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const container = document.getElementById('ordersManager');
+    
+    if (orders.length === 0) {
+        container.innerHTML = '<p class="no-data">لا توجد طلبات</p>';
+        return;
+    }
+    
+    let html = '<table class="admin-table"><tr><th>المنتج</th><th>المستخدم</th><th>السعر</th><th>الحالة</th><th>تاريخ</th><th>تحكم</th></tr>';
+    
+    orders.reverse().forEach((order, index) => {
+        html += `
+            <tr>
+                <td>${order.product}</td>
+                <td>${order.userEmail || 'زائر'}</td>
+                <td>${order.price}$</td>
+                <td><span class="status-badge ${order.status}">${order.status === 'pending' ? 'قيد الانتظار' : 'مكتمل'}</span></td>
+                <td>${new Date(order.date).toLocaleDateString()}</td>
+                <td>
+                    <button onclick="updateOrderStatus(${index})">تغيير الحالة</button>
+                </td>
+            </tr>
         `;
     });
-
-    adminPanelHTML += `
-            </div>
-        </div>
-    `;
-
-    document.getElementById('adminPanel').innerHTML = adminPanelHTML;
+    
+    html += '</table>';
+    container.innerHTML = html;
 }
 
-function markAsCompleted(date) {
-    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    const orderIndex = orders.findIndex(o => o.date === date);
+// تحديث حالة الطلب
+function updateOrderStatus(orderIndex) {
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders[orderIndex].status = orders[orderIndex].status === 'pending' ? 'completed' : 'pending';
+    localStorage.setItem('orders', JSON.stringify(orders));
+    loadOrdersManager();
+    showToast('تم التحديث');
+}
+
+// ========== إدارة طلبات الشحن ==========
+function loadChargesManager() {
+    const charges = JSON.parse(localStorage.getItem('charges')) || [];
+    const container = document.getElementById('chargesManager');
     
-    if (orderIndex !== -1) {
-        orders[orderIndex].status = orders[orderIndex].status === 'pending' ? 'completed' : 'pending';
-        localStorage.setItem('orders', JSON.stringify(orders));
-        updateAdminPanel();
-        showToast('✅ تم تحديث حالة الطلب');
+    if (charges.length === 0) {
+        container.innerHTML = '<p class="no-data">لا توجد طلبات شحن</p>';
+        return;
     }
+    
+    let html = '<table class="admin-table"><tr><th>المستخدم</th><th>المبلغ</th><th>التاريخ</th><th>الحالة</th><th>تحكم</th></tr>';
+    
+    charges.reverse().forEach((charge, index) => {
+        html += `
+            <tr>
+                <td>${charge.userEmail}</td>
+                <td>${charge.amount}$</td>
+                <td>${new Date(charge.date).toLocaleDateString()}</td>
+                <td><span class="status-badge ${charge.status}">${charge.status === 'pending' ? 'قيد الانتظار' : 'مكتمل'}</span></td>
+                <td>
+                    ${charge.status === 'pending' ? 
+                        `<button onclick="confirmChargeFromAdmin(${index})">تأكيد وصول المبلغ</button>` : 
+                        'مكتمل'}
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+// تأكيد الشحن من المدير
+function confirmChargeFromAdmin(chargeIndex) {
+    let charges = JSON.parse(localStorage.getItem('charges')) || [];
+    const charge = charges[chargeIndex];
+    
+    // إضافة الرصيد للمستخدم
+    let wallets = JSON.parse(localStorage.getItem('wallets')) || {};
+    if (!wallets[charge.userEmail]) {
+        wallets[charge.userEmail] = { balance: 0, transactions: [] };
+    }
+    
+    wallets[charge.userEmail].balance += charge.amount;
+    wallets[charge.userEmail].transactions.push({
+        type: 'charge',
+        amount: charge.amount,
+        description: 'شحن رصيد',
+        date: new Date().toISOString()
+    });
+    
+    // تحديث حالة طلب الشحن
+    charges[chargeIndex].status = 'completed';
+    
+    localStorage.setItem('wallets', JSON.stringify(wallets));
+    localStorage.setItem('charges', JSON.stringify(charges));
+    
+    loadChargesManager();
+    showToast('تم تأكيد الشحن وإضافة الرصيد');
+}
+
+// ========== إدارة العملاء ==========
+function loadUsersManager() {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const container = document.getElementById('usersManager');
+    
+    if (users.length === 0) {
+        container.innerHTML = '<p class="no-data">لا يوجد عملاء</p>';
+        return;
+    }
+    
+    let html = '<table class="admin-table"><tr><th>الاسم</th><th>البريد</th><th>تاريخ التسجيل</th><th>مدير؟</th></tr>';
+    
+    users.forEach(user => {
+        html += `
+            <tr>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td>
+                <td>${user.email === ADMIN_EMAIL ? 'نعم' : 'لا'}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+// ========== الإحصائيات ==========
+function loadStatsManager() {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const charges = JSON.parse(localStorage.getItem('charges')) || [];
+    
+    const totalSales = orders.reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalCharges = charges.filter(c => c.status === 'completed').reduce((sum, c) => sum + (c.amount || 0), 0);
+    
+    document.getElementById('statsManager').innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-value">${orders.length}</span><span>إجمالي الطلبات</span></div>
+            <div class="stat-card"><span class="stat-value">${users.length}</span><span>العملاء</span></div>
+            <div class="stat-card"><span class="stat-value">${totalSales}$</span><span>مبيعات</span></div>
+            <div class="stat-card"><span class="stat-value">${totalCharges}$</span><span>شحن رصيد</span></div>
+        </div>
+    `;
+}
+
+// التبديل بين تبويبات لوحة المدير
+function showAdminTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-content').forEach(tab => tab.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`admin${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
+}
+
+// تهيئة لوحة المدير
+function prepareAdminPanel() {
+    // فقط تحضير، لا نظهرها تلقائياً
+    console.log('Admin panel ready');
 }
