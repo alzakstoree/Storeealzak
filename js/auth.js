@@ -18,7 +18,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 // البريد الإلكتروني للمالك (استبدله ببريدك أنت)
-const OWNER_EMAIL = "your-email@gmail.com"; // ⚠️ غير هذا إلى بريدك
+const OWNER_EMAIL = "alolao45y@gmail.com"; // ⚠️ غير هذا إلى بريدك
 
 // حالة المستخدم الحالي
 let currentUser = JSON.parse(localStorage.getItem('alzak_user')) || null;
