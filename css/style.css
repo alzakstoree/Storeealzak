@@ -682,4 +682,141 @@ body.light-mode .wallet-row {
     display: flex;
     gap: 10px;
     justify-content: center;
+}/* تنسيقات المستخدم والمحفظة */
+.login-btn {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.user-menu img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #fbbf24;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: #1a1a1a;
+    border: 2px solid #fbbf24;
+    border-radius: 15px;
+    padding: 10px;
+    min-width: 150px;
+    display: none;
+    z-index: 1000;
+}
+
+.user-menu:hover .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 8px 15px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+}
+
+.user-dropdown a:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+.google-login-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 30px;
+    font-weight: 700;
+    width: 100%;
+    cursor: pointer;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+body.light-mode .google-login-btn {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+/* تنسيقات الأقسام */
+.main-categories {
+    padding: 15px;
+}
+
+.main-cat-item {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    border: 1px solid #333;
+}
+
+.main-cat-item:hover {
+    border-color: #fbbf24;
+}
+
+.sub-cat-item {
+    background: #1a1a1a;
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid #333;
+}
+
+#breadcrumb {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#breadcrumb span {
+    cursor: pointer;
+    color: #fbbf24;
+}
+
+#breadcrumb span:last-child {
+    color: #fff;
+    cursor: default;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    margin-bottom: 5px;
 }
