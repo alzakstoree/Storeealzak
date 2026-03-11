@@ -590,4 +590,36 @@ body.light-mode .product-card {
     .admin-tabs {
         flex-direction: column;
     }
+}/* ===== تحسينات خاصة للجوال ===== */
+@media (max-width: 768px) {
+    .admin-panel {
+        width: 95%;
+        padding: 15px;
+        top: 48%;
+    }
+
+    .admin-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        flex: 1 1 auto;
+        font-size: 13px;
+        padding: 12px 8px;
+        margin: 2px;
+    }
+
+    .admin-product-item input {
+        font-size: 16px !important; /* لمنع التكبير التلقائي على iOS */
+        padding: 12px !important;
+    }
+
+    .admin-product-item button {
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+
+    select, input, button {
+        font-size: 16px; /* لمنع التكبير التلقائي */
+    }
 }
