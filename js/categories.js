@@ -1,4 +1,4 @@
-// ==================== الأقسام والفئات ====================
+// ==================== الأقسام والفئات مع روابط صور صحيحة ====================
 const storeData = {
     sections: [
         {
@@ -87,6 +87,8 @@ const storeData = {
 // عرض الأقسام الرئيسية بالصور
 function showMainCategories() {
     const container = document.getElementById('mainCategories');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     storeData.sections.forEach(section => {
@@ -102,7 +104,9 @@ function showMainCategories() {
         `;
     });
     
-    document.getElementById('subContent').innerHTML = '';
+    const subContent = document.getElementById('subContent');
+    if (subContent) subContent.innerHTML = '';
+    
     updateBreadcrumb([{ name: 'الرئيسية' }]);
 }
 
@@ -110,6 +114,7 @@ function showMainCategories() {
 function showCategories(sectionId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     const container = document.getElementById('subContent');
+    if (!container) return;
     
     container.innerHTML = `<h2 class="section-title">${section.name}</h2>`;
     
@@ -136,6 +141,7 @@ function showProducts(sectionId, categoryId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     const category = section.categories.find(c => c.id === categoryId);
     const container = document.getElementById('subContent');
+    if (!container) return;
     
     let html = `<h2 class="section-title">${category.name}</h2><div class="products-grid">`;
     
@@ -160,18 +166,63 @@ function showProducts(sectionId, categoryId) {
 }
 
 // فتح نافذة الشراء
+let currentPurchase = null;
 function openPurchaseModal(productName, price, categoryName) {
     currentPurchase = { productName, price, categoryName };
-    document.getElementById('purchaseDetails').innerHTML = `
-        <p>المنتج: ${productName}</p>
-        <p>السعر: ${price} $</p>
-    `;
-    document.getElementById('purchaseModal').style.display = 'flex';
+    const purchaseDetails = document.getElementById('purchaseDetails');
+    if (purchaseDetails) {
+        purchaseDetails.innerHTML = `
+            <p>المنتج: ${productName}</p>
+            <p>السعر: ${price} $</p>
+        `;
+    }
+    const modal = document.getElementById('purchaseModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+// تأكيد الشراء (يتم ربطها مع wallet.js)
+function confirmPurchase() {
+    if (!currentPurchase) return;
+    
+    const playerId = document.getElementById('playerId')?.value;
+    if (!playerId) {
+        showToast('أدخل معرف اللعبة', 'error');
+        return;
+    }
+    
+    // حفظ الطلب في localStorage
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push({
+        product: currentPurchase.productName,
+        price: currentPurchase.price,
+        category: currentPurchase.categoryName,
+        userEmail: currentUser?.email || 'زائر',
+        playerId: playerId,
+        date: new Date().toISOString(),
+        status: 'pending'
+    });
+    
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // تحديث عداد السلة
+    const cartBadge = document.getElementById('cartBadge');
+    if (cartBadge) cartBadge.textContent = orders.length;
+    
+    showToast('تم تأكيد الطلب');
+    
+    const modal = document.getElementById('purchaseModal');
+    if (modal) modal.style.display = 'none';
+    
+    // فتح واتساب لتأكيد الدفع
+    const message = `🛍️ طلب جديد\nالمنتج: ${currentPurchase.productName}\nالسعر: ${currentPurchase.price}$\nمعرف: ${playerId}`;
+    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
 }
 
 // مسار التنقل
 function updateBreadcrumb(path) {
     const breadcrumb = document.getElementById('breadcrumb');
+    if (!breadcrumb) return;
+    
     breadcrumb.innerHTML = '<i class="fas fa-home" onclick="showMainCategories()"></i>';
     
     path.forEach((item, index) => {
@@ -184,5 +235,13 @@ function updateBreadcrumb(path) {
     });
 }
 
+// دالة مؤقتة للتوست (إذا مش موجودة)
+function showToast(message, type = 'success') {
+    console.log(message);
+    alert(message); // مؤقتاً
+}
+
 // تهيئة الصفحة
-document.addEventListener('DOMContentLoaded', showMainCategories);
+document.addEventListener('DOMContentLoaded', function() {
+    showMainCategories();
+});
