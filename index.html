@@ -545,6 +545,8 @@
             <span>المتجر الرسمي</span>
         </div>
         <div class="header-icons">
+            <i class="fas fa-wallet" onclick="showWallet()"></i>
+            <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
             <i class="far fa-user-circle" onclick="showAuthModal()"></i>
         </div>
@@ -558,7 +560,7 @@
         </div>
         <ul class="menu-items">
             <li><a href="#" onclick="showMainCategories(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
+            <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
             <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
         </ul>
         <div class="menu-footer">
@@ -836,12 +838,14 @@
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateUI();
+                updateAdminMenu(); // تحديث ظهور رابط لوحة المدير في القائمة الجانبية
                 await createUserProfile(user);
                 updateWalletDisplay();
             } else {
                 currentUser = null;
                 localStorage.removeItem('currentUser');
                 updateUI();
+                updateAdminMenu(); // إخفاء رابط لوحة المدير
             }
         });
 
@@ -1202,6 +1206,14 @@
             document.body.classList.toggle('light-mode');
         };
 
+        // تحديث ظهور رابط لوحة المدير في القائمة الجانبية
+        function updateAdminMenu() {
+            const adminMenuItem = document.getElementById('adminMenuItem');
+            if (adminMenuItem) {
+                adminMenuItem.style.display = (currentUser && currentUser.email === ADMIN_EMAIL) ? 'block' : 'none';
+            }
+        }
+
         window.showMainCategories = function() {
             const container = document.getElementById('mainCategories');
             if (!container) return;
@@ -1390,6 +1402,7 @@
         window.onload = function() {
             showMainCategories();
             updateUI();
+            updateAdminMenu(); // إخفاء لوحة المدير في البداية
             setTimeout(() => {
                 testFirebase();
             }, 1000);
