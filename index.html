@@ -10,7 +10,6 @@
         body { background:#0a0a0a; color:#fff; transition:0.3s; }
         body.light-mode { background:#f5f5f5; color:#000; }
 
-        /* الهيدر */
         .header {
             background:#000; padding:15px;
             display:flex; justify-content:space-between; align-items:center;
@@ -33,7 +32,6 @@
             padding:2px 6px; font-size:10px; font-weight:700;
         }
 
-        /* القائمة الجانبية */
         .side-menu {
             position:fixed; top:0; right:-280px; width:260px; height:100vh;
             background:#111; border-left:2px solid #fbbf24;
@@ -52,38 +50,17 @@
             gap:10px; padding:8px; border-radius:10px;
         }
         .menu-items a:hover { background:#fbbf24; color:#000; }
+        #adminMenuItem { display:none; }
 
-        /* الأقسام */
-        .main-content { padding:15px; }
-        .section-grid {
-            display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+        .main-categories {
+            display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:15px;
         }
         .section-card {
             background:#1a1a1a; border:2px solid #333; border-radius:15px;
-            padding:10px; text-align:center; cursor:pointer;
-            transition:0.3s;
+            padding:20px; text-align:center; cursor:pointer;
         }
         .section-card:hover { border-color:#fbbf24; }
-        .section-card img {
-            width:100%; height:100px; object-fit:cover; border-radius:10px;
-            margin-bottom:8px;
-        }
-        .section-card span { display:block; font-weight:700; }
 
-        .products-grid {
-            display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
-        }
-        .product-card {
-            background:#1a1a1a; border:2px solid #333; border-radius:15px;
-            padding:10px; text-align:center;
-        }
-        .product-card .price { color:#fbbf24; font-size:18px; font-weight:900; }
-        .buy-btn {
-            background:#fbbf24; color:#000; border:none; padding:8px;
-            border-radius:30px; width:100%; cursor:pointer; font-weight:700;
-        }
-
-        /* لوحة المدير */
         .admin-panel {
             position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
             width:95%; height:85vh; background:#111; border:3px solid #fbbf24;
@@ -99,15 +76,14 @@
             background:#111; border:2px solid #fbbf24; border-radius:25px;
             padding:25px; width:90%; max-width:350px;
         }
-        .modal-content input, .modal-content select {
+        .modal-content input {
             width:100%; padding:12px; margin:10px 0;
             background:#333; border:1px solid #fbbf24; border-radius:10px;
             color:#fff;
         }
         .modal-content button {
             width:100%; padding:12px; background:#fbbf24; color:#000;
-            border:none; border-radius:30px; font-weight:700; margin:5px 0;
-            cursor:pointer;
+            border:none; border-radius:30px; font-weight:700; cursor:pointer;
         }
         .close { float:left; font-size:24px; cursor:pointer; color:#fbbf24; }
 
@@ -138,51 +114,44 @@
         </div>
         <ul class="menu-items">
             <li><a href="#" onclick="showMain(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li id="adminMenuItem" style="display:none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
+            <li id="adminMenuItem"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
             <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
         </ul>
     </div>
 
-    <div class="main-content" id="mainContent"></div>
+    <div id="mainCategories" class="main-categories"></div>
 
     <div id="adminPanel" class="admin-panel">
         <div class="admin-header">
-            <h2 style="color:#fbbf24;">لوحة التحكم</h2>
+            <h2 style="color:#fbbf24;">🔧 لوحة التحكم</h2>
             <button onclick="hideAdminPanel()" style="background:none; border:none; color:#fbbf24; font-size:24px;">✕</button>
         </div>
-        <div id="adminContent">🔧 قريباً...</div>
+        <div id="adminContent">⚙️ قريباً...</div>
     </div>
 
-    <!-- النوافذ المنبثقة -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('authModal')">&times;</span>
-            <h2 style="text-align:center;">تسجيل الدخول</h2>
+            <h2>تسجيل الدخول</h2>
             <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
             <input type="password" id="loginPassword" placeholder="كلمة المرور">
             <button onclick="loginWithEmail()">دخول</button>
-            <p style="text-align:center; margin:10px 0;">أو</p>
-            <button onclick="loginWithGoogle()" style="background:#fff; color:#000;">تسجيل بحساب Google</button>
-            <p style="text-align:center; margin-top:15px;">ليس لديك حساب؟ <a href="#" onclick="showRegister()" style="color:#fbbf24;">سجل الآن</a></p>
+            <p style="text-align:center; margin:10px;">أو</p>
+            <button onclick="loginWithGoogle()" style="background:#fff; color:#000;">Google</button>
+            <p style="text-align:center; margin-top:15px;">
+                <a href="#" onclick="showRegister()" style="color:#fbbf24;">إنشاء حساب</a>
+            </p>
         </div>
     </div>
 
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2 style="text-align:center;">تسجيل جديد</h2>
+            <h2>تسجيل جديد</h2>
             <input type="text" id="regName" placeholder="الاسم">
             <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
             <input type="password" id="regPassword" placeholder="كلمة المرور">
             <button onclick="registerWithEmail()">تسجيل</button>
-        </div>
-    </div>
-
-    <div id="walletModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('walletModal')">&times;</span>
-            <h2 style="text-align:center;">محفظتي</h2>
-            <div style="font-size:36px; color:#fbbf24; text-align:center;" id="walletBalance">0$</div>
         </div>
     </div>
 
@@ -205,31 +174,7 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        const sections = [
-            { id:'games', name:'🎮 الألعاب', img:'https://i.imgur.com/Z1z7ZqN.jpg' },
-            { id:'apps', name:'📱 التطبيقات', img:'https://i.imgur.com/2XZ4qXZ.jpg' },
-            { id:'cards', name:'💳 بطاقات جوجل', img:'https://i.imgur.com/3Y5qY5Y.jpg' }
-        ];
-
-        const products = {
-            games: [
-                { name:'PUBG - 60 UC', price:0.99 },
-                { name:'PUBG - 300 UC', price:4.99 },
-                { name:'Free Fire - 100', price:1.50 },
-                { name:'Free Fire - 341', price:3.99 }
-            ],
-            apps: [
-                { name:'شاهد شهر', price:5.99 },
-                { name:'شاهد 3 شهور', price:15.99 },
-                { name:'نتفلكس شهر', price:7.99 },
-                { name:'نتفلكس 3 شهور', price:21.99 }
-            ],
-            cards: [
-                { name:'بطاقة 10$', price:10.00 },
-                { name:'بطاقة 25$', price:25.00 }
-            ]
-        };
-
+        const categories = ['🎮 الألعاب', '📱 التطبيقات', '💳 بطاقات جوجل'];
         let currentUser = null;
         const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
@@ -240,13 +185,13 @@
                     email: user.email,
                     name: user.displayName || user.email.split('@')[0]
                 };
-                updateUI();
                 document.getElementById('adminMenuItem').style.display = 
                     user.email === ADMIN_EMAIL ? 'block' : 'none';
+                updateUI();
             } else {
                 currentUser = null;
-                updateUI();
                 document.getElementById('adminMenuItem').style.display = 'none';
+                updateUI();
             }
         });
 
@@ -269,46 +214,14 @@
         };
 
         window.showMain = () => {
-            const html = `<div class="section-grid">${
-                sections.map(s => `
-                    <div class="section-card" onclick="showProducts('${s.id}')">
-                        <img src="${s.img}" alt="${s.name}">
-                        <span>${s.name}</span>
-                    </div>
-                `).join('')
-            }</div>`;
-            document.getElementById('mainContent').innerHTML = html;
-        };
-
-        window.showProducts = (cat) => {
-            const html = `
-                <button class="buy-btn" onclick="showMain()" style="margin-bottom:10px;">🔙 رجوع</button>
-                <div class="products-grid">${
-                    products[cat].map(p => `
-                        <div class="product-card">
-                            <h4>${p.name}</h4>
-                            <p class="price">${p.price}$</p>
-                            <button class="buy-btn" onclick="buy('${p.name}',${p.price})">اشتري</button>
-                        </div>
-                    `).join('')
-                }</div>`;
-            document.getElementById('mainContent').innerHTML = html;
-        };
-
-        window.buy = (name, price) => {
-            if (!currentUser) { showToast('سجل دخول أولاً', 'error'); showAuthModal(); return; }
-            showToast('✅ تم الشراء (تجريبي)');
-        };
-
-        window.showWallet = () => {
-            if (!currentUser) { showToast('سجل دخول أولاً', 'error'); showAuthModal(); return; }
-            document.getElementById('walletBalance').textContent = '0$';
-            document.getElementById('walletModal').style.display = 'flex';
+            const html = categories.map(c => 
+                `<div class="section-card" onclick="showToast('${c} قريباً')">${c}</div>`
+            ).join('');
+            document.getElementById('mainCategories').innerHTML = html;
         };
 
         window.showAdminPanel = () => {
             if (currentUser?.email !== ADMIN_EMAIL) { showToast('غير مصرح', 'error'); return; }
-            document.getElementById('adminContent').innerHTML = '<h3>📊 إحصائيات</h3><p>قريباً...</p>';
             document.getElementById('adminPanel').style.display = 'block';
         };
 
@@ -323,6 +236,8 @@
             t.textContent = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2000);
         };
+        window.showWallet = () => showToast('المحفظة قريباً');
+        window.showMyOrders = () => showToast('طلباتك قريباً');
 
         function updateUI() {
             document.getElementById('loginIcon').style.display = currentUser ? 'none' : 'block';
