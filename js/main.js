@@ -1,253 +1,191 @@
-let currentGame = {};
-let currentDiscount = 0;
-let lastPlayerId = localStorage.getItem('lastPlayerId') || '';
+// ==================== دوال العرض الرئيسية والعناصر المشتركة ====================
+import { defaultStoreData, loadStoreData } from './store-data.js';
+import { initAuth, currentUser } from './auth.js';
 
+let storeData = loadStoreData();
+let currentPurchase = null;
+
+// تهيئة الصفحة
 window.onload = function() {
-    loadPacks();
-    updateAdminPanel();
-    updateCartBadge();
-    startCountdown();
-    loadLastPlayerId();
-    loadCachedData();
-    playSuccessSound('welcome');
-    showToast('✨ مرحباً بك في ALZAK STORE');
+    showMainCategories();
+    initAuth();
+    updateUI();
+    if (typeof updateAdminMenu === 'function') updateAdminMenu();
 };
 
-function loadLastPlayerId() {
-    document.getElementById('playerId').value = lastPlayerId;
-}
+// دوال القائمة الجانبية
+window.toggleSideMenu = function() {
+    document.getElementById('sideMenu').classList.toggle('show');
+};
 
-function loadCachedData() {
-    const cached = getCachedData('gamesData');
-    if (!cached) {
-        cacheData('gamesData', gamesData);
-    }
-}
+window.toggleTheme = function() {
+    document.body.classList.toggle('light-mode');
+};
 
-function loadPacks() {
-    for (let game in gamesData) {
-        const container = document.getElementById(`${game}PacksGrid`);
-        if (!container) continue;
-        
-        container.innerHTML = '';
-        gamesData[game].forEach(pack => {
-            container.innerHTML += `
-                <div class="pack-card">
-                    <span class="pack-badge">${pack.badge}</span>
-                    <div class="pack-icon"><i class="fas ${pack.icon}"></i></div>
-                    <div class="pack-name">${pack.name}</div>
-                    <div class="pack-rating">
-                        <i class="fas fa-star"></i> ${pack.rating} (${pack.reviews})
+// دوال التنقل
+window.showMainCategories = function() {
+    const container = document.getElementById('mainCategories');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    storeData.sections.forEach(section => {
+        container.innerHTML += `
+            <div class="section-card" onclick="showCategories('${section.id}')">
+                <div class="section-image" style="background-image: url('${section.image}')">
+                    <div class="section-overlay">
+                        <i class="fas ${section.icon}"></i>
+                        <h3>${section.name}</h3>
                     </div>
-                    <div class="pack-price">$${pack.price}</div>
-                    <button class="buy-btn" onclick="openPurchaseModal('${gameName(game)}', '${pack.name.replace(/'/g, "\\'")}', '${pack.price}')">
-                        <i class="fas fa-shopping-cart"></i> اشتري
-                    </button>
                 </div>
-            `;
-        });
-    }
-}
-
-function showPacks(game) {
-    hideAllPacks();
-    const packsSection = document.getElementById(game + 'Packs');
-    if (packsSection) {
-        packsSection.classList.add('show');
-    }
-}
-
-function hidePacks(game) {
-    const packsSection = document.getElementById(game + 'Packs');
-    if (packsSection) {
-        packsSection.classList.remove('show');
-    }
-}
-
-function hideAllPacks() {
-    document.querySelectorAll('.packs-section').forEach(s => s.classList.remove('show'));
-}
-
-function filterGames(game, element) {
-    document.querySelectorAll('.cat').forEach(c => c.classList.remove('active'));
-    element.classList.add('active');
-    
-    hideAllPacks();
-    
-    document.querySelectorAll('.game-card').forEach(card => {
-        card.style.display = 'block';
-    });
-}
-
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const games = document.querySelectorAll('.game-card');
-    
-    games.forEach(game => {
-        const gameName = game.querySelector('h3').textContent.toLowerCase();
-        if (gameName.includes(searchTerm) || searchTerm === '') {
-            game.style.display = 'block';
-        } else {
-            game.style.display = 'none';
-        }
-    });
-});
-
-function openPurchaseModal(game, pack, price) {
-    showLoading();
-    setTimeout(() => {
-        currentGame = { game, pack, price };
-        currentDiscount = 0;
-        document.getElementById('modalGameName').textContent = game;
-        document.getElementById('modalGamePack').textContent = pack;
-        document.getElementById('modalGamePrice').textContent = '$' + price;
-        document.getElementById('finalPrice').textContent = '$' + price;
-        document.getElementById('playerId').value = localStorage.getItem('lastPlayerId') || '';
-        document.getElementById('couponCode').value = '';
-        document.getElementById('progressFill').style.width = '25%';
-        document.getElementById('purchaseModal').classList.add('show');
-        hideLoading();
-    }, 500);
-}
-
-function closeModal() {
-    document.getElementById('purchaseModal').classList.remove('show');
-}
-
-function applyCoupon() {
-    const code = document.getElementById('couponCode').value.toUpperCase().trim();
-    
-    if (coupons[code]) {
-        currentDiscount = coupons[code];
-        const originalPrice = parseFloat(currentGame.price);
-        const newPrice = originalPrice * (1 - currentDiscount/100);
-        document.getElementById('finalPrice').textContent = '$' + newPrice.toFixed(2);
-        showToast(`🎉 تم تطبيق خصم ${currentDiscount}%`);
-        playSuccessSound('success');
-    } else {
-        showToast('❌ كوبون غير صالح', 'error');
-    }
-}
-
-function sendToWhatsApp() {
-    const playerId = sanitizeInput(document.getElementById('playerId').value);
-    
-    if (!playerId) {
-        showToast('❌ أدخل معرف اللعبة أولاً', 'error');
-        return;
-    }
-    
-    if (!validatePlayerId(currentGame.game, playerId)) {
-        showToast('❌ المعرف غير صحيح للعبة المختارة', 'error');
-        return;
-    }
-
-    const finalPrice = parseFloat(currentGame.price) * (1 - currentDiscount/100);
-    const message = `🛍️ طلب جديد من ALZAK STORE
-اللعبة: ${currentGame.game}
-الباقة: ${currentGame.pack}
-معرف اللعبة: ${playerId}
-المبلغ الأصلي: $${currentGame.price}
-الخصم: ${currentDiscount}%
-المبلغ النهائي: $${finalPrice.toFixed(2)}`;
-
-    window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(message)}`, '_blank');
-    
-    document.getElementById('progressFill').style.width = '75%';
-    
-    saveOrder();
-    showToast('✅ تم فتح واتساب، أرسل الإيصال');
-    playSuccessSound('success');
-}
-
-function confirmOrder() {
-    const playerId = sanitizeInput(document.getElementById('playerId').value);
-    
-    if (!playerId) {
-        showToast('❌ أدخل معرف اللعبة أولاً', 'error');
-        return;
-    }
-    
-    if (!validatePlayerId(currentGame.game, playerId)) {
-        showToast('❌ المعرف غير صحيح للعبة المختارة', 'error');
-        return;
-    }
-
-    localStorage.setItem('lastPlayerId', playerId);
-    
-    showLoading();
-    
-    setTimeout(() => {
-        saveOrder();
-        document.getElementById('progressFill').style.width = '100%';
-        showToast('✅ تم حفظ الطلب بنجاح');
-        playSuccessSound('success');
-        hideLoading();
-        
-        setTimeout(() => {
-            closeModal();
-            document.getElementById('progressFill').style.width = '0%';
-        }, 1500);
-    }, 1000);
-}
-
-function saveOrder() {
-    const playerId = sanitizeInput(document.getElementById('playerId').value);
-    const finalPrice = (parseFloat(currentGame.price) * (1 - currentDiscount/100)).toFixed(2);
-    
-    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push({
-        game: currentGame.game,
-        pack: currentGame.pack,
-        price: currentGame.price,
-        playerId: playerId,
-        finalPrice: finalPrice,
-        discount: currentDiscount,
-        date: new Date().toLocaleString(),
-        dateObj: new Date().toISOString(),
-        status: 'pending'
-    });
-    localStorage.setItem('orders', JSON.stringify(orders));
-    updateCartBadge();
-    updateAdminPanel();
-}
-
-function updateCartBadge() {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    document.getElementById('cartBadge').textContent = orders.length;
-}
-
-function showMyOrders() {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    const myOrdersList = document.getElementById('myOrdersList');
-    
-    if (orders.length === 0) {
-        myOrdersList.innerHTML = '<p style="text-align: center; color: #666;">لا توجد طلبات سابقة</p>';
-    } else {
-        myOrdersList.innerHTML = orders.slice(-5).reverse().map(o => `
-            <div style="background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #fbbf24;">${o.game}</span>
-                    <span class="status ${o.status}">${o.status === 'pending' ? '⏳ قيد الانتظار' : '✅ مكتمل'}</span>
-                </div>
-                <div style="margin-top: 5px;">الباقة: ${o.pack}</div>
-                <div>المعرف: ${o.playerId}</div>
-                <div>المبلغ: $${o.finalPrice || o.price}</div>
-                <div style="font-size: 11px; color: #666; margin-top: 5px;">${o.date}</div>
             </div>
-        `).join('');
-    }
-    
-    document.getElementById('myOrdersModal').classList.add('show');
-}
-
-function closeMyOrders() {
-    document.getElementById('myOrdersModal').classList.remove('show');
-}
-
-window.onbeforeunload = function() {
-    const playerId = document.getElementById('playerId')?.value;
-    if (playerId) {
-        localStorage.setItem('lastPlayerId', playerId);
-    }
+        `;
+    });
+    document.getElementById('subContent').innerHTML = '';
+    updateBreadcrumb([{ name: 'الرئيسية' }]);
 };
+
+window.showCategories = function(sectionId) {
+    const section = storeData.sections.find(s => s.id === sectionId);
+    if (!section) return;
+    
+    const container = document.getElementById('subContent');
+    if (!container) return;
+    
+    container.innerHTML = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${section.name}</h2>`;
+    
+    section.categories.forEach(cat => {
+        container.innerHTML += `
+            <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
+                <div class="category-image" style="background-image: url('${cat.image}')">
+                    <div class="category-overlay">
+                        <h4>${cat.name}</h4>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    updateBreadcrumb([
+        { name: 'الرئيسية', onclick: 'showMainCategories()' },
+        { name: section.name }
+    ]);
+};
+
+window.showProducts = function(sectionId, categoryId) {
+    const section = storeData.sections.find(s => s.id === sectionId);
+    if (!section) return;
+    
+    const category = section.categories.find(c => c.id === categoryId);
+    if (!category) return;
+    
+    const container = document.getElementById('subContent');
+    if (!container) return;
+    
+    let html = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${category.name}</h2><div class="products-grid">`;
+    
+    category.products.forEach(prod => {
+        html += `
+            <div class="product-card" onclick="openPurchaseModal('${prod.name}', ${prod.price})">
+                <h4>${prod.name}</h4>
+                <p class="price">${prod.price} $</p>
+                <button class="buy-btn">اشتري</button>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    updateBreadcrumb([
+        { name: 'الرئيسية', onclick: 'showMainCategories()' },
+        { name: section.name, onclick: `showCategories('${section.id}')` },
+        { name: category.name }
+    ]);
+};
+
+function updateBreadcrumb(path) {
+    const bc = document.getElementById('breadcrumb');
+    if (!bc) return;
+    
+    bc.innerHTML = '<i class="fas fa-home" onclick="showMainCategories()"></i>';
+    
+    path.forEach((item, i) => {
+        if (item.onclick) {
+            bc.innerHTML += `<span onclick="${item.onclick}">${item.name}</span>`;
+        } else {
+            bc.innerHTML += `<span>${item.name}</span>`;
+        }
+        if (i < path.length - 1) bc.innerHTML += `<i class="fas fa-chevron-left"></i>`;
+    });
+}
+
+window.openPurchaseModal = function(name, price) {
+    if (!currentUser) {
+        showToast('سجل دخول أولاً', 'error');
+        showAuthModal();
+        return;
+    }
+    currentPurchase = { name, price };
+    document.getElementById('purchaseDetails').innerHTML = `<p>المنتج: ${name}</p><p>السعر: ${price}$</p>`;
+    document.getElementById('purchaseModal').style.display = 'flex';
+};
+
+// دوال مساعدة
+window.showToast = function(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+};
+
+window.showAuthModal = function() {
+    document.getElementById('authModal').style.display = 'flex';
+};
+
+window.showRegisterModal = function() {
+    closeModal('authModal');
+    document.getElementById('registerModal').style.display = 'flex';
+};
+
+window.closeModal = function(id) {
+    document.getElementById(id).style.display = 'none';
+};
+
+window.toggleDropdown = function() {
+    const d = document.getElementById('userDropdown');
+    if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
+};
+
+function updateUI() {
+    const loginIcon = document.getElementById('loginIcon');
+    const userMenu = document.getElementById('userMenu');
+    const userName = document.getElementById('userName');
+    
+    if (currentUser) {
+        if (loginIcon) loginIcon.style.display = 'none';
+        if (userMenu) {
+            userMenu.style.display = 'flex';
+            if (userName) userName.textContent = currentUser.name;
+        }
+    } else {
+        if (loginIcon) loginIcon.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// تحديث عداد السلة
+setInterval(async () => {
+    if (currentUser && typeof getDocs !== 'undefined' && typeof collection !== 'undefined') {
+        try {
+            const { getDocs, collection, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            const { db } = await import('./firebase-config.js');
+            const q = query(collection(db, 'orders'), where('userId', '==', currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            document.getElementById('cartBadge').textContent = querySnapshot.size;
+        } catch (e) {
+            // تجاهل الأخطاء
+        }
+    }
+}, 5000);
