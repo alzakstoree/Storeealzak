@@ -548,7 +548,17 @@
             <i class="fas fa-wallet" onclick="showWallet()"></i>
             <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
-            <i class="far fa-user-circle" onclick="showAuthModal()"></i>
+            <i class="far fa-user-circle" onclick="showAuthModal()" id="loginIcon"></i>
+            <div id="userMenu" style="display: none;">
+                <span id="userName"></span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown" id="userDropdown">
+                    <a href="#" onclick="showWallet()">محفظتي</a>
+                    <a href="#" onclick="showMyOrders()">طلباتي</a>
+                    <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">🔧 لوحة المدير</a>
+                    <a href="#" onclick="logout()">تسجيل خروج</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -565,25 +575,6 @@
         </ul>
         <div class="menu-footer">
             <p>ALZAK STORE<br>©2025</p>
-        </div>
-    </div>
-
-    <!-- باقي المحتوى (نفس القديم) -->
-    <div class="icons" style="display: none;">
-        <i class="fas fa-wallet" onclick="showWallet()"></i>
-        <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
-        <div id="userSection">
-            <i class="fas fa-user" onclick="showAuthModal()" id="loginIcon"></i>
-            <div id="userMenu" style="display: none;" onclick="toggleDropdown()">
-                <span id="userName"></span>
-                <i class="fas fa-chevron-down"></i>
-                <div class="dropdown" id="userDropdown">
-                    <a href="#" onclick="showWallet()">محفظتي</a>
-                    <a href="#" onclick="showMyOrders()">طلباتي</a>
-                    <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">🔧 لوحة المدير</a>
-                    <a href="#" onclick="logout()">تسجيل خروج</a>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -785,8 +776,9 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
+                // إغلاق النافذة فور نجاح تسجيل الدخول
+                document.getElementById('authModal').style.display = 'none';
                 showToast('✅ مرحباً بعودتك');
-                closeModal('authModal');
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
@@ -806,7 +798,7 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCredential.user, { displayName: name });
                 showToast('✅ تم التسجيل بنجاح');
-                closeModal('registerModal');
+                document.getElementById('registerModal').style.display = 'none';
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
@@ -816,7 +808,7 @@
             try {
                 await signInWithPopup(auth, provider);
                 showToast('✅ مرحباً بك');
-                closeModal('authModal');
+                document.getElementById('authModal').style.display = 'none';
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
@@ -838,14 +830,14 @@
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateUI();
-                updateAdminMenu(); // تحديث ظهور رابط لوحة المدير في القائمة الجانبية
+                updateAdminMenu();
                 await createUserProfile(user);
                 updateWalletDisplay();
             } else {
                 currentUser = null;
                 localStorage.removeItem('currentUser');
                 updateUI();
-                updateAdminMenu(); // إخفاء رابط لوحة المدير
+                updateAdminMenu();
             }
         });
 
@@ -1206,11 +1198,14 @@
             document.body.classList.toggle('light-mode');
         };
 
-        // تحديث ظهور رابط لوحة المدير في القائمة الجانبية
         function updateAdminMenu() {
             const adminMenuItem = document.getElementById('adminMenuItem');
             if (adminMenuItem) {
                 adminMenuItem.style.display = (currentUser && currentUser.email === ADMIN_EMAIL) ? 'block' : 'none';
+            }
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) {
+                adminLink.style.display = (currentUser && currentUser.email === ADMIN_EMAIL) ? 'block' : 'none';
             }
         }
 
@@ -1341,11 +1336,6 @@
             document.getElementById(id).style.display = 'none';
         };
 
-        window.toggleDropdown = function() {
-            const d = document.getElementById('userDropdown');
-            if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
-        };
-
         window.showWallet = function() {
             if (!currentUser) {
                 showToast('سجل دخول أولاً', 'error');
@@ -1360,20 +1350,12 @@
             const loginIcon = document.getElementById('loginIcon');
             const userMenu = document.getElementById('userMenu');
             const userName = document.getElementById('userName');
-            const adminLink = document.getElementById('adminLink');
 
             if (currentUser) {
                 if (loginIcon) loginIcon.style.display = 'none';
                 if (userMenu) {
                     userMenu.style.display = 'flex';
                     if (userName) userName.textContent = currentUser.name;
-                }
-                if (adminLink) {
-                    if (currentUser.email === ADMIN_EMAIL) {
-                        adminLink.style.display = 'block';
-                    } else {
-                        adminLink.style.display = 'none';
-                    }
                 }
             } else {
                 if (loginIcon) loginIcon.style.display = 'block';
@@ -1402,7 +1384,7 @@
         window.onload = function() {
             showMainCategories();
             updateUI();
-            updateAdminMenu(); // إخفاء لوحة المدير في البداية
+            updateAdminMenu();
             setTimeout(() => {
                 testFirebase();
             }, 1000);
