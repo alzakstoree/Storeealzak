@@ -7,7 +7,7 @@ export const defaultStoreData = {
             id: 'games',
             name: 'الألعاب',
             icon: 'fa-gamepad',
-            image: 'https://i.ibb.co/rRSNhBXc/Screenshot-20260312-002402.jpg', // صورة غلاف الألعاب
+            image: <a href="https://ibb.co/fZGThJq"><img src="https://i.ibb.co/5CxJNZG/Screenshot-20260312-222843.jpg" alt="Screenshot-20260312-222843" border="0"></a> // صورة غلاف الألعاب
             categories: [
                 {
                     id: 'pubg',
