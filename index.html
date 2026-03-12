@@ -154,6 +154,27 @@
             color: #000;
         }
 
+        /* البانر الجديد */
+        .banner {
+            width: 100%;
+            height: 120px;
+            margin: 10px 0;
+            background: linear-gradient(145deg, #000, #1a1a1a);
+            border-top: 2px solid #fbbf24;
+            border-bottom: 2px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+
         .breadcrumb {
             padding: 15px;
             display: flex;
@@ -537,6 +558,11 @@
         </div>
     </div>
 
+    <!-- البانر الجديد -->
+    <div class="banner">
+        <img src="https://i.ibb.co/svNY3gdM/Screenshot-20260307-020853.jpg" alt="ALZAK Banner">
+    </div>
+
     <div class="breadcrumb" id="breadcrumb">
         <i class="fas fa-home" onclick="showMainCategories()"></i>
     </div>
@@ -648,12 +674,12 @@
                     id: 'games',
                     name: 'الألعاب',
                     icon: 'fa-gamepad',
-                    image: 'https://img.freepik.com/free-vector/gaming-zone-neon-signs-composition_1284-44547.jpg',
+                    image: 'https://i.ibb.co/rRSNhBXc/Screenshot-20260312-002402.jpg',
                     categories: [
                         {
                             id: 'pubg',
                             name: 'PUBG',
-                            image: 'https://i.pinimg.com/originals/7b/af/1c/7baf1c0d2c3e4f5d6e7f8a9b0c1d2e3f.jpg',
+                            image: 'https://i.ibb.co/ccXyWp5v/Screenshot-20260309-045801.jpg',
                             products: [
                                 { name: '60 UC', price: 0.99 },
                                 { name: '300 UC + 25', price: 4.99 },
@@ -666,7 +692,7 @@
                         {
                             id: 'freefire',
                             name: 'Free Fire',
-                            image: 'https://i.pinimg.com/originals/8a/bc/2d/8abc2d3e4f5a6b7c8d9e0f1a2b3c4d5e.jpg',
+                            image: 'https://i.ibb.co/ghSdR1b/Screenshot-20260309-045833.jpg',
                             products: [
                                 { name: '100 جوهرة', price: 1.50 },
                                 { name: '341 جوهرة', price: 3.99 },
@@ -675,6 +701,18 @@
                                 { name: '2079 جوهرة', price: 24.99 },
                                 { name: '5600 دايموند + 1150', price: 49.99 }
                             ]
+                        },
+                        {
+                            id: 'cod',
+                            name: 'Call of Duty',
+                            image: 'https://i.ibb.co/qYCBCS7m/Screenshot-20260309-045944.jpg',
+                            products: [
+                                { name: '500 CP', price: 4.99 },
+                                { name: '1100 CP', price: 9.99 },
+                                { name: '2400 CP', price: 19.99 },
+                                { name: '5000 CP', price: 39.99 },
+                                { name: '10000 CP', price: 79.99 }
+                            ]
                         }
                     ]
                 },
@@ -682,12 +720,12 @@
                     id: 'apps',
                     name: 'التطبيقات',
                     icon: 'fa-mobile-alt',
-                    image: 'https://img.freepik.com/free-vector/mobile-apps-concept-illustration_114360-2121.jpg',
+                    image: 'https://i.ibb.co/S45Nv2TH/Screenshot-20260312-001846.jpg',
                     categories: [
                         {
                             id: 'shahid',
                             name: 'شاهد VIP',
-                            image: 'https://i.pinimg.com/originals/9b/cd/3e/9bcd3e4f5a6b7c8d9e0f1a2b3c4d5e6f.jpg',
+                            image: 'https://i.ibb.co/zTCxDXRc/Screenshot-20260312-220100.jpg',
                             products: [
                                 { name: 'شهر واحد', price: 5.99 },
                                 { name: '3 شهور', price: 15.99 },
@@ -697,7 +735,7 @@
                         {
                             id: 'netflix',
                             name: 'نتفلكس',
-                            image: 'https://i.pinimg.com/originals/1a/2b/3c/1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d.jpg',
+                            image: 'https://i.ibb.co/ZpsTsKCT/Screenshot-20260312-215939.jpg',
                             products: [
                                 { name: 'شهر واحد', price: 7.99 },
                                 { name: '3 شهور', price: 21.99 },
@@ -710,12 +748,12 @@
                     id: 'cards',
                     name: 'بطاقات جوجل',
                     icon: 'fa-google',
-                    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Play_Logo_2019.svg/2560px-Google_Play_Logo_2019.svg.png',
+                    image: 'https://i.ibb.co/TDCzWdNY/Screenshot-20260312-002552.jpg',
                     categories: [
                         {
                             id: 'google',
                             name: 'بطاقات جوجل بلاي',
-                            image: 'https://seeklogo.com/images/G/google-play-store-new-2022-logo-8D7E1E2C3F-seeklogo.com.png',
+                            image: 'https://i.ibb.co/27L8d2Cv/Screenshot-20260312-220435.jpg',
                             products: [
                                 { name: 'بطاقة 10$', price: 10.00 },
                                 { name: 'بطاقة 25$', price: 25.00 },
