@@ -11,6 +11,7 @@ window.onload = function() {
     initAuth();
     updateUI();
     if (typeof updateAdminMenu === 'function') updateAdminMenu();
+    initSlider(); // تشغيل السلايدر
 };
 
 // دوال القائمة الجانبية
@@ -22,39 +23,50 @@ window.toggleTheme = function() {
     document.body.classList.toggle('light-mode');
 };
 
-// دوال التنقل
+// ===== دوال الأقسام والمنتجات (المعدلة) =====
+
+// عرض الأقسام الرئيسية (3 مربعات)
 window.showMainCategories = function() {
     const container = document.getElementById('mainCategories');
+    const subContainer = document.getElementById('subContent');
     if (!container) return;
+    
+    // إظهار الأقسام وإخفاء المحتوى الفرعي
+    container.style.display = 'grid';
+    subContainer.style.display = 'none';
     
     container.innerHTML = '';
     storeData.sections.forEach(section => {
         container.innerHTML += `
-            <div class="section-card" onclick="showCategories('${section.id}')">
-                <div class="section-image" style="background-image: url('${section.image}')">
-                    <div class="section-overlay">
-                        <i class="fas ${section.icon}"></i>
-                        <h3>${section.name}</h3>
-                    </div>
+            <div class="section-card" style="background-image: url('${section.image}')" onclick="showCategories('${section.id}')">
+                <div class="section-overlay">
+                    <i class="fas ${section.icon}"></i>
+                    <span>${section.name}</span>
                 </div>
             </div>
         `;
     });
-    document.getElementById('subContent').innerHTML = '';
-    updateBreadcrumb([{ name: 'الرئيسية' }]);
 };
 
+// عرض الفئات (الصفحة الجديدة)
 window.showCategories = function(sectionId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     if (!section) return;
     
-    const container = document.getElementById('subContent');
-    if (!container) return;
+    const mainContainer = document.getElementById('mainCategories');
+    const subContainer = document.getElementById('subContent');
     
-    container.innerHTML = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${section.name}</h2>`;
+    // إخفاء الأقسام الرئيسية وإظهار المحتوى الفرعي
+    mainContainer.style.display = 'none';
+    subContainer.style.display = 'block';
+    
+    let html = `<div class="breadcrumb" style="margin-bottom:15px;">
+        <span onclick="showMainCategories()">🔙 الرئيسية</span>
+        <span>${section.name}</span>
+    </div>`;
     
     section.categories.forEach(cat => {
-        container.innerHTML += `
+        html += `
             <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
                 <div class="category-image" style="background-image: url('${cat.image}')">
                     <div class="category-overlay">
@@ -65,23 +77,24 @@ window.showCategories = function(sectionId) {
         `;
     });
     
-    updateBreadcrumb([
-        { name: 'الرئيسية', onclick: 'showMainCategories()' },
-        { name: section.name }
-    ]);
+    subContainer.innerHTML = html;
 };
 
+// عرض المنتجات
 window.showProducts = function(sectionId, categoryId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     if (!section) return;
-    
     const category = section.categories.find(c => c.id === categoryId);
     if (!category) return;
     
-    const container = document.getElementById('subContent');
-    if (!container) return;
+    const subContainer = document.getElementById('subContent');
+    if (!subContainer) return;
     
-    let html = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${category.name}</h2><div class="products-grid">`;
+    let html = `<div class="breadcrumb" style="margin-bottom:15px;">
+        <span onclick="showCategories('${sectionId}')">🔙 رجوع</span>
+        <span>${category.name}</span>
+    </div>
+    <div class="products-grid">`;
     
     category.products.forEach(prod => {
         html += `
@@ -94,13 +107,7 @@ window.showProducts = function(sectionId, categoryId) {
     });
     
     html += '</div>';
-    container.innerHTML = html;
-    
-    updateBreadcrumb([
-        { name: 'الرئيسية', onclick: 'showMainCategories()' },
-        { name: section.name, onclick: `showCategories('${section.id}')` },
-        { name: category.name }
-    ]);
+    subContainer.innerHTML = html;
 };
 
 function updateBreadcrumb(path) {
@@ -129,6 +136,68 @@ window.openPurchaseModal = function(name, price) {
     document.getElementById('purchaseDetails').innerHTML = `<p>المنتج: ${name}</p><p>السعر: ${price}$</p>`;
     document.getElementById('purchaseModal').style.display = 'flex';
 };
+
+// ===== دوال السلايدر =====
+let currentSlide = 0;
+let slides = [];
+let dots = [];
+
+function initSlider() {
+    slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.querySelector('.slider-dots');
+    
+    if (!slides.length || !dotsContainer) return;
+    
+    // إنشاء النقاط
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.classList.add('dot');
+        dot.onclick = () => goToSlide(index);
+        dotsContainer.appendChild(dot);
+    });
+    
+    dots = document.querySelectorAll('.dot');
+    updateSlider();
+    
+    // أزرار التحكم
+    const nextBtn = document.querySelector('.slider-next');
+    const prevBtn = document.querySelector('.slider-prev');
+    
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    
+    // تشغيل تلقائي كل 5 ثواني
+    setInterval(nextSlide, 5000);
+}
+
+function updateSlider() {
+    const slider = document.querySelector('.slider');
+    if (!slider) return;
+    
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function nextSlide() {
+    if (!slides.length) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+}
+
+function prevSlide() {
+    if (!slides.length) return;
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlider();
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+}
 
 // دوال مساعدة
 window.showToast = function(message, type = 'success') {
