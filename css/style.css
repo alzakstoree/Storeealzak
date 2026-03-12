@@ -622,4 +622,128 @@ body.light-mode .product-card {
     select, input, button {
         font-size: 16px; /* لمنع التكبير التلقائي */
     }
+}/* ===== القائمة الجانبية ===== */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 260px;
+    height: 100vh;
+    background: #111;
+    border-left: 2px solid #fbbf24;
+    transition: 0.3s;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.side-menu.show {
+    right: 0;
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    color: #fbbf24;
+}
+
+.menu-header i {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-items {
+    list-style: none;
+}
+
+.menu-items li {
+    margin-bottom: 20px;
+}
+
+.menu-items a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.menu-items a:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+.menu-footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+}
+
+/* ===== الوضع الفاتح للقائمة الجانبية ===== */
+body.light-mode .side-menu {
+    background: #fff;
+    border-left-color: #fbbf24;
+}
+
+body.light-mode .menu-items a {
+    color: #000;
+}
+
+body.light-mode .menu-items a:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+body.light-mode .menu-footer {
+    color: #999;
+}
+
+/* ===== أزرار المصادقة ===== */
+.auth-btn {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    margin: 5px 0;
+}
+
+.google-btn {
+    background: #fff;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+body.light-mode .google-btn {
+    background: #f0f0f0;
+    border-color: #ccc;
+}
+
+/* ===== تحسينات للوضع الفاتح ===== */
+body.light-mode .modal-content {
+    background: #fff;
+    color: #000;
+}
+
+body.light-mode .modal-content input {
+    background: #f5f5f5;
+    color: #000;
+    border-color: #fbbf24;
+}
+
+body.light-mode .category-card {
+    background: #fff;
+    border-color: #ddd;
+}
+
+body.light-mode .category-card:hover {
+    border-color: #fbbf24;
 }
