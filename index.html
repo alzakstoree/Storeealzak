@@ -49,9 +49,7 @@
             padding: 20px;
             overflow-y: auto;
         }
-        .side-menu.show {
-            right: 0;
-        }
+        .side-menu.show { right: 0; }
         .menu-header {
             display: flex;
             align-items: center;
@@ -59,16 +57,9 @@
             margin-bottom: 30px;
             color: #fbbf24;
         }
-        .menu-header i {
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .menu-items {
-            list-style: none;
-        }
-        .menu-items li {
-            margin-bottom: 20px;
-        }
+        .menu-header i { font-size: 24px; cursor: pointer; }
+        .menu-items { list-style: none; }
+        .menu-items li { margin-bottom: 20px; }
         .menu-items a {
             color: #fff;
             text-decoration: none;
@@ -78,34 +69,15 @@
             padding: 8px;
             border-radius: 10px;
         }
-        .menu-items a:hover {
-            background: #fbbf24;
-            color: #000;
-        }
+        .menu-items a:hover { background: #fbbf24; color: #000; }
         .menu-footer {
             margin-top: 40px;
             text-align: center;
             color: #666;
             font-size: 12px;
         }
-
-        /* زر تسجيل الدخول */
-        .auth-btn {
-            background: #fbbf24;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin: 5px 0;
-        }
-        .google-btn {
-            background: #fff;
-            color: #000;
-            border: 1px solid #ddd;
-        }
+        body.light-mode .side-menu { background: #fff; }
+        body.light-mode .menu-items a { color: #000; }
 
         /* النوافذ المنبثقة */
         .modal {
@@ -125,7 +97,7 @@
             width: 90%;
             max-width: 350px;
         }
-        .modal-content input {
+        .modal-content input, .modal-content select {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -151,17 +123,34 @@
             cursor: pointer;
             color: #fbbf24;
         }
+        .google-btn { background: #fff; color: #000; }
 
-        /* المحتوى الرئيسي */
-        .main-content {
-            padding: 20px;
+        /* الإشعارات */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            background: #111;
+            border: 2px solid #fbbf24;
+            color: #fff;
+            padding: 15px;
+            border-radius: 30px;
+            text-align: center;
+            transform: translateY(200%);
+            transition: 0.3s;
+            z-index: 10001;
         }
-        .category-grid {
+        .toast.show { transform: translateY(0); }
+
+        /* الأقسام والمنتجات */
+        .main-content { padding: 20px; }
+        .section-grid, .products-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
-        .category-card {
+        .section-card, .product-card, .category-card {
             background: #1a1a1a;
             border: 2px solid #333;
             border-radius: 15px;
@@ -169,21 +158,97 @@
             text-align: center;
             cursor: pointer;
         }
-        .category-card:hover {
-            border-color: #fbbf24;
+        .section-card:hover, .product-card:hover, .category-card:hover { border-color: #fbbf24; }
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fbbf24;
+            font-size: 16px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: block;
+        }
+        .price { color: #fbbf24; font-size: 18px; font-weight: 900; margin: 10px 0; }
+        .buy-btn {
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            padding: 8px;
+            border-radius: 30px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* لوحة المدير */
+        .admin-panel {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 95%; height: 85vh;
+            background: #111;
+            border: 3px solid #fbbf24;
+            border-radius: 25px;
+            padding: 15px;
+            z-index: 10000;
+            overflow-y: auto;
+            display: none;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1; min-width: 70px;
+            background: #1a1a1a; color: #fff;
+            border: 1px solid #333;
+            padding: 12px 5px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .tab-btn.active { background: #fbbf24; color: #000; font-weight: 700; }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
+        .product-edit-card {
+            background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px;
+        }
+        .product-edit-row {
+            display: flex; gap: 10px; margin-bottom: 10px;
+        }
+        .product-edit-row input {
+            flex: 1; background: #333; border: 1px solid #fbbf24;
+            border-radius: 10px; padding: 12px; color: #fff;
+        }
+        .product-edit-actions {
+            display: flex; gap: 5px;
+        }
+        .product-edit-actions button {
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            font-weight: 700; cursor: pointer;
+        }
+        .save-btn { background: #22c55e; color: #fff; }
+        .delete-btn { background: #ef4444; color: #fff; }
+        .add-btn {
+            width: 100%; background: #fbbf24; color: #000;
+            border: none; border-radius: 10px; padding: 15px;
+            font-weight: 700; margin-top: 10px; cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <!-- الهيدر -->
     <div class="top-bar">
         <div class="menu-icons">
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
             <i class="far fa-user-circle" onclick="showAuthModal()"></i>
         </div>
-        <div class="logo">
-            <h1>ALZAK STORE</h1>
-        </div>
+        <div class="logo"><h1>ALZAK STORE</h1></div>
     </div>
 
     <!-- القائمة الجانبية -->
@@ -194,16 +259,36 @@
         </div>
         <ul class="menu-items">
             <li><a href="#" onclick="showMainCategories()"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="#" onclick="alert('قريباً')"><i class="fas fa-info-circle"></i> من نحن</a></li>
-            <li><a href="#" onclick="alert('قريباً')"><i class="fas fa-mobile-alt"></i> التطبيقات</a></li>
+            <li><a href="#" onclick="showAdminPanel()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
             <li><a href="#" onclick="toggleTheme()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
         </ul>
-        <div class="menu-footer">
-            <p>برمجة وتصميم ALZAK<br>©2025</p>
-        </div>
+        <div class="menu-footer"><p>ALZAK STORE ©2025</p></div>
     </div>
 
-    <!-- نافذة تسجيل الدخول -->
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <div id="categoryGrid" class="section-grid"></div>
+    </div>
+
+    <!-- لوحة المدير -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-header">
+            <h2 style="color:#fbbf24;"><i class="fas fa-crown"></i> لوحة التحكم</h2>
+            <button onclick="hideAdminPanel()" style="background:none; border:none; color:#fbbf24; font-size:24px;">✕</button>
+        </div>
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showAdminTab('products')">المنتجات</button>
+            <button class="tab-btn" onclick="showAdminTab('orders')">الطلبات</button>
+            <button class="tab-btn" onclick="showAdminTab('users')">العملاء</button>
+            <button class="tab-btn" onclick="showAdminTab('stats')">الإحصائيات</button>
+        </div>
+        <div id="adminProducts" class="admin-tab-content active"></div>
+        <div id="adminOrders" class="admin-tab-content"></div>
+        <div id="adminUsers" class="admin-tab-content"></div>
+        <div id="adminStats" class="admin-tab-content"></div>
+    </div>
+
+    <!-- نوافذ المصادقة والشراء -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('authModal')">&times;</span>
@@ -218,7 +303,6 @@
         </div>
     </div>
 
-    <!-- نافذة التسجيل -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('registerModal')">&times;</span>
@@ -230,14 +314,22 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي -->
-    <div class="main-content">
-        <div class="category-grid" id="categoryGrid"></div>
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('purchaseModal')">&times;</span>
+            <h2 style="color:#fbbf24;">تأكيد الشراء</h2>
+            <div id="purchaseDetails"></div>
+            <input type="text" id="playerId" placeholder="معرف اللعبة">
+            <button onclick="confirmPurchase()">تأكيد</button>
+        </div>
     </div>
+
+    <div id="toast" class="toast"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, orderBy, updateDoc, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
@@ -250,9 +342,80 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // دوال القائمة
+        // بيانات المتجر
+        const storeData = {
+            sections: [
+                { id: 'games', name: '🎮 الألعاب', 
+                  categories: [
+                      { id: 'pubg', name: 'PUBG', products: [
+                          { name: '60 UC', price: 0.99 },
+                          { name: '300 UC + 25', price: 4.99 },
+                          { name: '600 UC + 60', price: 9.99 }
+                      ]},
+                      { id: 'freefire', name: 'Free Fire', products: [
+                          { name: '100 جوهرة', price: 1.50 },
+                          { name: '341 جوهرة', price: 3.99 }
+                      ]}
+                  ]},
+                { id: 'apps', name: '📱 التطبيقات',
+                  categories: [
+                      { id: 'shahid', name: 'شاهد VIP', products: [
+                          { name: 'شهر واحد', price: 5.99 },
+                          { name: '3 شهور', price: 15.99 }
+                      ]},
+                      { id: 'netflix', name: 'نتفلكس', products: [
+                          { name: 'شهر واحد', price: 7.99 },
+                          { name: '3 شهور', price: 21.99 }
+                      ]}
+                  ]},
+                { id: 'cards', name: '💳 بطاقات جوجل',
+                  categories: [
+                      { id: 'google', name: 'بطاقات جوجل بلاي', products: [
+                          { name: 'بطاقة 10$', price: 10.00 },
+                          { name: 'بطاقة 25$', price: 25.00 }
+                      ]}
+                  ]}
+            ]
+        };
+
+        let currentUser = null;
+        let currentPurchase = null;
+        const ADMIN_EMAIL = 'alolao45y@gmail.com';
+
+        // ===== Firebase Auth =====
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: user.displayName || user.email.split('@')[0]
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUI();
+                await createUserProfile(user);
+            } else {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateUI();
+            }
+        });
+
+        async function createUserProfile(user) {
+            const userRef = doc(db, 'users', user.uid);
+            const docSnap = await getDoc(userRef);
+            if (!docSnap.exists()) {
+                await setDoc(userRef, {
+                    email: user.email,
+                    name: user.displayName || user.email.split('@')[0],
+                    walletBalance: 0
+                });
+            }
+        }
+
+        // ===== UI Functions =====
         window.toggleSideMenu = () => {
             document.getElementById('sideMenu').classList.toggle('show');
         };
@@ -262,7 +425,6 @@
             toggleSideMenu();
         };
 
-        // دوال المصادقة
         window.showAuthModal = () => {
             document.getElementById('authModal').style.display = 'flex';
         };
@@ -276,25 +438,40 @@
             document.getElementById(id).style.display = 'none';
         };
 
+        window.showToast = (msg, type = 'success') => {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        };
+
+        function updateUI() {
+            const adminLink = document.querySelector('.menu-items a[href*="showAdminPanel"]');
+            if (adminLink) {
+                adminLink.style.display = currentUser?.email === ADMIN_EMAIL ? 'flex' : 'none';
+            }
+        }
+
+        // ===== Auth Functions =====
         window.login = async () => {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert('✅ تم تسجيل الدخول');
+                showToast('✅ تم تسجيل الدخول');
                 closeModal('authModal');
             } catch (e) {
-                alert('❌ ' + e.message);
+                showToast('❌ ' + e.message, 'error');
             }
         };
 
         window.loginWithGoogle = async () => {
             try {
                 await signInWithPopup(auth, provider);
-                alert('✅ تم تسجيل الدخول');
+                showToast('✅ تم تسجيل الدخول');
                 closeModal('authModal');
             } catch (e) {
-                alert('❌ ' + e.message);
+                showToast('❌ ' + e.message, 'error');
             }
         };
 
@@ -305,19 +482,191 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(cred.user, { displayName: name });
-                alert('✅ تم إنشاء الحساب');
+                showToast('✅ تم إنشاء الحساب');
                 closeModal('registerModal');
             } catch (e) {
-                alert('❌ ' + e.message);
+                showToast('❌ ' + e.message, 'error');
             }
         };
 
-        // عرض الفئات
-        const categories = ['📱 الألعاب', '🎬 التطبيقات', '💳 بطاقات جوجل'];
-        const grid = document.getElementById('categoryGrid');
-        categories.forEach(cat => {
-            grid.innerHTML += `<div class="category-card" onclick="alert('${cat} قريباً')">${cat}</div>`;
-        });
+        window.logout = async () => {
+            await signOut(auth);
+            showToast('✅ تم تسجيل الخروج');
+            hideAdminPanel();
+        };
+
+        // ===== Store Display Functions =====
+        window.showMainCategories = () => {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            storeData.sections.forEach(section => {
+                grid.innerHTML += `
+                    <div class="section-card" onclick="showCategories('${section.id}')">
+                        <h3>${section.name}</h3>
+                    </div>
+                `;
+            });
+        };
+
+        window.showCategories = (sectionId) => {
+            const section = storeData.sections.find(s => s.id === sectionId);
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = `<button class="back-btn" onclick="showMainCategories()">🔙 رجوع</button>`;
+            section.categories.forEach(cat => {
+                grid.innerHTML += `
+                    <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
+                        <h4>${cat.name}</h4>
+                    </div>
+                `;
+            });
+        };
+
+        window.showProducts = (sectionId, categoryId) => {
+            const section = storeData.sections.find(s => s.id === sectionId);
+            const category = section.categories.find(c => c.id === categoryId);
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = `<button class="back-btn" onclick="showCategories('${sectionId}')">🔙 رجوع</button><div class="products-grid">`;
+            category.products.forEach(prod => {
+                grid.innerHTML += `
+                    <div class="product-card" onclick="openPurchaseModal('${prod.name}', ${prod.price})">
+                        <h4>${prod.name}</h4>
+                        <p class="price">${prod.price}$</p>
+                        <button class="buy-btn">اشتري</button>
+                    </div>
+                `;
+            });
+            grid.innerHTML += '</div>';
+        };
+
+        window.openPurchaseModal = (name, price) => {
+            if (!currentUser) {
+                showToast('سجل دخول أولاً', 'error');
+                showAuthModal();
+                return;
+            }
+            currentPurchase = { name, price };
+            document.getElementById('purchaseDetails').innerHTML = `<p>المنتج: ${name}</p><p>السعر: ${price}$</p>`;
+            document.getElementById('purchaseModal').style.display = 'flex';
+        };
+
+        window.confirmPurchase = async () => {
+            const playerId = document.getElementById('playerId').value;
+            if (!playerId) { showToast('أدخل المعرف', 'error'); return; }
+            
+            try {
+                await addDoc(collection(db, 'orders'), {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    product: currentPurchase.name,
+                    price: currentPurchase.price,
+                    playerId,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                });
+                showToast('✅ تم تأكيد الطلب');
+                closeModal('purchaseModal');
+            } catch (e) {
+                showToast('❌ فشل الطلب', 'error');
+            }
+        };
+
+        // ===== Admin Functions =====
+        function isAdmin() {
+            return currentUser && currentUser.email === ADMIN_EMAIL;
+        }
+
+        window.showAdminPanel = () => {
+            if (!isAdmin()) { showToast('غير مصرح', 'error'); return; }
+            document.getElementById('adminPanel').style.display = 'block';
+            loadAdminProducts();
+            loadAdminOrders();
+            loadAdminUsers();
+            loadAdminStats();
+        };
+
+        window.hideAdminPanel = () => {
+            document.getElementById('adminPanel').style.display = 'none';
+        };
+
+        window.showAdminTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('admin' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+        };
+
+        function loadAdminProducts() {
+            let html = '<h3>📦 إدارة المنتجات</h3>';
+            storeData.sections.forEach((section, s) => {
+                section.categories.forEach((category, c) => {
+                    html += `<h4>${category.name}</h4>`;
+                    category.products.forEach((product, p) => {
+                        html += `
+                            <div class="product-edit-card">
+                                <div class="product-edit-row">
+                                    <input type="text" id="name_${s}_${c}_${p}" value="${product.name}">
+                                    <input type="number" id="price_${s}_${c}_${p}" value="${product.price}">
+                                </div>
+                                <div class="product-edit-actions">
+                                    <button class="save-btn" onclick="updateProduct(${s},${c},${p})">💾 حفظ</button>
+                                    <button class="delete-btn" onclick="deleteProduct(${s},${c},${p})">🗑️ حذف</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+            });
+            document.getElementById('adminProducts').innerHTML = html;
+        }
+
+        window.updateProduct = (s, c, p) => {
+            const name = document.getElementById(`name_${s}_${c}_${p}`).value;
+            const price = parseFloat(document.getElementById(`price_${s}_${c}_${p}`).value);
+            storeData.sections[s].categories[c].products[p] = { name, price };
+            localStorage.setItem('storeData', JSON.stringify(storeData));
+            showToast('✅ تم التعديل');
+        };
+
+        window.deleteProduct = (s, c, p) => {
+            storeData.sections[s].categories[c].products.splice(p, 1);
+            localStorage.setItem('storeData', JSON.stringify(storeData));
+            loadAdminProducts();
+            showToast('✅ تم الحذف');
+        };
+
+        async function loadAdminOrders() {
+            const snapshot = await getDocs(collection(db, 'orders'));
+            let html = '<h3>📋 الطلبات</h3>';
+            snapshot.forEach(doc => {
+                const o = doc.data();
+                html += `<div>${o.product} - ${o.price}$ (${o.status})</div>`;
+            });
+            document.getElementById('adminOrders').innerHTML = html;
+        }
+
+        async function loadAdminUsers() {
+            const snapshot = await getDocs(collection(db, 'users'));
+            let html = '<h3>👥 العملاء</h3>';
+            snapshot.forEach(doc => {
+                const u = doc.data();
+                html += `<div>${u.name} - ${u.email}</div>`;
+            });
+            document.getElementById('adminUsers').innerHTML = html;
+        }
+
+        async function loadAdminStats() {
+            const usersSnap = await getDocs(collection(db, 'users'));
+            const ordersSnap = await getDocs(collection(db, 'orders'));
+            document.getElementById('adminStats').innerHTML = `
+                <h3>📊 الإحصائيات</h3>
+                <p>العملاء: ${usersSnap.size}</p>
+                <p>الطلبات: ${ordersSnap.size}</p>
+            `;
+        }
+
+        // Start
+        showMainCategories();
+        updateUI();
     </script>
 </body>
 </html>
