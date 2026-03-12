@@ -3,48 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALZAK STORE</title>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
-</head>
-<body style="background:#111; color:#fff; direction:rtl; padding:20px;">
-    <h1 style="color:#fbbf24;">ALZAK STORE</h1>
-    
-    <div id="status"></div>
-    
-    <button onclick="login()" style="background:#fbbf24; padding:10px 20px; border-radius:10px;">تسجيل دخول المدير</button>
-    
-    <script>
-        firebase.initializeApp({
-            apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
-            authDomain: "alzak-store-dea53.firebaseapp.com",
-            projectId: "alzak-store-dea53"
-        });
+    <title>ALZAK STORE | المتجر الرسمي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #0a0a0a; color: #fff; transition: 0.3s; }
+        body.light-mode { background: #f5f5f5; color: #000; }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        function log(msg) {
-            document.getElementById('status').innerHTML += `<div>${msg}</div>`;
+        /* الهيدر */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #000;
+            border-bottom: 2px solid #fbbf24;
+        }
+        .logo h1 {
+            font-size: 20px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .menu-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .menu-icons i {
+            font-size: 22px;
+            cursor: pointer;
+            color: #fbbf24;
         }
 
+        /* القائمة الجانبية */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 260px;
+            height: 100vh;
+            background: #111;
+            border-left: 2px solid #fbbf24;
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .side-menu.show {
+            right: 0;
+        }
+        .menu-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            color: #fbbf24;
+        }
+        .menu-header i {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .menu-items {
+            list-style: none;
+        }
+        .menu-items li {
+            margin-bottom: 20px;
+        }
+        .menu-items a {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 10px;
+        }
+        .menu-items a:hover {
+            background: #fbbf24;
+            color: #000;
+        }
+        .menu-footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* زر تسجيل الدخول */
+        .auth-btn {
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin: 5px 0;
+        }
+        .google-btn {
+            background: #fff;
+            color: #000;
+            border: 1px solid #ddd;
+        }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: #111;
+            border: 2px solid #fbbf24;
+            border-radius: 20px;
+            padding: 25px;
+            width: 90%;
+            max-width: 350px;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #333;
+            border: 1px solid #fbbf24;
+            border-radius: 10px;
+            color: #fff;
+        }
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .close {
+            float: left;
+            font-size: 24px;
+            cursor: pointer;
+            color: #fbbf24;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            padding: 20px;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .category-card {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            border-color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <!-- الهيدر -->
+    <div class="top-bar">
+        <div class="menu-icons">
+            <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
+            <i class="far fa-user-circle" onclick="showAuthModal()"></i>
+        </div>
+        <div class="logo">
+            <h1>ALZAK STORE</h1>
+        </div>
+    </div>
+
+    <!-- القائمة الجانبية -->
+    <div id="sideMenu" class="side-menu">
+        <div class="menu-header">
+            <i class="fas fa-times" onclick="toggleSideMenu()"></i>
+            <h3>القائمة</h3>
+        </div>
+        <ul class="menu-items">
+            <li><a href="#" onclick="showMainCategories()"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="#" onclick="alert('قريباً')"><i class="fas fa-info-circle"></i> من نحن</a></li>
+            <li><a href="#" onclick="alert('قريباً')"><i class="fas fa-mobile-alt"></i> التطبيقات</a></li>
+            <li><a href="#" onclick="toggleTheme()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
+        </ul>
+        <div class="menu-footer">
+            <p>برمجة وتصميم ALZAK<br>©2025</p>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('authModal')">&times;</span>
+            <h2 style="color:#fbbf24; text-align:center;">تسجيل الدخول</h2>
+            <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
+            <input type="password" id="loginPassword" placeholder="كلمة السر">
+            <button onclick="login()">تسجيل الدخول</button>
+            <button class="google-btn" onclick="loginWithGoogle()">تسجيل بواسطة Google</button>
+            <p style="text-align:center; margin-top:15px;">
+                ليس لديك حساب؟ <a href="#" onclick="showRegister()" style="color:#fbbf24;">إنشاء حساب جديد</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- نافذة التسجيل -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2 style="color:#fbbf24; text-align:center;">إنشاء حساب جديد</h2>
+            <input type="text" id="regName" placeholder="الاسم">
+            <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
+            <input type="password" id="regPassword" placeholder="كلمة السر">
+            <button onclick="register()">إنشاء حساب</button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <div class="category-grid" id="categoryGrid"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
+            authDomain: "alzak-store-dea53.firebaseapp.com",
+            projectId: "alzak-store-dea53",
+            storageBucket: "alzak-store-dea53.firebasestorage.app",
+            messagingSenderId: "494547602038",
+            appId: "1:494547602038:web:f9f78605414173ae63ed57"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // دوال القائمة
+        window.toggleSideMenu = () => {
+            document.getElementById('sideMenu').classList.toggle('show');
+        };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('light-mode');
+            toggleSideMenu();
+        };
+
+        // دوال المصادقة
+        window.showAuthModal = () => {
+            document.getElementById('authModal').style.display = 'flex';
+        };
+
+        window.showRegister = () => {
+            closeModal('authModal');
+            document.getElementById('registerModal').style.display = 'flex';
+        };
+
+        window.closeModal = (id) => {
+            document.getElementById(id).style.display = 'none';
+        };
+
         window.login = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             try {
-                await auth.signInWithEmailAndPassword('alolao45y@gmail.com', 'admin123');
-                log('✅ تم تسجيل الدخول');
-                
-                const snapshot = await db.collection('orders').get();
-                log(`📦 عدد الطلبات: ${snapshot.size}`);
-                
-                snapshot.forEach(doc => {
-                    const o = doc.data();
-                    log(`- ${o.product}: ${o.price}$ (${o.status})`);
-                });
+                await signInWithEmailAndPassword(auth, email, password);
+                alert('✅ تم تسجيل الدخول');
+                closeModal('authModal');
             } catch (e) {
-                log('❌ ' + e.message);
+                alert('❌ ' + e.message);
             }
         };
+
+        window.loginWithGoogle = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+                alert('✅ تم تسجيل الدخول');
+                closeModal('authModal');
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        };
+
+        window.register = async () => {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(cred.user, { displayName: name });
+                alert('✅ تم إنشاء الحساب');
+                closeModal('registerModal');
+            } catch (e) {
+                alert('❌ ' + e.message);
+            }
+        };
+
+        // عرض الفئات
+        const categories = ['📱 الألعاب', '🎬 التطبيقات', '💳 بطاقات جوجل'];
+        const grid = document.getElementById('categoryGrid');
+        categories.forEach(cat => {
+            grid.innerHTML += `<div class="category-card" onclick="alert('${cat} قريباً')">${cat}</div>`;
+        });
     </script>
 </body>
 </html>
