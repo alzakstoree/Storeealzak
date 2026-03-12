@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة المدير</title>
+    <style>
+        body { background: #111; color: #fff; font-family: sans-serif; padding: 20px; }
+        .order { background: #1a1a1a; border: 2px solid #fbbf24; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        button { background: #fbbf24; color: #000; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1 style="color:#fbbf24;">📋 جميع الطلبات (من Firestore)</h1>
+    <div id="orders"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
+            authDomain: "alzak-store-dea53.firebaseapp.com",
+            projectId: "alzak-store-dea53"
+        });
+
+        const db = firebase.firestore();
+
+        async function loadOrders() {
+            const div = document.getElementById('orders');
+            const snapshot = await db.collection('orders').get();
+            
+            if (snapshot.empty) {
+                div.innerHTML = '<p>❌ لا توجد طلبات في قاعدة البيانات</p>';
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const o = doc.data();
+                html += `
+                    <div class="order">
+                        <strong>${o.product || 'غير معروف'}</strong> - ${o.price || 0}$<br>
+                        المستخدم: ${o.userEmail || 'بدون بريد'}<br>
+                        معرف: ${o.playerId || 'بدون معرف'}<br>
+                        الحالة: ${o.status || 'pending'}<br>
+                        <small>معرف المستخدم: ${o.userId || 'غير موجود'}</small>
+                    </div>
+                `;
+            });
+            div.innerHTML = html;
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>
