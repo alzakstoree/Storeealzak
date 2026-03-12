@@ -53,6 +53,39 @@ export async function updateWalletDisplay() {
     document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
 }
 
+// طلب شحن عادي (النظام القديم)
+window.requestCharge = async function() {
+    if (!currentUser) {
+        showToast('❌ سجل دخول أولاً', 'error');
+        showAuthModal();
+        return;
+    }
+    
+    const amount = parseFloat(document.getElementById('chargeAmount').value);
+    if (amount < 1) {
+        showToast('❌ الحد الأدنى للشحن 1$', 'error');
+        return;
+    }
+    
+    try {
+        await addDoc(collection(db, 'charges'), {
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            amount: amount,
+            status: 'pending',
+            date: new Date().toISOString()
+        });
+        
+        showToast('✅ تم إرسال طلب الشحن');
+        closeModal('walletModal');
+        
+        const msg = `💰 طلب شحن جديد\nالمستخدم: ${currentUser.email}\nالمبلغ: ${amount}$`;
+        window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
+    } catch (error) {
+        showToast('❌ فشل إرسال الطلب', 'error');
+    }
+};
+
 // ===== نافذة الإيداع الجديدة =====
 window.showDepositModal = function() {
     if (!currentUser) {
@@ -112,11 +145,13 @@ window.showDepositModal = function() {
         </div>
     `;
     
-    // إضافة النافذة إلى الصفحة
-    let modalElement = document.getElementById('depositModal');
-    if (modalElement) {
-        modalElement.remove();
+    // إزالة أي نافذة إيداع قديمة
+    let oldModal = document.getElementById('depositModal');
+    if (oldModal) {
+        oldModal.remove();
     }
+    
+    // إضافة النافذة الجديدة
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 };
 
@@ -210,4 +245,15 @@ window.submitDeposit = async function() {
     };
     
     reader.readAsDataURL(file);
+};
+
+// دوال المحفظة القديمة (تظل كما هي)
+window.showWallet = function() {
+    if (!currentUser) {
+        showToast('سجل دخول أولاً', 'error');
+        showAuthModal();
+        return;
+    }
+    updateWalletDisplay();
+    document.getElementById('walletModal').style.display = 'flex';
 };
