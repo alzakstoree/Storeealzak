@@ -1,127 +1,129 @@
-// ==================== نظام تسجيل الدخول ====================
-let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-const ADMIN_EMAIL = 'alolao45y@gmail.com';
+// ==================== دوال المصادقة (تسجيل الدخول) ====================
+import { auth, googleProvider } from './firebase-config.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { db } from './firebase-config.js';
 
-// فتح نافذة تسجيل الدخول
-function showAuthModal() {
-    document.getElementById('authModal').style.display = 'flex';
-}
+export let currentUser = null;
+export const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
-// إغلاق النوافذ
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-// تسجيل الدخول
-function login() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    
-    if (users.length === 0) {
-        users.push({
-            name: 'المدير',
-            email: ADMIN_EMAIL,
-            password: 'admin123',
-            isAdmin: true
-        });
-        localStorage.setItem('users', JSON.stringify(users));
-    }
-    
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        currentUser = user;
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        closeModal('authModal');
-        updateUI();
-        showToast(`مرحباً ${user.name}`);
-    } else {
-        showToast('بريد أو كلمة سر خطأ', 'error');
-    }
-}
-
-// تسجيل جديد
-function register() {
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    
-    if (!name || !email || !password) {
-        showToast('املأ جميع الحقول', 'error');
-        return;
-    }
-    
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    
-    if (users.find(u => u.email === email)) {
-        showToast('البريد موجود مسبقاً', 'error');
-        return;
-    }
-    
-    const newUser = {
-        name, email, password,
-        isAdmin: email === ADMIN_EMAIL,
-        createdAt: new Date().toISOString()
-    };
-    
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    showToast('تم التسجيل بنجاح');
-    closeModal('registerModal');
-    showAuthModal();
-}
-
-// تسجيل الخروج
-function logout() {
-    currentUser = null;
-    localStorage.removeItem('currentUser');
-    document.getElementById('adminPanel').style.display = 'none';
-    updateUI();
-    showToast('تم تسجيل الخروج');
-}
-
-// تحديث واجهة المستخدم
-function updateUI() {
+// دالة تحديث واجهة المستخدم
+export function updateUI() {
     const loginIcon = document.getElementById('loginIcon');
     const userMenu = document.getElementById('userMenu');
     const userName = document.getElementById('userName');
-    const adminLink = document.getElementById('adminLink');
     
     if (currentUser) {
-        loginIcon.style.display = 'none';
-        userMenu.style.display = 'flex';
-        userName.textContent = currentUser.name;
-        
-        if (currentUser.email === ADMIN_EMAIL) {
-            adminLink.style.display = 'block';
-        } else {
-            adminLink.style.display = 'none';
+        if (loginIcon) loginIcon.style.display = 'none';
+        if (userMenu) {
+            userMenu.style.display = 'flex';
+            if (userName) userName.textContent = currentUser.name;
         }
     } else {
-        loginIcon.style.display = 'block';
-        userMenu.style.display = 'none';
+        if (loginIcon) loginIcon.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'none';
     }
 }
 
-// إظهار لوحة المدير
-function showAdminPanel() {
-    if (currentUser?.email === ADMIN_EMAIL) {
-        document.getElementById('adminPanel').style.display = 'block';
-        if (typeof loadAdminData === 'function') loadAdminData();
+// دالة تحديث ظهور لوحة المدير
+export function updateAdminMenu() {
+    const adminMenuItem = document.getElementById('adminMenuItem');
+    const adminLink = document.getElementById('adminLink');
+    const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+    
+    if (adminMenuItem) adminMenuItem.style.display = isAdmin ? 'block' : 'none';
+    if (adminLink) adminLink.style.display = isAdmin ? 'block' : 'none';
+}
+
+// إنشاء ملف المستخدم
+export async function createUserProfile(user) {
+    const userRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
+        await setDoc(userRef, {
+            email: user.email,
+            name: user.displayName || user.email.split('@')[0],
+            createdAt: new Date().toISOString(),
+            walletBalance: 0
+        });
     }
 }
 
-function hideAdminPanel() {
-    document.getElementById('adminPanel').style.display = 'none';
+// مراقبة حالة تسجيل الدخول
+export function initAuth() {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = {
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName || user.email.split('@')[0]
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUI();
+            updateAdminMenu();
+            await createUserProfile(user);
+            
+            // تحديث المحفظة إذا كانت الدالة موجودة
+            if (typeof window.updateWalletDisplay === 'function') {
+                window.updateWalletDisplay();
+            }
+        } else {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUI();
+            updateAdminMenu();
+        }
+    });
 }
 
-function showRegister() {
-    closeModal('authModal');
-    document.getElementById('registerModal').style.display = 'flex';
-}
+// تسجيل الدخول بالبريد
+window.loginWithEmail = async function() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        document.getElementById('authModal').style.display = 'none';
+        showToast('✅ مرحباً بعودتك');
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
+};
 
-// تهيئة
-document.addEventListener('DOMContentLoaded', updateUI);
+// تسجيل جديد
+window.registerWithEmail = async function() {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    if (!name || !email || !password) {
+        showToast('❌ املأ جميع الحقول', 'error');
+        return;
+    }
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
+        showToast('✅ تم التسجيل بنجاح');
+        document.getElementById('registerModal').style.display = 'none';
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
+};
+
+// تسجيل الدخول بـ Google
+window.loginWithGoogle = async function() {
+    try {
+        await signInWithPopup(auth, googleProvider);
+        document.getElementById('authModal').style.display = 'none';
+        showToast('✅ مرحباً بك');
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
+};
+
+// تسجيل الخروج
+window.logout = async function() {
+    await signOut(auth);
+    showToast('✅ تم تسجيل الخروج');
+    if (typeof window.hideAdminPanel === 'function') {
+        window.hideAdminPanel();
+    }
+};
