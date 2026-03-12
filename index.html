@@ -789,3 +789,22 @@
     </script>
 </body>
 </html>
+<script>
+// هذا الكود لفرض ظهور الطلبات في لوحة المدير
+async function forceLoadOrders() {
+    console.log("🔵 محاولة تحميل الطلبات...");
+    if (typeof loadAdminOrders === 'function' && currentUser?.email === 'alolao45y@gmail.com') {
+        await loadAdminOrders();
+        console.log("✅ تم تحديث الطلبات");
+    } else {
+        console.log("⚠️ لم يتم تحميل الطلبات: المستخدم ليس مديراً أو الدالة غير موجودة");
+    }
+}
+
+// استدعاء الدالة كل 5 ثواني عندما يكون المدير مسجلاً
+setInterval(() => {
+    if (currentUser?.email === 'alolao45y@gmail.com') {
+        forceLoadOrders();
+    }
+}, 5000);
+</script>
