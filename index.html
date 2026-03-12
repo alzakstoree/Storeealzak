@@ -71,6 +71,15 @@
             font-weight: 700;
         }
 
+        .profile-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: url('https://i.ibb.co/1YJrvSr3/file-000000005428724691b0c7d13890c115-1.jpg') no-repeat center center/cover;
+            border: 2px solid #fbbf24;
+            cursor: pointer;
+        }
+
         .side-menu {
             position: fixed;
             top: 0;
@@ -137,6 +146,11 @@
         }
 
         body.light-mode .menu-items a {
+            color: #000;
+        }
+
+        body.light-mode .menu-items a:hover {
+            background: #fbbf24;
             color: #000;
         }
 
@@ -494,7 +508,7 @@
             <i class="fas fa-wallet" onclick="showWallet()"></i>
             <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
-            <i class="far fa-user-circle" onclick="showAuthModal()" id="loginIcon"></i>
+            <div class="profile-icon" onclick="showAuthModal()" id="loginIcon"></div>
             <div id="userMenu" style="display: none;" onclick="toggleDropdown()">
                 <span id="userName"></span>
                 <i class="fas fa-chevron-down"></i>
