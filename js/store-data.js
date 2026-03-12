@@ -4,13 +4,10 @@
 export const defaultStoreData = {
     sections: [
         {
-           {
-    id: 'games',
-    name: 'الألعاب',
-    icon: 'fa-gamepad',
-    image: 'https://i.ibb.co/5CxJNZG/Screenshot-20260312-222843.jpg',  // <--- الرابط الجديد
-    categories: [ ... ]
-}, صورة غلاف الألعاب
+            id: 'games',
+            name: 'الألعاب',
+            icon: 'fa-gamepad',
+            image: 'https://i.ibb.co/5CxJNZG/Screenshot-20260312-222843.jpg', // الصورة الجديدة للألعاب
             categories: [
                 {
                     id: 'pubg',
@@ -84,12 +81,12 @@ export const defaultStoreData = {
             id: 'cards',
             name: 'بطاقات جوجل',
             icon: 'fa-google',
-            image: 'https://i.ibb.co/TDCzWdNY/Screenshot-20260312-002552.jpg', // صورة غلاف بطاقات جوجل
+            image: 'https://i.ibb.co/DgfqBM1Z/Screenshot-20260312-234341.jpg', // الصورة الجديدة لبطاقات جوجل
             categories: [
                 {
                     id: 'google',
                     name: 'بطاقات جوجل بلاي',
-                    image: 'https://i.ibb.co/27L8d2Cv/Screenshot-20260312-220435.jpg', // صورة بطاقة جوجل
+                    image: 'https://i.ibb.co/DgfqBM1Z/Screenshot-20260312-234341.jpg', // نفس الصورة للفئة الفرعية
                     products: [
                         { name: 'بطاقة 10$', price: 10.00 },
                         { name: 'بطاقة 25$', price: 25.00 },
