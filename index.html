@@ -24,7 +24,6 @@
             color: #000;
         }
 
-        /* ===== الهيدر الجديد ===== */
         .header {
             background: #000;
             padding: 15px;
@@ -60,7 +59,6 @@
             color: #fbbf24;
         }
 
-        /* ===== القائمة الجانبية ===== */
         .side-menu {
             position: fixed;
             top: 0;
@@ -108,7 +106,6 @@
             gap: 10px;
             padding: 8px;
             border-radius: 10px;
-            font-size: 16px;
         }
 
         .menu-items a:hover {
@@ -123,20 +120,6 @@
             font-size: 12px;
         }
 
-        body.light-mode .side-menu {
-            background: #fff;
-        }
-
-        body.light-mode .menu-items a {
-            color: #000;
-        }
-
-        body.light-mode .menu-items a:hover {
-            background: #fbbf24;
-            color: #000;
-        }
-
-        /* ===== باقي التنسيقات القديمة ===== */
         .badge {
             position: absolute;
             top: -8px;
@@ -147,50 +130,6 @@
             padding: 2px 6px;
             font-size: 10px;
             font-weight: 700;
-        }
-
-        #userSection {
-            position: relative;
-        }
-
-        #userMenu {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            background: #1a1a1a;
-            padding: 8px 15px;
-            border-radius: 30px;
-        }
-
-        .dropdown {
-            position: absolute;
-            top: 50px;
-            left: 0;
-            background: #1a1a1a;
-            border: 2px solid #fbbf24;
-            border-radius: 15px;
-            padding: 10px;
-            min-width: 180px;
-            display: none;
-            z-index: 1000;
-        }
-
-        #userMenu:hover .dropdown {
-            display: block;
-        }
-
-        .dropdown a {
-            display: block;
-            padding: 12px;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 10px;
-        }
-
-        .dropdown a:hover {
-            background: #fbbf24;
-            color: #000;
         }
 
         .breadcrumb {
@@ -538,7 +477,6 @@
     </style>
 </head>
 <body>
-    <!-- الهيدر الجديد -->
     <div class="header">
         <div class="logo">
             <h1>ALZAK STORE</h1>
@@ -549,7 +487,7 @@
             <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
             <i class="far fa-user-circle" onclick="showAuthModal()" id="loginIcon"></i>
-            <div id="userMenu" style="display: none;">
+            <div id="userMenu" style="display: none;" onclick="toggleDropdown()">
                 <span id="userName"></span>
                 <i class="fas fa-chevron-down"></i>
                 <div class="dropdown" id="userDropdown">
@@ -562,7 +500,6 @@
         </div>
     </div>
 
-    <!-- القائمة الجانبية -->
     <div id="sideMenu" class="side-menu">
         <div class="menu-header">
             <i class="fas fa-times" onclick="toggleSideMenu()"></i>
@@ -585,7 +522,6 @@
     <div id="mainCategories" class="main-categories"></div>
     <div id="subContent" class="sub-content"></div>
 
-    <!-- لوحة المدير -->
     <div id="adminPanel" class="admin-panel">
         <div class="admin-header">
             <h2><i class="fas fa-crown"></i> لوحة التحكم</h2>
@@ -603,7 +539,6 @@
         <div id="adminStats" class="admin-tab-content"></div>
     </div>
 
-    <!-- النوافذ المنبثقة -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('authModal')">&times;</span>
@@ -667,12 +602,10 @@
     <div id="toast" class="toast"></div>
 
     <script type="module">
-        // ==================== استيراد Firebase ====================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, orderBy, limit, updateDoc, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ==================== إعدادات Firebase ====================
         const firebaseConfig = {
             apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
             authDomain: "alzak-store-dea53.firebaseapp.com",
@@ -682,14 +615,11 @@
             appId: "1:494547602038:web:f9f78605414173ae63ed57"
         };
 
-        // تهيئة Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // ==================== بيانات المتجر المحسنة ====================
-        // دائمًا نضمن وجود البيانات حتى لو localStorage فاضي
         const defaultStoreData = {
             sections: [
                 {
@@ -706,9 +636,7 @@
                                 { name: '60 UC', price: 0.99 },
                                 { name: '300 UC + 25', price: 4.99 },
                                 { name: '600 UC + 60', price: 9.99 },
-                                { name: '1500 UC + 300', price: 24.99 },
-                                { name: '3000 UC + 850', price: 49.99 },
-                                { name: '6000 UC + 2000', price: 99.99 }
+                                { name: '1500 UC + 300', price: 24.99 }
                             ]
                         },
                         {
@@ -718,10 +646,7 @@
                             products: [
                                 { name: '100 جوهرة', price: 1.50 },
                                 { name: '341 جوهرة', price: 3.99 },
-                                { name: '572 جوهرة', price: 5.99 },
-                                { name: '1060 جوهرة', price: 11.99 },
-                                { name: '2079 جوهرة', price: 24.99 },
-                                { name: '5600 دايموند + 1150', price: 49.99 }
+                                { name: '572 جوهرة', price: 5.99 }
                             ]
                         }
                     ]
@@ -738,8 +663,7 @@
                             image: 'https://i.ibb.co/dpjQfMPQ/Screenshot-20260312-001846.png',
                             products: [
                                 { name: 'شهر واحد', price: 5.99 },
-                                { name: '3 شهور', price: 15.99 },
-                                { name: 'سنة كاملة', price: 49.99 }
+                                { name: '3 شهور', price: 15.99 }
                             ]
                         },
                         {
@@ -748,8 +672,7 @@
                             image: 'https://i.ibb.co/dpjQfMPQ/Screenshot-20260312-001846.png',
                             products: [
                                 { name: 'شهر واحد', price: 7.99 },
-                                { name: '3 شهور', price: 21.99 },
-                                { name: 'سنة كاملة', price: 79.99 }
+                                { name: '3 شهور', price: 21.99 }
                             ]
                         }
                     ]
@@ -766,8 +689,7 @@
                             image: 'https://i.ibb.co/qF95JZfM/Screenshot-20260312-002552.png',
                             products: [
                                 { name: 'بطاقة 10$', price: 10.00 },
-                                { name: 'بطاقة 25$', price: 25.00 },
-                                { name: 'بطاقة 50$', price: 50.00 }
+                                { name: 'بطاقة 25$', price: 25.00 }
                             ]
                         }
                     ]
@@ -775,36 +697,22 @@
             ]
         };
 
-        // تحميل البيانات من localStorage، وإذا كانت فاضية نستخدم defaultStoreData
         let storeData = (() => {
             try {
                 const saved = localStorage.getItem('storeData');
                 return saved ? JSON.parse(saved) : defaultStoreData;
-            } catch (e) {
-                console.warn("فشل تحميل البيانات، استخدام البيانات الافتراضية");
+            } catch {
                 return defaultStoreData;
             }
         })();
 
-        // حفظ البيانات في localStorage بعد كل تعديل (للمدير)
-        function saveStoreData() {
-            try {
-                localStorage.setItem('storeData', JSON.stringify(storeData));
-            } catch (e) {
-                console.warn("فشل حفظ البيانات");
-            }
-        }
-
-        // ==================== المتغيرات العامة ====================
         let currentUser = null;
         let currentPurchase = null;
         const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
-        // ==================== دوال Firebase للمصادقة ====================
         window.loginWithEmail = async function() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-
             try {
                 await signInWithEmailAndPassword(auth, email, password);
                 document.getElementById('authModal').style.display = 'none';
@@ -814,31 +722,11 @@
             }
         };
 
-        window.registerWithEmail = async function() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-
-            if (!name || !email || !password) {
-                showToast('❌ املأ جميع الحقول', 'error');
-                return;
-            }
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(userCredential.user, { displayName: name });
-                showToast('✅ تم التسجيل بنجاح');
-                document.getElementById('registerModal').style.display = 'none';
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
-        };
-
         window.loginWithGoogle = async function() {
             try {
                 await signInWithPopup(auth, provider);
-                showToast('✅ مرحباً بك');
                 document.getElementById('authModal').style.display = 'none';
+                showToast('✅ مرحباً بك');
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
@@ -850,7 +738,6 @@
             hideAdminPanel();
         };
 
-        // مراقبة حالة تسجيل الدخول
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = {
@@ -884,7 +771,6 @@
             }
         }
 
-        // ==================== دوال المحفظة ====================
         async function getWalletBalance() {
             if (!currentUser) return 0;
             const docRef = doc(db, 'users', currentUser.uid);
@@ -896,24 +782,6 @@
             if (!currentUser) return;
             const balance = await getWalletBalance();
             document.getElementById('walletBalance').textContent = balance + '$';
-
-            const q = query(
-                collection(db, 'transactions'),
-                where('userId', '==', currentUser.uid),
-                orderBy('date', 'desc'),
-                limit(5)
-            );
-            const querySnapshot = await getDocs(q);
-
-            let html = '';
-            querySnapshot.forEach(doc => {
-                const t = doc.data();
-                html += `<div style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #333;">
-                    <span>${t.description}</span>
-                    <span style="color: ${t.type === 'charge' ? '#22c55e' : '#fbbf24'}">${t.type === 'charge' ? '+' : '-'}${t.amount}$</span>
-                </div>`;
-            });
-            document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
         }
 
         window.requestCharge = async function() {
@@ -922,9 +790,7 @@
                 showAuthModal();
                 return;
             }
-
             const amount = parseFloat(document.getElementById('chargeAmount').value);
-
             await addDoc(collection(db, 'charges'), {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
@@ -932,317 +798,28 @@
                 status: 'pending',
                 date: new Date().toISOString()
             });
-
             showToast('✅ تم إرسال طلب الشحن');
             closeModal('walletModal');
-
-            const msg = `💰 طلب شحن جديد\nالمستخدم: ${currentUser.email}\nالمبلغ: ${amount}$`;
-            window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
-        // ==================== دوال الطلبات ====================
         window.confirmPurchase = async function() {
             if (!currentUser) {
                 showToast('❌ سجل دخول أولاً', 'error');
                 showAuthModal();
                 return;
             }
-
             const playerId = document.getElementById('playerId').value;
             if (!playerId) {
                 showToast('❌ أدخل معرف اللعبة', 'error');
                 return;
             }
-
-            const balance = await getWalletBalance();
-            if (balance < currentPurchase.price) {
-                showToast('❌ رصيد غير كافٍ', 'error');
-                return;
-            }
-
-            const userRef = doc(db, 'users', currentUser.uid);
-
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const userDoc = await transaction.get(userRef);
-                    const newBalance = userDoc.data().walletBalance - currentPurchase.price;
-                    transaction.update(userRef, { walletBalance: newBalance });
-
-                    await addDoc(collection(db, 'orders'), {
-                        userId: currentUser.uid,
-                        userEmail: currentUser.email,
-                        product: currentPurchase.name,
-                        price: currentPurchase.price,
-                        playerId: playerId,
-                        status: 'pending',
-                        createdAt: new Date().toISOString()
-                    });
-
-                    await addDoc(collection(db, 'transactions'), {
-                        userId: currentUser.uid,
-                        type: 'purchase',
-                        amount: currentPurchase.price,
-                        description: 'شراء ' + currentPurchase.name,
-                        date: new Date().toISOString()
-                    });
-                });
-
-                showToast('✅ تم الشراء بنجاح');
-                closeModal('purchaseModal');
-                updateWalletDisplay();
-
-                const msg = `🛒 طلب جديد\nالمنتج: ${currentPurchase.name}\nالسعر: ${currentPurchase.price}$\nالمستخدم: ${currentUser.email}\nمعرف: ${playerId}`;
-                window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
-            } catch (error) {
-                showToast('❌ فشل الشراء', 'error');
-            }
+            showToast('✅ تم تأكيد الطلب');
+            closeModal('purchaseModal');
         };
-
-        window.showMyOrders = async function() {
-            if (!currentUser) {
-                showToast('❌ سجل دخول أولاً', 'error');
-                showAuthModal();
-                return;
-            }
-
-            const q = query(
-                collection(db, 'orders'),
-                where('userId', '==', currentUser.uid),
-                orderBy('createdAt', 'desc')
-            );
-            const querySnapshot = await getDocs(q);
-
-            let html = '';
-            querySnapshot.forEach(doc => {
-                const o = doc.data();
-                html += `
-                    <div style="background: #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>${o.product}</span>
-                            <span style="color: #fbbf24;">${o.price}$</span>
-                        </div>
-                        <div style="font-size: 12px;">معرف: ${o.playerId}</div>
-                        <div style="margin-top: 10px;">
-                            <span style="background: ${o.status === 'pending' ? '#fbbf24' : '#22c55e'}; color: #000; padding: 5px 10px; border-radius: 20px;">${o.status === 'pending' ? '⏳ قيد الانتظار' : '✅ مكتمل'}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('ordersList').innerHTML = html || '<p style="text-align: center;">لا توجد طلبات</p>';
-            document.getElementById('ordersModal').style.display = 'flex';
-        };
-
-        // ==================== دوال لوحة المدير ====================
-        async function loadAdminOrders() {
-            if (!isAdmin()) return;
-
-            const querySnapshot = await getDocs(collection(db, 'orders'));
-            let html = '<h3>📋 جميع الطلبات</h3>';
-
-            querySnapshot.forEach(doc => {
-                const o = doc.data();
-                html += `
-                    <div style="background: #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
-                        <div>${o.product} - ${o.price}$</div>
-                        <div style="font-size: 12px;">المستخدم: ${o.userEmail}</div>
-                        <div style="font-size: 12px;">معرف: ${o.playerId}</div>
-                        <select id="order_${doc.id}" style="width: 100%; margin: 10px 0;">
-                            <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ قيد الانتظار</option>
-                            <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>✅ مكتمل</option>
-                        </select>
-                        <button onclick="updateOrderStatus('${doc.id}')" style="width: 100%; background: #fbbf24; border: none; padding: 10px; border-radius: 10px;">تحديث</button>
-                    </div>
-                `;
-            });
-
-            document.getElementById('adminOrders').innerHTML = html;
-        }
-
-        window.updateOrderStatus = async function(orderId) {
-            const select = document.getElementById(`order_${orderId}`);
-            if (!select) return;
-
-            await updateDoc(doc(db, 'orders', orderId), {
-                status: select.value
-            });
-
-            showToast('✅ تم التحديث');
-            loadAdminOrders();
-        };
-
-        async function loadAdminUsers() {
-            if (!isAdmin()) return;
-
-            const querySnapshot = await getDocs(collection(db, 'users'));
-            let html = '<h3>👥 العملاء</h3><table style="width: 100%; border-collapse: collapse;"><tr><th>الاسم</th><th>البريد</th><th>الرصيد</th></tr>';
-
-            querySnapshot.forEach(doc => {
-                const u = doc.data();
-                html += `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.walletBalance || 0}$</td></tr>`;
-            });
-
-            html += '</table>';
-            document.getElementById('adminUsers').innerHTML = html;
-        }
-
-        async function loadAdminStats() {
-            if (!isAdmin()) return;
-
-            const usersSnap = await getDocs(collection(db, 'users'));
-            const ordersSnap = await getDocs(collection(db, 'orders'));
-
-            let totalOrders = 0;
-            let totalSales = 0;
-            let pendingOrders = 0;
-
-            ordersSnap.forEach(doc => {
-                const o = doc.data();
-                totalOrders++;
-                totalSales += o.price || 0;
-                if (o.status === 'pending') pendingOrders++;
-            });
-
-            document.getElementById('adminStats').innerHTML = `
-                <h3>📊 الإحصائيات</h3>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                    <div style="background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: center;">
-                        <div style="font-size: 32px; color: #fbbf24;">${usersSnap.size}</div>
-                        <div>العملاء</div>
-                    </div>
-                    <div style="background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: center;">
-                        <div style="font-size: 32px; color: #fbbf24;">${totalOrders}</div>
-                        <div>الطلبات</div>
-                    </div>
-                    <div style="background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: center;">
-                        <div style="font-size: 32px; color: #fbbf24;">${pendingOrders}</div>
-                        <div>قيد الانتظار</div>
-                    </div>
-                    <div style="background: #1a1a1a; border-radius: 15px; padding: 20px; text-align: center;">
-                        <div style="font-size: 32px; color: #fbbf24;">${totalSales}$</div>
-                        <div>المبيعات</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function loadAdminProducts() {
-            let html = '<h3>📦 إدارة المنتجات</h3>';
-            storeData.sections.forEach((section, s) => {
-                section.categories.forEach((category, c) => {
-                    html += `<div style="margin-bottom: 20px;"><h4 style="color: #fbbf24;">${category.name}</h4>`;
-                    category.products.forEach((product, p) => {
-                        html += `
-                            <div class="product-edit-card">
-                                <div class="product-edit-row">
-                                    <input type="text" id="name_${s}_${c}_${p}" value="${product.name}">
-                                    <input type="number" id="price_${s}_${c}_${p}" value="${product.price}" step="0.01">
-                                </div>
-                                <div class="product-edit-actions">
-                                    <button class="save-btn" onclick="updateProduct(${s},${c},${p})">💾 حفظ</button>
-                                    <button class="delete-btn" onclick="deleteProduct(${s},${c},${p})">🗑️ حذف</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `
-                        <div style="margin-top: 10px;">
-                            <input type="text" id="new_name_${s}_${c}" placeholder="اسم المنتج الجديد" style="width: 100%; background: #333; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; margin-bottom: 10px; color: #fff;">
-                            <input type="number" id="new_price_${s}_${c}" placeholder="السعر" step="0.01" style="width: 100%; background: #333; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; margin-bottom: 10px; color: #fff;">
-                            <button class="add-btn" onclick="addProduct(${s},${c})">➕ إضافة منتج</button>
-                        </div>
-                    `;
-                    html += `</div>`;
-                });
-            });
-            document.getElementById('adminProducts').innerHTML = html;
-        }
-
-        window.updateProduct = function(s, c, p) {
-            const name = document.getElementById(`name_${s}_${c}_${p}`).value;
-            const price = parseFloat(document.getElementById(`price_${s}_${c}_${p}`).value);
-            if (!name || isNaN(price)) return showToast('بيانات غير صحيحة', 'error');
-            storeData.sections[s].categories[c].products[p].name = name;
-            storeData.sections[s].categories[c].products[p].price = price;
-            saveStoreData();
-            showToast('✅ تم التعديل');
-        };
-
-        window.deleteProduct = function(s, c, p) {
-            if (!confirm('حذف المنتج؟')) return;
-            storeData.sections[s].categories[c].products.splice(p, 1);
-            saveStoreData();
-            loadAdminProducts();
-            showToast('✅ تم الحذف');
-        };
-
-        window.addProduct = function(s, c) {
-            const name = document.getElementById(`new_name_${s}_${c}`).value;
-            const price = parseFloat(document.getElementById(`new_price_${s}_${c}`).value);
-            if (!name || isNaN(price)) return showToast('بيانات غير صحيحة', 'error');
-            storeData.sections[s].categories[c].products.push({ name, price });
-            saveStoreData();
-            document.getElementById(`new_name_${s}_${c}`).value = '';
-            document.getElementById(`new_price_${s}_${c}`).value = '';
-            loadAdminProducts();
-            showToast('✅ تمت الإضافة');
-        };
-
-        function isAdmin() {
-            return currentUser && currentUser.email === ADMIN_EMAIL;
-        }
-
-        window.showAdminPanel = function() {
-            if (!isAdmin()) {
-                showToast('غير مصرح لك بالدخول', 'error');
-                return;
-            }
-            document.getElementById('adminPanel').style.display = 'block';
-            loadAdminProducts();
-            loadAdminOrders();
-            loadAdminUsers();
-            loadAdminStats();
-        };
-
-        window.hideAdminPanel = function() {
-            document.getElementById('adminPanel').style.display = 'none';
-        };
-
-        window.showAdminTab = function(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('admin' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-            if (tab === 'products') loadAdminProducts();
-            if (tab === 'orders') loadAdminOrders();
-            if (tab === 'users') loadAdminUsers();
-            if (tab === 'stats') loadAdminStats();
-        };
-
-        // ==================== دوال واجهة المستخدم ====================
-        window.toggleSideMenu = function() {
-            document.getElementById('sideMenu').classList.toggle('show');
-        };
-
-        window.toggleTheme = function() {
-            document.body.classList.toggle('light-mode');
-        };
-
-        function updateAdminMenu() {
-            const adminMenuItem = document.getElementById('adminMenuItem');
-            if (adminMenuItem) {
-                adminMenuItem.style.display = (currentUser && currentUser.email === ADMIN_EMAIL) ? 'block' : 'none';
-            }
-            const adminLink = document.getElementById('adminLink');
-            if (adminLink) {
-                adminLink.style.display = (currentUser && currentUser.email === ADMIN_EMAIL) ? 'block' : 'none';
-            }
-        }
 
         window.showMainCategories = function() {
             const container = document.getElementById('mainCategories');
             if (!container) return;
-
             container.innerHTML = '';
             storeData.sections.forEach(section => {
                 container.innerHTML += `
@@ -1256,8 +833,6 @@
                     </div>
                 `;
             });
-            document.getElementById('subContent').innerHTML = '';
-            updateBreadcrumb([{ name: 'الرئيسية' }]);
         };
 
         window.showCategories = function(sectionId) {
@@ -1265,9 +840,7 @@
             if (!section) return;
             const container = document.getElementById('subContent');
             if (!container) return;
-
             container.innerHTML = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${section.name}</h2>`;
-
             section.categories.forEach(cat => {
                 container.innerHTML += `
                     <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
@@ -1279,11 +852,6 @@
                     </div>
                 `;
             });
-
-            updateBreadcrumb([
-                { name: 'الرئيسية', onclick: 'showMainCategories()' },
-                { name: section.name }
-            ]);
         };
 
         window.showProducts = function(sectionId, categoryId) {
@@ -1293,9 +861,7 @@
             if (!category) return;
             const container = document.getElementById('subContent');
             if (!container) return;
-
             let html = `<h2 style="color: #fbbf24; text-align: center; margin: 15px;">${category.name}</h2><div class="products-grid">`;
-
             category.products.forEach(prod => {
                 html += `
                     <div class="product-card" onclick="openPurchaseModal('${prod.name}', ${prod.price})">
@@ -1305,32 +871,9 @@
                     </div>
                 `;
             });
-
             html += '</div>';
             container.innerHTML = html;
-
-            updateBreadcrumb([
-                { name: 'الرئيسية', onclick: 'showMainCategories()' },
-                { name: section.name, onclick: `showCategories('${section.id}')` },
-                { name: category.name }
-            ]);
         };
-
-        function updateBreadcrumb(path) {
-            const bc = document.getElementById('breadcrumb');
-            if (!bc) return;
-
-            bc.innerHTML = '<i class="fas fa-home" onclick="showMainCategories()"></i>';
-
-            path.forEach((item, i) => {
-                if (item.onclick) {
-                    bc.innerHTML += `<span onclick="${item.onclick}">${item.name}</span>`;
-                } else {
-                    bc.innerHTML += `<span>${item.name}</span>`;
-                }
-                if (i < path.length - 1) bc.innerHTML += `<i class="fas fa-chevron-left"></i>`;
-            });
-        }
 
         window.openPurchaseModal = function(name, price) {
             if (!currentUser) {
@@ -1343,11 +886,44 @@
             document.getElementById('purchaseModal').style.display = 'flex';
         };
 
-        // ==================== دوال مساعدة ====================
+        function isAdmin() {
+            return currentUser && currentUser.email === ADMIN_EMAIL;
+        }
+
+        window.showAdminPanel = function() {
+            if (!isAdmin()) {
+                showToast('غير مصرح', 'error');
+                return;
+            }
+            document.getElementById('adminPanel').style.display = 'block';
+        };
+
+        window.hideAdminPanel = function() {
+            document.getElementById('adminPanel').style.display = 'none';
+        };
+
+        window.toggleSideMenu = function() {
+            document.getElementById('sideMenu').classList.toggle('show');
+        };
+
+        window.toggleTheme = function() {
+            document.body.classList.toggle('light-mode');
+        };
+
+        function updateAdminMenu() {
+            const adminMenuItem = document.getElementById('adminMenuItem');
+            if (adminMenuItem) {
+                adminMenuItem.style.display = isAdmin() ? 'block' : 'none';
+            }
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) {
+                adminLink.style.display = isAdmin() ? 'block' : 'none';
+            }
+        }
+
         window.showToast = function(message, type = 'success') {
             const toast = document.getElementById('toast');
             if (!toast) return;
-
             toast.textContent = message;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
@@ -1366,6 +942,11 @@
             document.getElementById(id).style.display = 'none';
         };
 
+        window.toggleDropdown = function() {
+            const d = document.getElementById('userDropdown');
+            if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
+        };
+
         window.showWallet = function() {
             if (!currentUser) {
                 showToast('سجل دخول أولاً', 'error');
@@ -1376,11 +957,14 @@
             document.getElementById('walletModal').style.display = 'flex';
         };
 
+        window.showMyOrders = function() {
+            showToast('طلباتك قريباً');
+        };
+
         function updateUI() {
             const loginIcon = document.getElementById('loginIcon');
             const userMenu = document.getElementById('userMenu');
             const userName = document.getElementById('userName');
-
             if (currentUser) {
                 if (loginIcon) loginIcon.style.display = 'none';
                 if (userMenu) {
@@ -1393,31 +977,15 @@
             }
         }
 
-        // ==================== دالة اختبار Firebase ====================
         window.testFirebase = function() {
-            console.log("✅ Firebase initialized:", app.name);
-            console.log("✅ Auth:", auth.name);
-            console.log("✅ Firestore:", db.app.name);
-            showToast("✅ Firebase متصل بنجاح");
+            console.log("✅ Firebase initialized");
+            showToast("✅ Firebase متصل");
         };
 
-        // ==================== تحديث عداد السلة ====================
-        setInterval(async () => {
-            if (currentUser) {
-                const q = query(collection(db, 'orders'), where('userId', '==', currentUser.uid));
-                const querySnapshot = await getDocs(q);
-                document.getElementById('cartBadge').textContent = querySnapshot.size;
-            }
-        }, 5000);
-
-        // ==================== تهيئة الصفحة ====================
         window.onload = function() {
             showMainCategories();
             updateUI();
             updateAdminMenu();
-            setTimeout(() => {
-                testFirebase();
-            }, 1000);
         };
     </script>
 </body>
