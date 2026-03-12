@@ -113,11 +113,16 @@
         </div>
     </div>
 
+    <!-- نافذة المحفظة -->
     <div id="walletModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('walletModal')">&times;</span>
             <h2 style="text-align: center;">محفظتي</h2>
             <div style="font-size: 36px; color: #fbbf24; text-align: center; margin: 20px 0;" id="walletBalance">0$</div>
+            
+            <!-- زر الإيداع الجديد -->
+            <button onclick="showDepositModal()" style="width: 100%; background: #fbbf24; color: #000; border: none; padding: 15px; border-radius: 30px; font-weight: 700; margin-bottom: 20px;">💰 إيداع رصيد جديد</button>
+            
             <h3>شحن الرصيد</h3>
             <select id="chargeAmount">
                 <option value="5">5 $</option>
@@ -140,6 +145,11 @@
     </div>
 
     <div id="toast" class="toast"></div>
+
+    <!-- نافذة الإيداع الجديدة (مخبأة، يتم عرضها عبر JavaScript) -->
+    <div id="depositModal" class="modal">
+        <!-- المحتوى يتم إنشاؤه ديناميكياً بواسطة JavaScript في ملف wallet.js -->
+    </div>
 
     <!-- ملفات JavaScript -->
     <script src="js/firebase-config.js" type="module"></script>
