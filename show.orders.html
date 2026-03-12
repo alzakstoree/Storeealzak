@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>عرض الطلبات</title>
+</head>
+<body style="background: #111; color: #fff; direction: rtl;">
+    <h1 style="color: #fbbf24;">📋 الطلبات في Firebase</h1>
+    <div id="result" style="background: #222; padding: 15px; border-radius: 10px;"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCO_VTLgQkTOv_MkB0SEdSEYdRMi9IdMFA",
+            authDomain: "alzak-store-dea53.firebaseapp.com",
+            projectId: "alzak-store-dea53"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadOrders() {
+            const div = document.getElementById('result');
+            div.innerHTML = '⏳ جاري التحميل...';
+
+            try {
+                const snapshot = await db.collection('orders').get();
+                if (snapshot.empty) {
+                    div.innerHTML = '❌ لا توجد طلبات في قاعدة البيانات';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const o = doc.data();
+                    html += `
+                        <div style="border-bottom:1px solid #333; padding:10px;">
+                            <strong>${o.product || '?'}</strong> - ${o.price || 0}$<br>
+                            المستخدم: ${o.userEmail || '?'}<br>
+                            الحالة: ${o.status || '?'}<br>
+                            <small>المعرف: ${o.userId || 'لا يوجد'}</small>
+                        </div>
+                    `;
+                });
+                div.innerHTML = html;
+            } catch (e) {
+                div.innerHTML = '❌ خطأ: ' + e.message;
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>
