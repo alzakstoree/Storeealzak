@@ -3,26 +3,23 @@ import { db } from './firebase-config.js';
 import { currentUser } from './auth.js';
 import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ===== بيانات طرق الدفع =====
+// ===== بيانات طرق الدفع (بدون أسماء) =====
 const paymentMethods = [
     {
         name: 'شام كاش',
-        walletNumber: '053b8f0d907772543d262622121d6df2',
-        accountName: 'اسحاق وسام الاسماعيل'
+        walletNumber: '053b8f0d907772543d262622121d6df2'
     },
     {
         name: 'يا مرسال',
-        walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
-        accountName: 'ALZAK STORE'
+        walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk'
     },
     {
         name: 'ليرات',
-        walletNumber: 'L793143293',
-        accountName: 'ALZAK STORE'
+        walletNumber: 'L793143293'
     }
 ];
 
-// ===== المحفظة =====
+// ===== المحفظة (عرض الرصيد) =====
 export async function getWalletBalance() {
     if (!currentUser) return 0;
     const docRef = doc(db, 'users', currentUser.uid);
@@ -53,40 +50,7 @@ export async function updateWalletDisplay() {
     document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
 }
 
-// طلب شحن عادي (النظام القديم)
-window.requestCharge = async function() {
-    if (!currentUser) {
-        showToast('❌ سجل دخول أولاً', 'error');
-        showAuthModal();
-        return;
-    }
-    
-    const amount = parseFloat(document.getElementById('chargeAmount').value);
-    if (amount < 1) {
-        showToast('❌ الحد الأدنى للشحن 1$', 'error');
-        return;
-    }
-    
-    try {
-        await addDoc(collection(db, 'charges'), {
-            userId: currentUser.uid,
-            userEmail: currentUser.email,
-            amount: amount,
-            status: 'pending',
-            date: new Date().toISOString()
-        });
-        
-        showToast('✅ تم إرسال طلب الشحن');
-        closeModal('walletModal');
-        
-        const msg = `💰 طلب شحن جديد\nالمستخدم: ${currentUser.email}\nالمبلغ: ${amount}$`;
-        window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
-    } catch (error) {
-        showToast('❌ فشل إرسال الطلب', 'error');
-    }
-};
-
-// ===== نافذة الإيداع الجديدة =====
+// ===== نافذة الإيداع الجديدة (بتحسينات التصميم) =====
 window.showDepositModal = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
@@ -97,50 +61,45 @@ window.showDepositModal = function() {
     let methodsHtml = '';
     paymentMethods.forEach((method) => {
         methodsHtml += `
-            <div style="margin-bottom: 20px; padding: 15px; background: #1a1a1a; border-radius: 15px; border: 2px solid #fbbf24;">
-                <h4 style="color: #fbbf24; margin-bottom: 10px;">💰 ${method.name}</h4>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0;">
-                    <span>رقم المحفظة:</span>
-                    <span style="color: #fbbf24; font-size: 12px; direction: ltr;">${method.walletNumber}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}')" style="background: #fbbf24; color: #000; border: none; padding: 5px 10px; border-radius: 20px; font-weight: 700;">نسخ</button>
+            <div style="margin-bottom: 15px; padding: 15px; background: #1a1a1a; border-radius: 15px; border: 2px solid #fbbf24;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <h4 style="color: #fbbf24; margin: 0;">💰 ${method.name}</h4>
+                    <input type="radio" name="paymentMethod" value="${method.name}" id="${method.name}" style="transform: scale(1.2);">
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0;">
-                    <span>الاسم:</span>
-                    <span style="color: #fbbf24;">${method.accountName}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${method.accountName}')" style="background: #fbbf24; color: #000; border: none; padding: 5px 10px; border-radius: 20px; font-weight: 700;">نسخ</button>
-                </div>
-                <div style="margin-top: 10px; text-align: center;">
-                    <input type="radio" name="paymentMethod" value="${method.name}" id="${method.name}" style="margin-left: 5px;">
-                    <label for="${method.name}">اختيار ${method.name}</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #333; padding: 10px; border-radius: 10px;">
+                    <span style="color: #fbbf24; font-size: 14px; direction: ltr; word-break: break-all;">${method.walletNumber}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}')" style="background: #fbbf24; color: #000; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px; white-space: nowrap;">نسخ</button>
                 </div>
             </div>
         `;
     });
     
     const modalHtml = `
-        <div id="depositModal" class="modal" style="display: flex;">
-            <div class="modal-content" style="max-width: 500px;">
-                <span class="close" onclick="closeModal('depositModal')">&times;</span>
-                <h2 style="text-align: center; color: #fbbf24;">💰 إيداع رصيد جديد</h2>
+        <div id="depositModal" class="modal" style="display: flex; align-items: flex-start; overflow-y: auto;">
+            <div class="modal-content" style="max-width: 500px; margin: 20px auto; max-height: 90vh; overflow-y: auto;">
+                <span class="close" onclick="closeModal('depositModal')" style="position: sticky; top: 0;">&times;</span>
+                <h2 style="text-align: center; color: #fbbf24; margin-top: 0;">💰 إيداع رصيد جديد</h2>
                 
-                ${methodsHtml}
+                <div style="max-height: 300px; overflow-y: auto; padding: 5px;">
+                    ${methodsHtml}
+                </div>
                 
                 <div style="margin: 20px 0;">
                     <label style="display: block; margin-bottom: 5px;">المبلغ الذي قمت بتحويله ($) (الحد الأدنى 2$):</label>
-                    <input type="number" id="depositAmount" min="2" step="0.01" style="width: 100%; padding: 12px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل المبلغ">
+                    <input type="number" id="depositAmount" min="2" step="0.01" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل المبلغ">
                 </div>
                 
                 <div style="margin: 20px 0;">
                     <label style="display: block; margin-bottom: 5px;">رقم العملية (Transaction ID):</label>
-                    <input type="text" id="transactionId" style="width: 100%; padding: 12px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل رقم العملية من التطبيق">
+                    <input type="text" id="transactionId" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل رقم العملية من التطبيق">
                 </div>
                 
                 <div style="margin: 20px 0;">
                     <label style="display: block; margin-bottom: 5px;">صورة الإيصال (من التطبيق):</label>
-                    <input type="file" id="receiptImage" accept="image/*" style="width: 100%; padding: 12px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff;">
+                    <input type="file" id="receiptImage" accept="image/*" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff;">
                 </div>
                 
-                <button onclick="submitDeposit()" style="width: 100%; background: #fbbf24; color: #000; border: none; padding: 15px; border-radius: 30px; font-weight: 700; font-size: 16px;">📤 إرسال طلب الإيداع</button>
+                <button onclick="submitDeposit()" style="width: 100%; background: #fbbf24; color: #000; border: none; padding: 15px; border-radius: 30px; font-weight: 700; font-size: 16px; margin-bottom: 10px;">📤 إرسال طلب الإيداع</button>
             </div>
         </div>
     `;
@@ -171,7 +130,6 @@ window.submitDeposit = async function() {
         return;
     }
     
-    // تحديد طريقة الدفع المختارة
     const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
     if (!selectedMethod) {
         showToast('❌ اختر طريقة الدفع أولاً', 'error');
@@ -198,7 +156,6 @@ window.submitDeposit = async function() {
         return;
     }
     
-    // تحويل الصورة إلى Base64
     const file = fileInput.files[0];
     const reader = new FileReader();
     
@@ -206,7 +163,6 @@ window.submitDeposit = async function() {
         const imageBase64 = e.target.result.split(',')[1];
         
         try {
-            // إنشاء طلب الإيداع في قاعدة البيانات
             const depositRef = await addDoc(collection(db, 'charges'), {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
@@ -221,7 +177,6 @@ window.submitDeposit = async function() {
                 fileType: file.type
             });
             
-            // إرسال رسالة واتساب للمدير بكل التفاصيل
             const msg = `💰 طلب إيداع جديد
 ════════════════
 👤 المستخدم: ${currentUser.name}
@@ -247,7 +202,7 @@ window.submitDeposit = async function() {
     reader.readAsDataURL(file);
 };
 
-// دوال المحفظة القديمة (تظل كما هي)
+// دالة عرض المحفظة (بإزالة النظام القديم)
 window.showWallet = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
