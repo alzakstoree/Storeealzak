@@ -4,10 +4,13 @@
 export const defaultStoreData = {
     sections: [
         {
-            id: 'games',
-            name: 'الألعاب',
-            icon: 'fa-gamepad',
-            image: <a href="https://ibb.co/fZGThJq"><img src="https://i.ibb.co/5CxJNZG/Screenshot-20260312-222843.jpg" alt="Screenshot-20260312-222843" border="0"></a> // صورة غلاف الألعاب
+           {
+    id: 'games',
+    name: 'الألعاب',
+    icon: 'fa-gamepad',
+    image: 'https://i.ibb.co/5CxJNZG/Screenshot-20260312-222843.jpg',  // <--- الرابط الجديد
+    categories: [ ... ]
+}, صورة غلاف الألعاب
             categories: [
                 {
                     id: 'pubg',
