@@ -491,6 +491,91 @@ body.light-mode .user-email {
     font-size: 10px; /* تصغير خط الزر */
 }
 
+/* ===== كروت طرق الدفع (3 في السطر مع صور) ===== */
+.payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.payment-card {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 15px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-card:hover {
+    border-color: #fbbf24;
+    transform: translateY(-3px);
+}
+
+.payment-card.selected {
+    border-color: #fbbf24;
+    background: #222;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+}
+
+.payment-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fbbf24;
+}
+
+.payment-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.payment-name {
+    color: #fbbf24;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 5px 0 0;
+}
+
+.payment-number {
+    font-size: 10px;
+    color: #888;
+    word-break: break-all;
+    direction: ltr;
+    margin: 3px 0;
+    padding: 0 5px;
+}
+
+.payment-card .copy-btn {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+    width: 80%;
+    margin-top: 5px;
+    transition: 0.2s;
+}
+
+.payment-card .copy-btn:hover {
+    background: #fff;
+}
+
 /* ===== لوحة المدير ===== */
 .admin-panel {
     position: fixed;
@@ -761,7 +846,7 @@ body.light-mode .nav-item:hover {
 /* ===== التجاوب مع الجوال ===== */
 @media (max-width: 480px) {
     .products-grid {
-        grid-template-columns: repeat(3, 1fr); /* حتى على الجوال 3 أعمدة */
+        grid-template-columns: repeat(3, 1fr);
         gap: 5px;
         padding: 5px;
     }
@@ -781,6 +866,32 @@ body.light-mode .nav-item:hover {
     .buy-btn {
         font-size: 8px;
         padding: 3px 0;
+    }
+    
+    .payment-grid {
+        gap: 5px;
+    }
+    
+    .payment-card {
+        padding: 10px 5px;
+    }
+    
+    .payment-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .payment-name {
+        font-size: 12px;
+    }
+    
+    .payment-number {
+        font-size: 8px;
+    }
+    
+    .payment-card .copy-btn {
+        font-size: 9px;
+        padding: 4px 8px;
     }
     
     .categories-grid {
