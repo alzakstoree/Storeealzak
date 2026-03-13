@@ -1,7 +1,7 @@
 // ==================== دوال المحفظة والطلبات ====================
 import { db } from './firebase-config.js';
 import { currentUser } from './auth.js';
-import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ===== بيانات طرق الدفع (بدون أسماء) =====
 const paymentMethods = [
@@ -27,10 +27,27 @@ export async function getWalletBalance() {
     return docSnap.data()?.walletBalance || 0;
 }
 
-export async function updateWalletDisplay() {
+// تحديث الرصيد في الهيدر والقائمة الجانبية
+export async function updateWalletBalance() {
     if (!currentUser) return;
     const balance = await getWalletBalance();
-    document.getElementById('walletBalance').textContent = balance + '$';
+    
+    // تحديث الرصيد في الهيدر
+    const walletMini = document.getElementById('walletMini');
+    if (walletMini) {
+        walletMini.textContent = balance + '$';
+    }
+    
+    // تحديث الرصيد في نافذة المحفظة
+    const walletBalance = document.getElementById('walletBalance');
+    if (walletBalance) {
+        walletBalance.textContent = balance + '$';
+    }
+}
+
+export async function updateWalletDisplay() {
+    if (!currentUser) return;
+    await updateWalletBalance();
     
     const q = query(
         collection(db, 'transactions'),
@@ -50,7 +67,7 @@ export async function updateWalletDisplay() {
     document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
 }
 
-// ===== نافذة الإيداع الجديدة (بتحسينات التصميم) =====
+// ===== نافذة الإيداع الجديدة =====
 window.showDepositModal = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
@@ -104,13 +121,11 @@ window.showDepositModal = function() {
         </div>
     `;
     
-    // إزالة أي نافذة إيداع قديمة
     let oldModal = document.getElementById('depositModal');
     if (oldModal) {
         oldModal.remove();
     }
     
-    // إضافة النافذة الجديدة
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 };
 
@@ -202,7 +217,7 @@ window.submitDeposit = async function() {
     reader.readAsDataURL(file);
 };
 
-// دالة عرض المحفظة (بإزالة النظام القديم)
+// دالة عرض المحفظة
 window.showWallet = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
@@ -212,3 +227,35 @@ window.showWallet = function() {
     updateWalletDisplay();
     document.getElementById('walletModal').style.display = 'flex';
 };
+
+// دالة لتأكيد الشحن من المدير (تستخدم في admin.js)
+export async function confirmCharge(chargeId, userId, amount) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        const chargeRef = doc(db, 'charges', chargeId);
+        
+        const userDoc = await getDoc(userRef);
+        const newBalance = (userDoc.data().walletBalance || 0) + amount;
+        
+        await updateDoc(userRef, { walletBalance: newBalance });
+        await updateDoc(chargeRef, { status: 'completed' });
+        
+        await addDoc(collection(db, 'transactions'), {
+            userId: userId,
+            type: 'charge',
+            amount: amount,
+            description: 'شحن رصيد',
+            date: new Date().toISOString()
+        });
+        
+        // تحديث الرصيد في الواجهة إذا كان المستخدم الحالي هو نفسه
+        if (currentUser && currentUser.uid === userId) {
+            updateWalletBalance();
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('خطأ في تأكيد الشحن:', error);
+        return false;
+    }
+}
