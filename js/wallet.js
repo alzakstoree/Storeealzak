@@ -3,22 +3,25 @@ import { db } from './firebase-config.js';
 import { currentUser } from './auth.js';
 import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ===== بيانات طرق الدفع مع الصور الحقيقية =====
-const paymentMethods = [
+// ===== بيانات طرق الدفع مع الصور الحقيقية (تُستخدم في الصفحات الجديدة) =====
+export const paymentMethods = [
     {
         name: 'شام كاش',
         walletNumber: '053b8f0d907772543d262622121d6df2',
-        image: 'https://i.ibb.co/5XhmqrJq/Screenshot-20260313-152931.jpg'
+        image: 'https://i.ibb.co/5XhmqrJq/Screenshot-20260313-152931.jpg',
+        accountName: 'اسحاق وسام الاسماعيل'
     },
     {
         name: 'يا مرسال',
         walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
-        image: 'https://i.ibb.co/4ZcSH80M/Screenshot-20260313-152751.jpg'
+        image: 'https://i.ibb.co/4ZcSH80M/Screenshot-20260313-152751.jpg',
+        accountName: 'ALZAK STORE'
     },
     {
         name: 'ليرات',
         walletNumber: 'L793143293',
-        image: 'https://i.ibb.co/5hm3cHSk/Screenshot-20260313-153215.jpg'
+        image: 'https://i.ibb.co/5hm3cHSk/Screenshot-20260313-153215.jpg',
+        accountName: 'ALZAK STORE'
     }
 ];
 
@@ -70,92 +73,16 @@ export async function updateWalletDisplay() {
     document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
 }
 
-// دالة لتحديد طريقة الدفع
-function selectPaymentMethod(methodName) {
-    // إزالة التحديد السابق
-    document.querySelectorAll('.payment-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    
-    // تحديد الكارد المختار
-    const selectedCard = Array.from(document.querySelectorAll('.payment-card')).find(
-        card => card.getAttribute('data-method') === methodName
-    );
-    if (selectedCard) {
-        selectedCard.classList.add('selected');
-    }
-    
-    // تحديث الراديو المخفي
-    let radio = document.querySelector(`input[value="${methodName}"]`);
-    if (!radio) {
-        radio = document.createElement('input');
-        radio.type = 'radio';
-        radio.name = 'paymentMethod';
-        radio.value = methodName;
-        radio.style.display = 'none';
-        document.getElementById('depositModal').appendChild(radio);
-    }
-    radio.checked = true;
-}
+// ===== دوال الانتقال بين الصفحات =====
 
-// ===== نافذة الإيداع الجديدة (كروت 3 في السطر) =====
+// فتح صفحة طرق الدفع (بدل النافذة المنبثقة)
 window.showDepositModal = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
         showAuthModal();
         return;
     }
-    
-    let methodsHtml = '';
-    paymentMethods.forEach((method) => {
-        methodsHtml += `
-            <div class="payment-card" data-method="${method.name}" onclick="selectPaymentMethod('${method.name}')">
-                <div class="payment-image">
-                    <img src="${method.image}" alt="${method.name}">
-                </div>
-                <h4 class="payment-name">${method.name}</h4>
-                <div class="payment-number">${method.walletNumber}</div>
-                <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}'); event.stopPropagation();">📋 نسخ</button>
-            </div>
-        `;
-    });
-    
-    const modalHtml = `
-        <div id="depositModal" class="modal" style="display: flex; align-items: flex-start; overflow-y: auto;">
-            <div class="modal-content" style="max-width: 550px; margin: 20px auto; max-height: 90vh; overflow-y: auto;">
-                <span class="close" onclick="closeModal('depositModal')" style="position: sticky; top: 0;">&times;</span>
-                <h2 style="text-align: center; color: #fbbf24; margin-top: 0;">💰 إيداع رصيد جديد</h2>
-                
-                <div class="payment-grid">
-                    ${methodsHtml}
-                </div>
-                
-                <div style="margin: 20px 0;">
-                    <label style="display: block; margin-bottom: 5px;">المبلغ الذي قمت بتحويله ($) (الحد الأدنى 2$):</label>
-                    <input type="number" id="depositAmount" min="2" step="0.01" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل المبلغ">
-                </div>
-                
-                <div style="margin: 20px 0;">
-                    <label style="display: block; margin-bottom: 5px;">رقم العملية (Transaction ID):</label>
-                    <input type="text" id="transactionId" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff; font-size: 16px;" placeholder="أدخل رقم العملية من التطبيق">
-                </div>
-                
-                <div style="margin: 20px 0;">
-                    <label style="display: block; margin-bottom: 5px;">صورة الإيصال (من التطبيق):</label>
-                    <input type="file" id="receiptImage" accept="image/*" style="width: 100%; padding: 15px; background: #333; border: 1px solid #fbbf24; border-radius: 10px; color: #fff;">
-                </div>
-                
-                <button onclick="submitDeposit()" style="width: 100%; background: #fbbf24; color: #000; border: none; padding: 15px; border-radius: 30px; font-weight: 700; font-size: 16px; margin-bottom: 10px;">📤 إرسال طلب الإيداع</button>
-            </div>
-        </div>
-    `;
-    
-    let oldModal = document.getElementById('depositModal');
-    if (oldModal) {
-        oldModal.remove();
-    }
-    
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    window.location.href = 'payment-methods.html';
 };
 
 // نسخ النص إلى الحافظة
@@ -167,83 +94,47 @@ window.copyToClipboard = function(text) {
     });
 };
 
-// إرسال طلب الإيداع
-window.submitDeposit = async function() {
+// إرسال طلب الإيداع (يُستدعى من صفحة payment-confirm.html)
+window.submitDeposit = async function(amount, transactionId, imageBase64, fileName, fileType) {
     if (!currentUser) {
         showToast('❌ سجل دخول أولاً', 'error');
-        return;
+        return false;
     }
     
-    const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
-    if (!selectedMethod) {
-        showToast('❌ اختر طريقة الدفع أولاً', 'error');
-        return;
-    }
-    const methodName = selectedMethod.value;
-    
-    const amount = parseFloat(document.getElementById('depositAmount')?.value);
-    const transactionId = document.getElementById('transactionId')?.value.trim();
-    const fileInput = document.getElementById('receiptImage');
-    
-    if (!amount || amount < 2) {
-        showToast('❌ الحد الأدنى للإيداع 2$', 'error');
-        return;
-    }
-    
-    if (!transactionId) {
-        showToast('❌ يرجى إدخال رقم العملية', 'error');
-        return;
-    }
-    
-    if (!fileInput || fileInput.files.length === 0) {
-        showToast('❌ يرجى رفع صورة الإيصال', 'error');
-        return;
-    }
-    
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = async function(e) {
-        const imageBase64 = e.target.result.split(',')[1];
+    try {
+        const depositRef = await addDoc(collection(db, 'charges'), {
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            userName: currentUser.name,
+            amount: amount,
+            method: localStorage.getItem('selectedPaymentMethod'),
+            transactionId: transactionId,
+            status: 'pending',
+            date: new Date().toISOString(),
+            imageBase64: imageBase64,
+            fileName: fileName,
+            fileType: fileType
+        });
         
-        try {
-            const depositRef = await addDoc(collection(db, 'charges'), {
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                userName: currentUser.name,
-                amount: amount,
-                method: methodName,
-                transactionId: transactionId,
-                status: 'pending',
-                date: new Date().toISOString(),
-                imageBase64: imageBase64,
-                fileName: file.name,
-                fileType: file.type
-            });
-            
-            const msg = `💰 طلب إيداع جديد
+        const msg = `💰 طلب إيداع جديد
 ════════════════
 👤 المستخدم: ${currentUser.name}
 📧 البريد: ${currentUser.email}
 💵 المبلغ: ${amount}$
-💳 طريقة الدفع: ${methodName}
+💳 طريقة الدفع: ${localStorage.getItem('selectedPaymentMethod')}
 🔢 رقم العملية: ${transactionId}
 🆔 رقم الطلب: ${depositRef.id}
 📅 التاريخ: ${new Date().toLocaleString()}
 ════════════════
-📎 الصورة مرفقة: ${file.name}`;
-            
-            window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
-            
-            showToast('✅ تم إرسال طلب الإيداع، سيتم مراجعته قريباً');
-            closeModal('depositModal');
-            
-        } catch (error) {
-            showToast('❌ فشل إرسال الطلب: ' + error.message, 'error');
-        }
-    };
-    
-    reader.readAsDataURL(file);
+📎 الصورة مرفقة: ${fileName}`;
+        
+        window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
+        
+        return true;
+    } catch (error) {
+        console.error('خطأ في إرسال الطلب:', error);
+        return false;
+    }
 };
 
 // ===== دوال الطلبات (السلة) =====
