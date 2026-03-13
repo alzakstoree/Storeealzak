@@ -63,9 +63,8 @@
                 </div>
             </div>
             <ul class="menu-items">
-                <li><a href="#" onclick="showWallet(); toggleSideMenu()"><i class="fas fa-wallet"></i> محفظتي</a></li>
-                <li><a href="#" onclick="showMyOrders(); toggleSideMenu()"><i class="fas fa-shopping-cart"></i> طلباتي</a></li>
-                <li><a href="#" onclick="showDepositModal(); toggleSideMenu()"><i class="fas fa-plus-circle"></i> تعبئة رصيد</a></li>
+                <!-- زر لوحة المدير (يظهر فقط للمدير) -->
+                <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
                 <li><a href="#" onclick="logout(); toggleSideMenu()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</a></li>
             </ul>
         </div>
