@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>طرق الدفع - ALZAK STORE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* تنسيقات إضافية لصفحة طرق الدفع */
+        .payment-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #000;
+            border-bottom: 3px solid #fbbf24;
+        }
+        .payment-header i {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fbbf24;
+            margin-left: 15px;
+        }
+        .payment-header h1 {
+            font-size: 20px;
+            color: #fbbf24;
+        }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+        .payment-card {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .payment-card:hover {
+            border-color: #fbbf24;
+            transform: translateY(-5px);
+        }
+        .payment-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #fbbf24;
+        }
+        .payment-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .payment-name {
+            color: #fbbf24;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .payment-number {
+            font-size: 12px;
+            color: #888;
+            word-break: break-all;
+            direction: ltr;
+            padding: 0 5px;
+        }
+        @media (max-width: 480px) {
+            .payment-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            .payment-image {
+                width: 60px;
+                height: 60px;
+            }
+            .payment-name {
+                font-size: 14px;
+            }
+            .payment-number {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-header">
+        <i class="fas fa-arrow-right" onclick="goBack()"></i>
+        <h1>طرق الدفع</h1>
+    </div>
+
+    <div class="payment-grid" id="paymentMethodsGrid">
+        <!-- سيتم تعبئتها عبر JavaScript -->
+    </div>
+
+    <script>
+        // بيانات طرق الدفع
+        const paymentMethods = [
+            {
+                name: 'شام كاش',
+                walletNumber: '053b8f0d907772543d262622121d6df2',
+                image: 'https://i.ibb.co/5XhmqrJq/Screenshot-20260313-152931.jpg',
+                accountName: 'اسحاق وسام الاسماعيل'
+            },
+            {
+                name: 'يا مرسال',
+                walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
+                image: 'https://i.ibb.co/4ZcSH80M/Screenshot-20260313-152751.jpg',
+                accountName: 'ALZAK STORE'
+            },
+            {
+                name: 'ليرات',
+                walletNumber: 'L793143293',
+                image: 'https://i.ibb.co/5hm3cHSk/Screenshot-20260313-153215.jpg',
+                accountName: 'ALZAK STORE'
+            }
+        ];
+
+        // عرض طرق الدفع
+        function displayPaymentMethods() {
+            const grid = document.getElementById('paymentMethodsGrid');
+            grid.innerHTML = '';
+            
+            paymentMethods.forEach(method => {
+                const card = document.createElement('div');
+                card.className = 'payment-card';
+                card.onclick = () => selectPaymentMethod(method.name);
+                card.innerHTML = `
+                    <div class="payment-image">
+                        <img src="${method.image}" alt="${method.name}">
+                    </div>
+                    <div class="payment-name">${method.name}</div>
+                    <div class="payment-number">${method.walletNumber}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // اختيار طريقة الدفع
+        function selectPaymentMethod(methodName) {
+            // تخزين الطريقة المختارة في localStorage
+            localStorage.setItem('selectedPaymentMethod', methodName);
+            // الانتقال إلى صفحة تأكيد الإيداع
+            window.location.href = 'payment-confirm.html';
+        }
+
+        // العودة للصفحة السابقة
+        function goBack() {
+            window.history.back();
+        }
+
+        // تشغيل العرض عند تحميل الصفحة
+        displayPaymentMethods();
+    </script>
+</body>
+</html>
