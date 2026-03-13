@@ -142,6 +142,7 @@ window.showMainCategories = function() {
     });
 };
 
+// دالة عرض الفئات الفرعية (معدلة - الاسم تحت الصورة)
 window.showCategories = function(sectionId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     if (!section) return;
@@ -162,10 +163,9 @@ window.showCategories = function(sectionId) {
     
     section.categories.forEach(cat => {
         html += `
-            <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')" style="background-image: url('${cat.image}')">
-                <div class="category-overlay">
-                    <h4>${cat.name}</h4>
-                </div>
+            <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
+                <div class="category-image" style="background-image: url('${cat.image}')"></div>
+                <div class="category-name">${cat.name}</div>
             </div>
         `;
     });
