@@ -45,6 +45,7 @@ body.light-mode {
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
 }
 
 .wallet-mini {
@@ -63,7 +64,113 @@ body.light-mode {
     color: #fbbf24;
 }
 
-/* ===== القائمة الجانبية الجديدة ===== */
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: url('https://i.ibb.co/1YJrvSr3/file-000000005428724691b0c7d13890c115-1.jpg') no-repeat center center/cover;
+    border: 2px solid #fbbf24;
+    cursor: pointer;
+}
+
+/* ===== القائمة المنسدلة اليمنى ===== */
+#userMenu {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background: #1a1a1a;
+    padding: 8px 12px;
+    border-radius: 30px;
+    border: 2px solid #fbbf24;
+    position: relative;
+}
+
+#userMenu span {
+    color: #fbbf24;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+#userMenu i {
+    font-size: 16px;
+    color: #fbbf24;
+}
+
+.dropdown {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: #111;
+    border: 2px solid #fbbf24;
+    border-radius: 15px;
+    padding: 15px;
+    min-width: 220px;
+    display: none;
+    z-index: 1001;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+#userMenu:hover .dropdown {
+    display: block;
+}
+
+.dropdown-user-info {
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.dropdown-name {
+    color: #fbbf24;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.dropdown-email {
+    color: #888;
+    font-size: 12px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #333;
+    margin: 10px 0;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    text-align: right;
+}
+
+.dropdown a:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+body.light-mode .dropdown {
+    background: #fff;
+}
+
+body.light-mode .dropdown-name {
+    color: #fbbf24;
+}
+
+body.light-mode .dropdown-email {
+    color: #666;
+}
+
+body.light-mode .dropdown a {
+    color: #000;
+}
+
+/* ===== القائمة الجانبية ===== */
 .side-menu {
     position: fixed;
     top: 0;
@@ -362,23 +469,24 @@ body.light-mode .menu-profile .profile-email {
     font-size: 20px;
 }
 
-/* ===== الفئات الفرعية (مربعات بجانب بعض) ===== */
+/* ===== الفئات الفرعية (3 مربعات بجانب بعض - أصغر) ===== */
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     padding: 10px;
 }
 
 .category-card {
     aspect-ratio: 1 / 1;
     width: 100%;
-    border-radius: 15px;
+    border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
     background-size: cover;
     background-position: center;
     position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .category-image {
@@ -399,7 +507,7 @@ body.light-mode .menu-profile .profile-email {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: #fff;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
@@ -651,53 +759,6 @@ body.light-mode .menu-profile .profile-email {
     transform: translateY(0);
 }
 
-/* ===== قائمة المستخدم المنسدلة ===== */
-#userMenu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    background: #1a1a1a;
-    padding: 8px 15px;
-    border-radius: 30px;
-    position: relative;
-}
-
-#userMenu span {
-    color: #fbbf24;
-    font-weight: 700;
-}
-
-.dropdown {
-    position: absolute;
-    top: 50px;
-    left: 0;
-    background: #1a1a1a;
-    border: 2px solid #fbbf24;
-    border-radius: 15px;
-    padding: 10px;
-    min-width: 180px;
-    display: none;
-    z-index: 1001;
-}
-
-#userMenu:hover .dropdown {
-    display: block;
-}
-
-.dropdown a {
-    display: block;
-    padding: 10px;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-}
-
-.dropdown a:hover {
-    background: #fbbf24;
-    color: #000;
-}
-
 /* ===== القائمة السفلية ===== */
 .bottom-nav {
     position: fixed;
@@ -766,7 +827,12 @@ body.light-mode .nav-item:hover {
     }
     
     .categories-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+    
+    .category-overlay {
+        font-size: 12px;
     }
     
     .wallet-mini {
@@ -781,5 +847,14 @@ body.light-mode .nav-item:hover {
     
     .logo h1 {
         font-size: 16px;
+    }
+    
+    #userMenu span {
+        font-size: 12px;
+    }
+    
+    .dropdown {
+        min-width: 180px;
+        left: -50px;
     }
 }
