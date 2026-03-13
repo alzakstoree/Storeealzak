@@ -8,18 +8,19 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- الهيدر (بدون دائرة تسجيل الدخول) -->
+    <!-- الهيدر المعدل -->
     <div class="header">
         <div class="header-left">
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
         </div>
-        <div class="logo">
-            <!-- صورة اللوغو الدائرية -->
-            <img src="https://i.ibb.co/1YJrvSr3/file-000000005428724691b0c7d13890c115-1.jpg" alt="ALZAK STORE" class="logo-img">
+        <div class="header-center">
+            <span class="wallet-mini" id="walletMini">0$</span>
+            <i class="fas fa-plus-circle" onclick="showDepositModal()" style="color: #fbbf24; font-size: 24px; margin-right: 5px;"></i>
         </div>
         <div class="header-right">
-            <span class="wallet-mini" id="walletMini">0$</span>
-            <i class="fas fa-plus-circle" onclick="showDepositModal()" style="color: #fbbf24; font-size: 24px;"></i>
+            <div class="logo">
+                <img src="https://i.ibb.co/1YJrvSr3/file-000000005428724691b0c7d13890c115-1.jpg" alt="ALZAK STORE" class="logo-img">
+            </div>
         </div>
     </div>
 
