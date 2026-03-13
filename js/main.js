@@ -253,6 +253,7 @@ window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
 };
 
+// دالة تحديث واجهة المستخدم (تم تعريفها على window لتكون قابلة للاستدعاء من auth.js)
 function updateUI() {
     const adminLink = document.getElementById('adminLink');
     const adminMenuItem = document.getElementById('adminMenuItem');
@@ -288,6 +289,7 @@ function updateUI() {
         updateWalletMini();
     }
 }
+window.updateUI = updateUI; // تصدير الدالة
 
 // تحديث عداد السلة
 setInterval(async () => {
