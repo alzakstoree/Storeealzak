@@ -1,6 +1,14 @@
 // ==================== دوال المصادقة (تسجيل الدخول) ====================
 import { auth, googleProvider } from './firebase-config.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged, 
+    signInWithRedirect,
+    getRedirectResult,
+    updateProfile 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { db } from './firebase-config.js';
 
@@ -28,6 +36,23 @@ export async function createUserProfile(user) {
             createdAt: new Date().toISOString(),
             walletBalance: 0
         });
+    }
+}
+
+// معالجة نتيجة redirect بعد العودة من صفحة Google
+export async function handleRedirectResult() {
+    try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+            // تم تسجيل الدخول بنجاح عبر redirect
+            showToast('✅ مرحباً بك');
+            // إغلاق المودال إذا كان مفتوحاً
+            const authModal = document.getElementById('authModal');
+            if (authModal) authModal.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('خطأ في redirect result:', error);
+        showToast('❌ ' + error.message, 'error');
     }
 }
 
@@ -103,12 +128,11 @@ window.registerWithEmail = async function() {
     }
 };
 
-// تسجيل الدخول بـ Google
+// تسجيل الدخول بـ Google (باستخدام Redirect)
 window.loginWithGoogle = async function() {
     try {
-        await signInWithPopup(auth, googleProvider);
-        document.getElementById('authModal').style.display = 'none';
-        showToast('✅ مرحباً بك');
+        await signInWithRedirect(auth, googleProvider);
+        // لا حاجة لإغلاق المودال هنا لأن الصفحة ستنتقل
     } catch (error) {
         showToast('❌ ' + error.message, 'error');
     }
@@ -129,3 +153,6 @@ window.logout = async function() {
         window.updateUI();
     }
 };
+
+// استدعاء معالجة نتيجة redirect عند تحميل الصفحة
+handleRedirectResult();
