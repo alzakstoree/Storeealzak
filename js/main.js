@@ -4,6 +4,8 @@ import { initAuth, currentUser } from './auth.js';
 
 let storeData = loadStoreData();
 let currentPurchase = null;
+let currentSlide = 0;
+let slideInterval;
 
 // تهيئة الصفحة
 window.onload = function() {
@@ -11,7 +13,7 @@ window.onload = function() {
     initAuth();
     updateUI();
     if (typeof updateAdminMenu === 'function') updateAdminMenu();
-    initSlider(); // تشغيل السلايدر
+    initSlider();
 };
 
 // دوال القائمة الجانبية
@@ -23,15 +25,80 @@ window.toggleTheme = function() {
     document.body.classList.toggle('light-mode');
 };
 
-// ===== دوال الأقسام والمنتجات (المعدلة) =====
+// ===== دوال السلايدر (مبسطة ومضمونة) =====
+function initSlider() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.querySelector('.slider-prev');
+    const nextBtn = document.querySelector('.slider-next');
+    
+    if (slides.length === 0) return;
+    
+    // إضافة الأحداث للأزرار
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    
+    // إضافة الأحداث للنقاط
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => goToSlide(index));
+    });
+    
+    // تشغيل السلايدر التلقائي
+    startSlideTimer();
+}
 
-// عرض الأقسام الرئيسية (3 مربعات)
+function updateSlider() {
+    const slider = document.querySelector('.slider');
+    const dots = document.querySelectorAll('.dot');
+    
+    if (!slider) return;
+    
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function nextSlide() {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+    restartSlideTimer();
+}
+
+function prevSlide() {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlider();
+    restartSlideTimer();
+}
+
+function goToSlide(index) {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+    currentSlide = index;
+    updateSlider();
+    restartSlideTimer();
+}
+
+function startSlideTimer() {
+    slideInterval = setInterval(nextSlide, 5000);
+}
+
+function restartSlideTimer() {
+    clearInterval(slideInterval);
+    startSlideTimer();
+}
+
+// ===== دوال الأقسام والمنتجات =====
 window.showMainCategories = function() {
     const container = document.getElementById('mainCategories');
     const subContainer = document.getElementById('subContent');
     if (!container) return;
     
-    // إظهار الأقسام وإخفاء المحتوى الفرعي
     container.style.display = 'grid';
     subContainer.style.display = 'none';
     
@@ -48,7 +115,6 @@ window.showMainCategories = function() {
     });
 };
 
-// عرض الفئات (الصفحة الجديدة)
 window.showCategories = function(sectionId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     if (!section) return;
@@ -56,7 +122,6 @@ window.showCategories = function(sectionId) {
     const mainContainer = document.getElementById('mainCategories');
     const subContainer = document.getElementById('subContent');
     
-    // إخفاء الأقسام الرئيسية وإظهار المحتوى الفرعي
     mainContainer.style.display = 'none';
     subContainer.style.display = 'block';
     
@@ -80,7 +145,6 @@ window.showCategories = function(sectionId) {
     subContainer.innerHTML = html;
 };
 
-// عرض المنتجات
 window.showProducts = function(sectionId, categoryId) {
     const section = storeData.sections.find(s => s.id === sectionId);
     if (!section) return;
@@ -136,68 +200,6 @@ window.openPurchaseModal = function(name, price) {
     document.getElementById('purchaseDetails').innerHTML = `<p>المنتج: ${name}</p><p>السعر: ${price}$</p>`;
     document.getElementById('purchaseModal').style.display = 'flex';
 };
-
-// ===== دوال السلايدر =====
-let currentSlide = 0;
-let slides = [];
-let dots = [];
-
-function initSlider() {
-    slides = document.querySelectorAll('.slide');
-    const dotsContainer = document.querySelector('.slider-dots');
-    
-    if (!slides.length || !dotsContainer) return;
-    
-    // إنشاء النقاط
-    dotsContainer.innerHTML = '';
-    slides.forEach((_, index) => {
-        const dot = document.createElement('span');
-        dot.classList.add('dot');
-        dot.onclick = () => goToSlide(index);
-        dotsContainer.appendChild(dot);
-    });
-    
-    dots = document.querySelectorAll('.dot');
-    updateSlider();
-    
-    // أزرار التحكم
-    const nextBtn = document.querySelector('.slider-next');
-    const prevBtn = document.querySelector('.slider-prev');
-    
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    
-    // تشغيل تلقائي كل 5 ثواني
-    setInterval(nextSlide, 5000);
-}
-
-function updateSlider() {
-    const slider = document.querySelector('.slider');
-    if (!slider) return;
-    
-    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentSlide);
-    });
-}
-
-function nextSlide() {
-    if (!slides.length) return;
-    currentSlide = (currentSlide + 1) % slides.length;
-    updateSlider();
-}
-
-function prevSlide() {
-    if (!slides.length) return;
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    updateSlider();
-}
-
-function goToSlide(index) {
-    currentSlide = index;
-    updateSlider();
-}
 
 // دوال مساعدة
 window.showToast = function(message, type = 'success') {
