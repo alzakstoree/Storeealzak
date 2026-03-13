@@ -217,6 +217,54 @@ window.submitDeposit = async function() {
     reader.readAsDataURL(file);
 };
 
+// ===== دوال الطلبات (السلة) =====
+window.showMyOrders = async function() {
+    if (!currentUser) {
+        showToast('❌ سجل دخول أولاً', 'error');
+        showAuthModal();
+        return;
+    }
+    
+    try {
+        const q = query(
+            collection(db, 'orders'),
+            where('userId', '==', currentUser.uid),
+            orderBy('createdAt', 'desc')
+        );
+        const querySnapshot = await getDocs(q);
+        
+        let html = '';
+        if (querySnapshot.empty) {
+            html = '<p style="text-align: center;">لا توجد طلبات</p>';
+        } else {
+            querySnapshot.forEach(doc => {
+                const o = doc.data();
+                const statusText = o.status === 'pending' ? '⏳ قيد الانتظار' : '✅ مكتمل';
+                const statusColor = o.status === 'pending' ? '#fbbf24' : '#22c55e';
+                
+                html += `
+                    <div style="background: #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-weight: 700;">${o.product}</span>
+                            <span style="color: #fbbf24; font-weight: 900;">${o.price}$</span>
+                        </div>
+                        <div style="font-size: 12px; color: #888; margin-bottom: 5px;">معرف: ${o.playerId || 'غير محدد'}</div>
+                        <div style="margin-top: 10px;">
+                            <span style="background: ${statusColor}; color: #000; padding: 5px 10px; border-radius: 20px; font-size: 12px;">${statusText}</span>
+                        </div>
+                        <div style="font-size: 10px; color: #666; margin-top: 5px;">${new Date(o.createdAt).toLocaleString()}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        document.getElementById('ordersList').innerHTML = html;
+        document.getElementById('ordersModal').style.display = 'flex';
+    } catch (error) {
+        showToast('❌ فشل تحميل الطلبات: ' + error.message, 'error');
+    }
+};
+
 // دالة عرض المحفظة
 window.showWallet = function() {
     if (!currentUser) {
