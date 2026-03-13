@@ -1,7 +1,7 @@
 // ==================== دوال لوحة المدير ====================
 import { db } from './firebase-config.js';
 import { currentUser, ADMIN_EMAIL } from './auth.js';
-import { collection, getDocs, doc, updateDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, getDocs, doc, updateDoc, query, orderBy, runTransaction, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { loadStoreData, saveStoreData } from './store-data.js';
 
 let storeData = loadStoreData();
@@ -211,7 +211,7 @@ window.confirmCharge = async function(chargeId, userId, amount) {
         showToast('✅ تم تأكيد الشحن وإضافة الرصيد');
         loadAdminCharges();
     } catch (error) {
-        showToast('❌ فشل تأكيد الشحن', 'error');
+        showToast('❌ فشل تأكيد الشحن: ' + error.message, 'error');
     }
 };
 
