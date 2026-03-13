@@ -13,7 +13,6 @@ window.onload = function() {
     showMainCategories();
     initAuth();
     updateUI();
-    updateDropdownUserInfo();
     updateWalletMini();
     if (typeof updateAdminMenu === 'function') updateAdminMenu();
     initSlider();
@@ -38,22 +37,6 @@ async function updateWalletMini() {
         walletMini.textContent = balance + '$';
     } else {
         walletMini.textContent = '0$';
-    }
-}
-
-// ===== تحديث معلومات المستخدم في القائمة المنسدلة اليمنى =====
-function updateDropdownUserInfo() {
-    const dropdownName = document.getElementById('dropdownUserName');
-    const dropdownEmail = document.getElementById('dropdownUserEmail');
-    
-    if (!dropdownName || !dropdownEmail) return;
-    
-    if (currentUser) {
-        dropdownName.textContent = currentUser.name;
-        dropdownEmail.textContent = currentUser.email;
-    } else {
-        dropdownName.textContent = '';
-        dropdownEmail.textContent = '';
     }
 }
 
@@ -275,28 +258,13 @@ window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
 };
 
-window.toggleDropdown = function() {
-    const dropdown = document.getElementById('userDropdown');
-    if (dropdown) {
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    }
-};
-
 function updateUI() {
-    const loginIcon = document.getElementById('loginIcon');
-    const userMenu = document.getElementById('userMenu');
-    const userName = document.getElementById('userName');
     const adminLink = document.getElementById('adminLink');
     const adminMenuItem = document.getElementById('adminMenuItem');
     const guestMenu = document.getElementById('guestMenu');
     
     if (currentUser) {
         // مستخدم مسجل
-        if (loginIcon) loginIcon.style.display = 'none';
-        if (userMenu) {
-            userMenu.style.display = 'flex';
-            if (userName) userName.textContent = currentUser.name;
-        }
         if (adminLink) {
             adminLink.style.display = currentUser.email === ADMIN_EMAIL ? 'block' : 'none';
         }
@@ -306,19 +274,15 @@ function updateUI() {
         if (guestMenu) guestMenu.style.display = 'none';
         
         // تحديث جميع أقسام المستخدم
-        updateDropdownUserInfo();
         updateMenuProfile();
         updateWalletMini();
     } else {
         // مستخدم غير مسجل
-        if (loginIcon) loginIcon.style.display = 'block';
-        if (userMenu) userMenu.style.display = 'none';
         if (adminLink) adminLink.style.display = 'none';
         if (adminMenuItem) adminMenuItem.style.display = 'none';
         if (guestMenu) guestMenu.style.display = 'block';
         
         // إخفاء معلومات المستخدم
-        updateDropdownUserInfo();
         updateMenuProfile();
         updateWalletMini();
     }
