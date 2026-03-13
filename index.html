@@ -8,39 +8,53 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- الهيدر الجديد -->
     <div class="header">
+        <div class="header-left">
+            <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
+        </div>
         <div class="logo">
             <h1>ALZAK STORE</h1>
-            <span>المتجر الرسمي</span>
         </div>
-        <div class="header-icons">
-            <i class="fas fa-wallet" onclick="showWallet()"></i>
-            <i class="fas fa-shopping-cart" onclick="showMyOrders()"><span class="badge" id="cartBadge">0</span></i>
-            <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
-            <div class="profile-icon" onclick="showAuthModal()" id="loginIcon"></div>
-            <div id="userMenu" style="display: none;" onclick="toggleDropdown()">
-                <span id="userName"></span>
-                <i class="fas fa-chevron-down"></i>
-                <div class="dropdown" id="userDropdown">
-                    <a href="#" onclick="showWallet()">محفظتي</a>
-                    <a href="#" onclick="showMyOrders()">طلباتي</a>
-                    <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">🔧 لوحة المدير</a>
-                    <a href="#" onclick="logout()">تسجيل خروج</a>
-                </div>
-            </div>
+        <div class="header-right">
+            <span class="wallet-mini" id="walletMini">0$</span>
+            <i class="fas fa-plus-circle" onclick="showDepositModal()" style="color: #fbbf24; font-size: 24px;"></i>
         </div>
     </div>
 
+    <!-- القائمة الجانبية الجديدة -->
     <div id="sideMenu" class="side-menu">
         <div class="menu-header">
             <i class="fas fa-times" onclick="toggleSideMenu()"></i>
             <h3>القائمة</h3>
         </div>
-        <ul class="menu-items">
-            <li><a href="#" onclick="showMainCategories(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
-            <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
-        </ul>
+        
+        <!-- الملف الشخصي (يظهر فقط للمستخدمين المسجلين) -->
+        <div class="menu-profile" id="menuProfile" style="display: none;">
+            <div class="profile-name" id="menuProfileName"></div>
+            <div class="profile-email" id="menuProfileEmail"></div>
+        </div>
+        
+        <!-- قسم العميل -->
+        <div class="menu-section">
+            <div class="menu-section-title">حسابي</div>
+            <ul class="menu-items">
+                <li><a href="#" onclick="showWallet(); toggleSideMenu()"><i class="fas fa-wallet"></i> محفظتي</a></li>
+                <li><a href="#" onclick="showMyOrders(); toggleSideMenu()"><i class="fas fa-shopping-cart"></i> طلباتي</a></li>
+                <li><a href="#" onclick="showDepositModal(); toggleSideMenu()"><i class="fas fa-plus-circle"></i> تعبئة رصيد</a></li>
+            </ul>
+        </div>
+        
+        <!-- روابط عامة -->
+        <div class="menu-section">
+            <div class="menu-section-title">المتجر</div>
+            <ul class="menu-items">
+                <li><a href="#" onclick="showMainCategories(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
+                <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
+            </ul>
+        </div>
+        
         <div class="menu-footer">
             <p>ALZAK STORE<br>©2025</p>
         </div>
@@ -162,6 +176,26 @@
     <div id="depositModal" class="modal">
         <!-- المحتوى يتم إنشاؤه عبر JavaScript -->
     </div>
+
+    <!-- القائمة السفلية -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="showWallet()">
+            <i class="fas fa-wallet"></i>
+            <span>محفظتي</span>
+        </div>
+        <div class="nav-item active" onclick="showMainCategories()">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </div>
+        <div class="nav-item" onclick="showDepositModal()">
+            <i class="fas fa-dollar-sign"></i>
+            <span>تعبئة رصيد</span>
+        </div>
+        <div class="nav-item" onclick="showMyOrders()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>السلة</span>
+        </div>
+    </nav>
 
     <!-- ملفات JavaScript -->
     <script src="js/firebase-config.js" type="module"></script>
