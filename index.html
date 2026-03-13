@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- الهيدر الجديد -->
+    <!-- الهيدر -->
     <div class="header">
         <div class="header-left">
             <i class="fas fa-bars" onclick="toggleSideMenu()"></i>
@@ -53,22 +53,11 @@
             <div class="profile-email" id="menuProfileEmail"></div>
         </div>
         
-        <!-- قسم العميل -->
-        <div class="menu-section">
-            <div class="menu-section-title">حسابي</div>
-            <ul class="menu-items">
-                <li><a href="#" onclick="showWallet(); toggleSideMenu()"><i class="fas fa-wallet"></i> محفظتي</a></li>
-                <li><a href="#" onclick="showMyOrders(); toggleSideMenu()"><i class="fas fa-shopping-cart"></i> طلباتي</a></li>
-                <li><a href="#" onclick="showDepositModal(); toggleSideMenu()"><i class="fas fa-plus-circle"></i> تعبئة رصيد</a></li>
-            </ul>
-        </div>
-        
         <!-- روابط عامة -->
         <div class="menu-section">
             <div class="menu-section-title">المتجر</div>
             <ul class="menu-items">
                 <li><a href="#" onclick="showMainCategories(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
                 <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
             </ul>
         </div>
