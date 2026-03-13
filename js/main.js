@@ -311,4 +311,4 @@ setInterval(() => {
     if (currentUser) {
         updateWalletMini();
     }
-}, 10000);
+}, 10000); 
