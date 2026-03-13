@@ -3,22 +3,22 @@ import { db } from './firebase-config.js';
 import { currentUser } from './auth.js';
 import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ===== بيانات طرق الدفع مع إضافة روابط الصور =====
+// ===== بيانات طرق الدفع مع الصور الحقيقية =====
 const paymentMethods = [
     {
         name: 'شام كاش',
         walletNumber: '053b8f0d907772543d262622121d6df2',
-        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=شام' // رابط الصورة
+        image: 'https://i.ibb.co/5XhmqrJq/Screenshot-20260313-152931.jpg'
     },
     {
         name: 'يا مرسال',
         walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
-        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=مرسال' // رابط الصورة
+        image: 'https://i.ibb.co/4ZcSH80M/Screenshot-20260313-152751.jpg'
     },
     {
         name: 'ليرات',
         walletNumber: 'L793143293',
-        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=ليرات' // رابط الصورة
+        image: 'https://i.ibb.co/5hm3cHSk/Screenshot-20260313-153215.jpg'
     }
 ];
 
