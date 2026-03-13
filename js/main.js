@@ -288,6 +288,7 @@ function updateUI() {
     const userName = document.getElementById('userName');
     const adminLink = document.getElementById('adminLink');
     const adminMenuItem = document.getElementById('adminMenuItem');
+    const guestMenu = document.getElementById('guestMenu');
     
     if (currentUser) {
         // مستخدم مسجل
@@ -302,6 +303,7 @@ function updateUI() {
         if (adminMenuItem) {
             adminMenuItem.style.display = currentUser.email === ADMIN_EMAIL ? 'block' : 'none';
         }
+        if (guestMenu) guestMenu.style.display = 'none';
         
         // تحديث جميع أقسام المستخدم
         updateDropdownUserInfo();
@@ -313,6 +315,7 @@ function updateUI() {
         if (userMenu) userMenu.style.display = 'none';
         if (adminLink) adminLink.style.display = 'none';
         if (adminMenuItem) adminMenuItem.style.display = 'none';
+        if (guestMenu) guestMenu.style.display = 'block';
         
         // إخفاء معلومات المستخدم
         updateDropdownUserInfo();
