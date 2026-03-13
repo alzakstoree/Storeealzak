@@ -65,13 +65,6 @@
             font-size: 16px;
             font-weight: 700;
         }
-        .payment-number {
-            font-size: 12px;
-            color: #888;
-            word-break: break-all;
-            direction: ltr;
-            padding: 0 5px;
-        }
         @media (max-width: 480px) {
             .payment-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -84,9 +77,6 @@
             }
             .payment-name {
                 font-size: 14px;
-            }
-            .payment-number {
-                font-size: 10px;
             }
         }
     </style>
@@ -138,7 +128,6 @@
                         <img src="${method.image}" alt="${method.name}">
                     </div>
                     <div class="payment-name">${method.name}</div>
-                    <div class="payment-number">${method.walletNumber}</div>
                 `;
                 grid.appendChild(card);
             });
