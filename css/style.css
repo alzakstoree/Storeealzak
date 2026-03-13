@@ -400,50 +400,56 @@ body.light-mode .menu-items a:hover {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-/* ===== المنتجات (باقات أصغر) ===== */
+/* ===== المنتجات (3 باقات في كل صف - مربعات) ===== */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    padding: 10px;
+    grid-template-columns: repeat(3, 1fr); /* 3 أعمدة */
+    gap: 8px;
+    padding: 8px;
 }
 
 .product-card {
+    aspect-ratio: 1 / 1; /* مربع */
     background: #1a1a1a;
-    border: 2px solid #333;
-    border-radius: 12px;
-    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 8px;
     text-align: center;
     cursor: pointer;
     transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .product-card:hover {
     border-color: #fbbf24;
 }
 
-.product-card .price {
-    color: #fbbf24;
-    font-size: 16px; /* تصغير السعر */
-    font-weight: 900;
-    margin: 5px 0;
+.product-card h4 {
+    font-size: 12px; /* تصغير الخط */
+    margin-bottom: 3px;
+    color: #fff;
 }
 
-.product-card h4 {
-    font-size: 14px; /* تصغير اسم المنتج */
-    margin-bottom: 5px;
+.product-card .price {
+    color: #fbbf24;
+    font-size: 14px; /* تصغير السعر */
+    font-weight: 900;
+    margin: 3px 0;
 }
 
 .buy-btn {
     background: #fbbf24;
     color: #000;
     border: none;
-    padding: 6px; /* تصغير الزر */
-    border-radius: 20px;
+    padding: 4px 0; /* تصغير الزر */
+    border-radius: 15px;
     font-weight: 700;
-    width: 100%;
+    width: 90%;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 10px; /* تصغير خط الزر */
 }
 
 /* ===== لوحة المدير ===== */
@@ -716,23 +722,26 @@ body.light-mode .nav-item:hover {
 /* ===== التجاوب مع الجوال ===== */
 @media (max-width: 480px) {
     .products-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .products-grid {
-        gap: 8px;
+        grid-template-columns: repeat(3, 1fr); /* حتى على الجوال 3 أعمدة */
+        gap: 5px;
+        padding: 5px;
     }
     
     .product-card {
-        padding: 8px;
-    }
-    
-    .product-card .price {
-        font-size: 14px;
+        padding: 5px;
     }
     
     .product-card h4 {
+        font-size: 10px;
+    }
+    
+    .product-card .price {
         font-size: 12px;
+    }
+    
+    .buy-btn {
+        font-size: 8px;
+        padding: 3px 0;
     }
     
     .categories-grid {
