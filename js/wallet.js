@@ -3,19 +3,22 @@ import { db } from './firebase-config.js';
 import { currentUser } from './auth.js';
 import { collection, addDoc, query, where, getDocs, orderBy, limit, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ===== بيانات طرق الدفع (بدون أسماء) =====
+// ===== بيانات طرق الدفع مع إضافة روابط الصور =====
 const paymentMethods = [
     {
         name: 'شام كاش',
-        walletNumber: '053b8f0d907772543d262622121d6df2'
+        walletNumber: '053b8f0d907772543d262622121d6df2',
+        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=شام' // رابط الصورة
     },
     {
         name: 'يا مرسال',
-        walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk'
+        walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
+        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=مرسال' // رابط الصورة
     },
     {
         name: 'ليرات',
-        walletNumber: 'L793143293'
+        walletNumber: 'L793143293',
+        image: 'https://via.placeholder.com/80/1a1a1a/fbbf24?text=ليرات' // رابط الصورة
     }
 ];
 
@@ -67,7 +70,35 @@ export async function updateWalletDisplay() {
     document.getElementById('walletTransactions').innerHTML = html || '<p style="text-align: center;">لا توجد حركات</p>';
 }
 
-// ===== نافذة الإيداع الجديدة =====
+// دالة لتحديد طريقة الدفع
+function selectPaymentMethod(methodName) {
+    // إزالة التحديد السابق
+    document.querySelectorAll('.payment-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // تحديد الكارد المختار
+    const selectedCard = Array.from(document.querySelectorAll('.payment-card')).find(
+        card => card.getAttribute('data-method') === methodName
+    );
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+    }
+    
+    // تحديث الراديو المخفي
+    let radio = document.querySelector(`input[value="${methodName}"]`);
+    if (!radio) {
+        radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'paymentMethod';
+        radio.value = methodName;
+        radio.style.display = 'none';
+        document.getElementById('depositModal').appendChild(radio);
+    }
+    radio.checked = true;
+}
+
+// ===== نافذة الإيداع الجديدة (كروت 3 في السطر) =====
 window.showDepositModal = function() {
     if (!currentUser) {
         showToast('سجل دخول أولاً', 'error');
@@ -78,26 +109,24 @@ window.showDepositModal = function() {
     let methodsHtml = '';
     paymentMethods.forEach((method) => {
         methodsHtml += `
-            <div style="margin-bottom: 15px; padding: 15px; background: #1a1a1a; border-radius: 15px; border: 2px solid #fbbf24;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <h4 style="color: #fbbf24; margin: 0;">💰 ${method.name}</h4>
-                    <input type="radio" name="paymentMethod" value="${method.name}" id="${method.name}" style="transform: scale(1.2);">
+            <div class="payment-card" data-method="${method.name}" onclick="selectPaymentMethod('${method.name}')">
+                <div class="payment-image">
+                    <img src="${method.image}" alt="${method.name}">
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #333; padding: 10px; border-radius: 10px;">
-                    <span style="color: #fbbf24; font-size: 14px; direction: ltr; word-break: break-all;">${method.walletNumber}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}')" style="background: #fbbf24; color: #000; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px; white-space: nowrap;">نسخ</button>
-                </div>
+                <h4 class="payment-name">${method.name}</h4>
+                <div class="payment-number">${method.walletNumber}</div>
+                <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}'); event.stopPropagation();">📋 نسخ</button>
             </div>
         `;
     });
     
     const modalHtml = `
         <div id="depositModal" class="modal" style="display: flex; align-items: flex-start; overflow-y: auto;">
-            <div class="modal-content" style="max-width: 500px; margin: 20px auto; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-content" style="max-width: 550px; margin: 20px auto; max-height: 90vh; overflow-y: auto;">
                 <span class="close" onclick="closeModal('depositModal')" style="position: sticky; top: 0;">&times;</span>
                 <h2 style="text-align: center; color: #fbbf24; margin-top: 0;">💰 إيداع رصيد جديد</h2>
                 
-                <div style="max-height: 300px; overflow-y: auto; padding: 5px;">
+                <div class="payment-grid">
                     ${methodsHtml}
                 </div>
                 
