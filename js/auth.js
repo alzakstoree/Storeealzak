@@ -7,24 +7,6 @@ import { db } from './firebase-config.js';
 export let currentUser = null;
 export const ADMIN_EMAIL = 'alolao45y@gmail.com';
 
-// دالة تحديث واجهة المستخدم
-export function updateUI() {
-    const loginIcon = document.getElementById('loginIcon');
-    const userMenu = document.getElementById('userMenu');
-    const userName = document.getElementById('userName');
-    
-    if (currentUser) {
-        if (loginIcon) loginIcon.style.display = 'none';
-        if (userMenu) {
-            userMenu.style.display = 'flex';
-            if (userName) userName.textContent = currentUser.name;
-        }
-    } else {
-        if (loginIcon) loginIcon.style.display = 'block';
-        if (userMenu) userMenu.style.display = 'none';
-    }
-}
-
 // دالة تحديث ظهور لوحة المدير
 export function updateAdminMenu() {
     const adminMenuItem = document.getElementById('adminMenuItem');
@@ -59,7 +41,6 @@ export function initAuth() {
                 name: user.displayName || user.email.split('@')[0]
             };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateUI();
             updateAdminMenu();
             await createUserProfile(user);
             
@@ -67,11 +48,17 @@ export function initAuth() {
             if (typeof window.updateWalletDisplay === 'function') {
                 window.updateWalletDisplay();
             }
+            if (typeof window.updateWalletMini === 'function') {
+                window.updateWalletMini();
+            }
         } else {
             currentUser = null;
             localStorage.removeItem('currentUser');
-            updateUI();
             updateAdminMenu();
+            
+            if (typeof window.updateWalletMini === 'function') {
+                window.updateWalletMini();
+            }
         }
     });
 }
@@ -125,5 +112,8 @@ window.logout = async function() {
     showToast('✅ تم تسجيل الخروج');
     if (typeof window.hideAdminPanel === 'function') {
         window.hideAdminPanel();
+    }
+    if (typeof window.updateWalletMini === 'function') {
+        window.updateWalletMini();
     }
 };
