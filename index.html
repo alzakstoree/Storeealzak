@@ -58,7 +58,17 @@
             <div class="menu-section-title">المتجر</div>
             <ul class="menu-items">
                 <li><a href="#" onclick="showMainCategories(); toggleSideMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li id="adminMenuItem" style="display: none;"><a href="#" onclick="showAdminPanel(); toggleSideMenu()"><i class="fas fa-crown"></i> لوحة المدير</a></li>
                 <li><a href="#" onclick="toggleTheme(); toggleSideMenu()"><i class="fas fa-sun"></i> الوضع الفاتح</a></li>
+            </ul>
+        </div>
+        
+        <!-- قسم تسجيل الدخول (يظهر لغير المسجلين) -->
+        <div class="menu-section" id="guestMenu">
+            <div class="menu-section-title">حسابي</div>
+            <ul class="menu-items">
+                <li><a href="#" onclick="showAuthModal(); toggleSideMenu()"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></li>
+                <li><a href="#" onclick="showRegisterModal(); toggleSideMenu()"><i class="fas fa-user-plus"></i> إنشاء حساب</a></li>
             </ul>
         </div>
         
