@@ -49,14 +49,21 @@
             padding: 10px;
             background: #333;
             border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .info-row span:first-child {
             color: #888;
+            font-size: 14px;
         }
         .info-row span:last-child {
             color: #fbbf24;
             direction: ltr;
             word-break: break-all;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            font-size: 14px;
+            flex: 1;
         }
         .copy-btn {
             background: #fbbf24;
@@ -66,6 +73,7 @@
             border-radius: 20px;
             font-weight: 700;
             cursor: pointer;
+            white-space: nowrap;
         }
         .form-group {
             margin: 20px 0;
@@ -82,6 +90,82 @@
             border: 1px solid #fbbf24;
             border-radius: 10px;
             color: #fff;
+        }
+        /* ===== حقل رفع الصورة الجديد ===== */
+        .upload-container {
+            position: relative;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .upload-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .upload-area {
+            background: #1a1a1a;
+            border: 2px dashed #fbbf24;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: 0.3s;
+            z-index: 1;
+        }
+        .upload-area:hover {
+            background: #222;
+            border-color: #fbbf24;
+        }
+        .upload-area i {
+            font-size: 40px;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+        .upload-area p {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .upload-area span {
+            color: #888;
+            font-size: 12px;
+        }
+        .preview-container {
+            position: relative;
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #fbbf24;
+            display: none;
+        }
+        .preview-container img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .remove-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .remove-image:hover {
+            background: #fff;
         }
         .submit-btn {
             width: 100%;
@@ -100,6 +184,20 @@
             color: #888;
             font-size: 12px;
             margin-top: 10px;
+        }
+        @media (max-width: 480px) {
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .info-row span:last-child {
+                font-size: 12px;
+                width: 100%;
+            }
+            .copy-btn {
+                width: 100%;
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
@@ -175,12 +273,44 @@
 
                 <div class="form-group">
                     <label>صورة الإيصال</label>
-                    <input type="file" id="receiptImage" accept="image/*">
+                    <div class="upload-container">
+                        <input type="file" id="receiptImage" accept="image/*" onchange="previewImage(event)">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>اضغط لاختيار صورة الإيصال</p>
+                            <span>أو اسحب وأفلت</span>
+                        </div>
+                        <div class="preview-container" id="previewContainer">
+                            <img id="previewImage" src="" alt="معاينة الإيصال">
+                            <button type="button" class="remove-image" onclick="removeImage()">✕</button>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="submit-btn" onclick="submitDeposit()">📤 إرسال طلب الإيداع</button>
                 <div class="note">سيتم مراجعة طلبك وإضافة الرصيد بعد التأكيد</div>
             `;
+        }
+
+        // معاينة الصورة بعد اختيارها
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                    document.querySelector('.upload-area').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // إزالة الصورة المختارة
+        function removeImage() {
+            document.getElementById('receiptImage').value = '';
+            document.getElementById('previewContainer').style.display = 'none';
+            document.querySelector('.upload-area').style.display = 'block';
         }
 
         // نسخ النص
