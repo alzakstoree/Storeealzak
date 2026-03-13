@@ -40,20 +40,17 @@ async function updateWalletMini() {
     }
 }
 
-// ===== تحديث الملف الشخصي في القائمة الجانبية =====
-function updateMenuProfile() {
-    const menuProfile = document.getElementById('menuProfile');
-    const menuProfileName = document.getElementById('menuProfileName');
-    const menuProfileEmail = document.getElementById('menuProfileEmail');
+// ===== تحديث معلومات المستخدم في القائمة الجانبية =====
+function updateUserInfoMenu() {
+    const userInfoMenu = document.getElementById('userInfoMenu');
+    const menuUserName = document.getElementById('menuUserName');
+    const menuUserEmail = document.getElementById('menuUserEmail');
     
-    if (!menuProfile) return;
+    if (!userInfoMenu || !menuUserName || !menuUserEmail) return;
     
     if (currentUser) {
-        menuProfile.style.display = 'block';
-        if (menuProfileName) menuProfileName.textContent = currentUser.name;
-        if (menuProfileEmail) menuProfileEmail.textContent = currentUser.email;
-    } else {
-        menuProfile.style.display = 'none';
+        menuUserName.textContent = currentUser.name;
+        menuUserEmail.textContent = currentUser.email;
     }
 }
 
@@ -262,6 +259,7 @@ function updateUI() {
     const adminLink = document.getElementById('adminLink');
     const adminMenuItem = document.getElementById('adminMenuItem');
     const guestMenu = document.getElementById('guestMenu');
+    const userInfoMenu = document.getElementById('userInfoMenu');
     
     if (currentUser) {
         // مستخدم مسجل
@@ -271,19 +269,24 @@ function updateUI() {
         if (adminMenuItem) {
             adminMenuItem.style.display = currentUser.email === ADMIN_EMAIL ? 'block' : 'none';
         }
-        if (guestMenu) guestMenu.style.display = 'none';
         
-        // تحديث جميع أقسام المستخدم
-        updateMenuProfile();
+        // إخفاء قائمة الضيوف وإظهار معلومات المستخدم
+        if (guestMenu) guestMenu.style.display = 'none';
+        if (userInfoMenu) {
+            userInfoMenu.style.display = 'block';
+            updateUserInfoMenu();
+        }
+        
         updateWalletMini();
     } else {
         // مستخدم غير مسجل
         if (adminLink) adminLink.style.display = 'none';
         if (adminMenuItem) adminMenuItem.style.display = 'none';
-        if (guestMenu) guestMenu.style.display = 'block';
         
-        // إخفاء معلومات المستخدم
-        updateMenuProfile();
+        // إظهار قائمة الضيوف وإخفاء معلومات المستخدم
+        if (guestMenu) guestMenu.style.display = 'block';
+        if (userInfoMenu) userInfoMenu.style.display = 'none';
+        
         updateWalletMini();
     }
 }
