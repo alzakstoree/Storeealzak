@@ -51,6 +51,10 @@ export function initAuth() {
             if (typeof window.updateWalletMini === 'function') {
                 window.updateWalletMini();
             }
+            // تحديث واجهة المستخدم (القائمة الجانبية)
+            if (typeof window.updateUI === 'function') {
+                window.updateUI();
+            }
         } else {
             currentUser = null;
             localStorage.removeItem('currentUser');
@@ -58,6 +62,10 @@ export function initAuth() {
             
             if (typeof window.updateWalletMini === 'function') {
                 window.updateWalletMini();
+            }
+            // تحديث واجهة المستخدم (القائمة الجانبية)
+            if (typeof window.updateUI === 'function') {
+                window.updateUI();
             }
         }
     });
@@ -115,5 +123,9 @@ window.logout = async function() {
     }
     if (typeof window.updateWalletMini === 'function') {
         window.updateWalletMini();
+    }
+    // تحديث واجهة المستخدم بعد تسجيل الخروج
+    if (typeof window.updateUI === 'function') {
+        window.updateUI();
     }
 };
