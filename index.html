@@ -19,10 +19,28 @@
         <div class="header-right">
             <span class="wallet-mini" id="walletMini">0$</span>
             <i class="fas fa-plus-circle" onclick="showDepositModal()" style="color: #fbbf24; font-size: 24px;"></i>
+            <!-- أيقونة المستخدم -->
+            <div class="profile-icon" onclick="showAuthModal()" id="loginIcon"></div>
+            <!-- القائمة المنسدلة اليمنى (بعد تسجيل الدخول) -->
+            <div id="userMenu" style="display: none;">
+                <span id="userName"></span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown" id="userDropdown">
+                    <!-- معلومات المستخدم -->
+                    <div class="dropdown-user-info">
+                        <div class="dropdown-name" id="dropdownUserName"></div>
+                        <div class="dropdown-email" id="dropdownUserEmail"></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <!-- روابط -->
+                    <a href="#" id="adminLink" style="display: none;" onclick="showAdminPanel()">🔧 لوحة المدير</a>
+                    <a href="#" onclick="logout()">🚪 تسجيل خروج</a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- القائمة الجانبية الجديدة -->
+    <!-- القائمة الجانبية (☰) -->
     <div id="sideMenu" class="side-menu">
         <div class="menu-header">
             <i class="fas fa-times" onclick="toggleSideMenu()"></i>
