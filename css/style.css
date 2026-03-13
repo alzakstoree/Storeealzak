@@ -329,29 +329,67 @@ body.light-mode .user-email {
     background: #fbbf24;
 }
 
-/* ===== مسار التنقل ===== */
+/* ===== مسار التنقل المحسن ===== */
 .breadcrumb {
-    padding: 15px;
+    padding: 12px 15px;
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
-    border-bottom: 1px solid #333;
+    border-bottom: 2px solid #333;
     flex-wrap: wrap;
+    background: #0f0f0f;
+    margin: 5px 0;
 }
 
 .breadcrumb i {
     color: #fbbf24;
     cursor: pointer;
+    font-size: 18px;
+    background: #1a1a1a;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.breadcrumb i:hover {
+    background: #fbbf24;
+    color: #000;
+    transform: scale(1.1);
 }
 
 .breadcrumb span {
     cursor: pointer;
     color: #fbbf24;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #1a1a1a;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.breadcrumb span:hover {
+    background: #fbbf24;
+    color: #000;
 }
 
 .breadcrumb span:last-child {
     color: #fff;
     cursor: default;
+    background: transparent;
+    box-shadow: none;
+}
+
+.breadcrumb span:last-child:hover {
+    background: transparent;
+    color: #fff;
 }
 
 /* ===== الأقسام الرئيسية (3 مربعات - اسم تحت الصورة) ===== */
@@ -882,6 +920,22 @@ body.light-mode .nav-item:hover {
     .section-name {
         padding: 8px;
         font-size: 12px;
+    }
+    
+    .breadcrumb {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .breadcrumb i {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .breadcrumb span {
+        font-size: 12px;
+        padding: 4px 8px;
     }
     
     .payment-grid {
