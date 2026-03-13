@@ -64,110 +64,13 @@ body.light-mode {
     color: #fbbf24;
 }
 
+/* ===== إزالة تنسيقات الدوائر القديمة ===== */
 .profile-icon {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: url('https://i.ibb.co/1YJrvSr3/file-000000005428724691b0c7d13890c115-1.jpg') no-repeat center center/cover;
-    border: 2px solid #fbbf24;
-    cursor: pointer;
+    display: none; /* إخفاء الدائرة */
 }
 
-/* ===== القائمة المنسدلة اليمنى ===== */
 #userMenu {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    background: #1a1a1a;
-    padding: 8px 12px;
-    border-radius: 30px;
-    border: 2px solid #fbbf24;
-    position: relative;
-}
-
-#userMenu span {
-    color: #fbbf24;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-#userMenu i {
-    font-size: 16px;
-    color: #fbbf24;
-}
-
-.dropdown {
-    position: absolute;
-    top: 50px;
-    left: 0;
-    background: #111;
-    border: 2px solid #fbbf24;
-    border-radius: 15px;
-    padding: 15px;
-    min-width: 220px;
-    display: none;
-    z-index: 1001;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-
-#userMenu:hover .dropdown {
-    display: block;
-}
-
-.dropdown-user-info {
-    text-align: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #333;
-}
-
-.dropdown-name {
-    color: #fbbf24;
-    font-weight: 700;
-    font-size: 16px;
-    margin-bottom: 5px;
-}
-
-.dropdown-email {
-    color: #888;
-    font-size: 12px;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background: #333;
-    margin: 10px 0;
-}
-
-.dropdown a {
-    display: block;
-    padding: 10px;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    text-align: right;
-}
-
-.dropdown a:hover {
-    background: #fbbf24;
-    color: #000;
-}
-
-body.light-mode .dropdown {
-    background: #fff;
-}
-
-body.light-mode .dropdown-name {
-    color: #fbbf24;
-}
-
-body.light-mode .dropdown-email {
-    color: #666;
-}
-
-body.light-mode .dropdown a {
-    color: #000;
+    display: none; /* إخفاء القائمة المنسدلة */
 }
 
 /* ===== القائمة الجانبية ===== */
@@ -200,24 +103,6 @@ body.light-mode .dropdown a {
 .menu-header i {
     font-size: 24px;
     cursor: pointer;
-}
-
-.menu-profile {
-    text-align: center;
-    padding: 20px;
-    border-bottom: 2px solid #fbbf24;
-    margin-bottom: 20px;
-}
-
-.menu-profile .profile-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #fbbf24;
-}
-
-.menu-profile .profile-email {
-    font-size: 12px;
-    color: #888;
 }
 
 .menu-section {
@@ -279,10 +164,6 @@ body.light-mode .menu-items a {
 body.light-mode .menu-items a:hover {
     background: #fbbf24;
     color: #000;
-}
-
-body.light-mode .menu-profile .profile-email {
-    color: #666;
 }
 
 /* ===== البانر ===== */
@@ -519,19 +400,19 @@ body.light-mode .menu-profile .profile-email {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-/* ===== المنتجات ===== */
+/* ===== المنتجات (باقات أصغر) ===== */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 15px;
+    gap: 10px;
+    padding: 10px;
 }
 
 .product-card {
     background: #1a1a1a;
     border: 2px solid #333;
-    border-radius: 15px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 10px;
     text-align: center;
     cursor: pointer;
     transition: 0.3s;
@@ -543,20 +424,26 @@ body.light-mode .menu-profile .profile-email {
 
 .product-card .price {
     color: #fbbf24;
-    font-size: 20px;
+    font-size: 16px; /* تصغير السعر */
     font-weight: 900;
-    margin: 10px 0;
+    margin: 5px 0;
+}
+
+.product-card h4 {
+    font-size: 14px; /* تصغير اسم المنتج */
+    margin-bottom: 5px;
 }
 
 .buy-btn {
     background: #fbbf24;
     color: #000;
     border: none;
-    padding: 10px;
-    border-radius: 30px;
+    padding: 6px; /* تصغير الزر */
+    border-radius: 20px;
     font-weight: 700;
     width: 100%;
     cursor: pointer;
+    font-size: 12px;
 }
 
 /* ===== لوحة المدير ===== */
@@ -832,6 +719,22 @@ body.light-mode .nav-item:hover {
         grid-template-columns: 1fr;
     }
     
+    .products-grid {
+        gap: 8px;
+    }
+    
+    .product-card {
+        padding: 8px;
+    }
+    
+    .product-card .price {
+        font-size: 14px;
+    }
+    
+    .product-card h4 {
+        font-size: 12px;
+    }
+    
     .categories-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 5px;
@@ -853,14 +756,5 @@ body.light-mode .nav-item:hover {
     
     .logo h1 {
         font-size: 16px;
-    }
-    
-    #userMenu span {
-        font-size: 12px;
-    }
-    
-    .dropdown {
-        min-width: 180px;
-        left: -50px;
     }
 }
