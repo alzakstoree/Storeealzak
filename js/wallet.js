@@ -155,7 +155,13 @@ window.showMyOrders = async function() {
         
         let html = '';
         if (querySnapshot.empty) {
-            html = '<p style="text-align: center;">لا توجد طلبات</p>';
+            html = `
+                <div style="text-align: center; padding: 30px;">
+                    <i class="fas fa-shopping-cart" style="font-size: 60px; color: #333; margin-bottom: 15px;"></i>
+                    <p style="color: #888; font-size: 16px;">لا توجد طلبات حتى الآن</p>
+                    <p style="color: #666; font-size: 14px; margin-top: 10px;">ابدأ بالتسوق وأضف أول طلب لك!</p>
+                </div>
+            `;
         } else {
             querySnapshot.forEach(doc => {
                 const o = doc.data();
@@ -163,16 +169,18 @@ window.showMyOrders = async function() {
                 const statusColor = o.status === 'pending' ? '#fbbf24' : '#22c55e';
                 
                 html += `
-                    <div style="background: #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-weight: 700;">${o.product}</span>
+                    <div style="background: #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px solid #333;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-weight: 700; color: #fbbf24;">${o.product}</span>
                             <span style="color: #fbbf24; font-weight: 900;">${o.price}$</span>
                         </div>
-                        <div style="font-size: 12px; color: #888; margin-bottom: 5px;">معرف: ${o.playerId || 'غير محدد'}</div>
-                        <div style="margin-top: 10px;">
-                            <span style="background: ${statusColor}; color: #000; padding: 5px 10px; border-radius: 20px; font-size: 12px;">${statusText}</span>
+                        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">
+                            <i class="fas fa-id-card" style="margin-left: 3px;"></i> معرف: ${o.playerId || 'غير محدد'}
                         </div>
-                        <div style="font-size: 10px; color: #666; margin-top: 5px;">${new Date(o.createdAt).toLocaleString()}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="background: ${statusColor}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">${statusText}</span>
+                            <span style="font-size: 10px; color: #666;">${new Date(o.createdAt).toLocaleDateString()}</span>
+                        </div>
                     </div>
                 `;
             });
@@ -181,7 +189,8 @@ window.showMyOrders = async function() {
         document.getElementById('ordersList').innerHTML = html;
         document.getElementById('ordersModal').style.display = 'flex';
     } catch (error) {
-        showToast('❌ فشل تحميل الطلبات: ' + error.message, 'error');
+        console.error('خطأ في تحميل الطلبات:', error);
+        showToast('❌ حدث خطأ أثناء تحميل الطلبات', 'error');
     }
 };
 
