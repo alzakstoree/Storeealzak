@@ -255,6 +255,12 @@ body.light-mode .dropdown a {
     color: #000;
 }
 
+/* تنسيق خاص لأيقونات تسجيل الدخول */
+.menu-items a i {
+    width: 20px;
+    text-align: center;
+}
+
 .menu-footer {
     margin-top: 40px;
     text-align: center;
