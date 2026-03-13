@@ -39,13 +39,32 @@
             </ul>
         </div>
         
-        <!-- قسم تسجيل الدخول (يظهر للجميع) -->
+        <!-- قسم الضيوف (يظهر لغير المسجلين) -->
         <div class="menu-section" id="guestMenu">
             <div class="menu-section-title">حسابي</div>
             <ul class="menu-items">
                 <li><a href="#" onclick="showAuthModal(); toggleSideMenu()"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></li>
                 <li><a href="#" onclick="showRegisterModal(); toggleSideMenu()"><i class="fas fa-user-plus"></i> إنشاء حساب</a></li>
                 <li><a href="#" onclick="loginWithGoogle(); toggleSideMenu()"><i class="fab fa-google"></i> إنشاء حساب عبر Google</a></li>
+            </ul>
+        </div>
+
+        <!-- قسم المستخدم المسجل (يظهر للمسجلين فقط) -->
+        <div class="menu-section" id="userInfoMenu" style="display: none;">
+            <div class="user-info-header">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name" id="menuUserName"></div>
+                    <div class="user-email" id="menuUserEmail"></div>
+                </div>
+            </div>
+            <ul class="menu-items">
+                <li><a href="#" onclick="showWallet(); toggleSideMenu()"><i class="fas fa-wallet"></i> محفظتي</a></li>
+                <li><a href="#" onclick="showMyOrders(); toggleSideMenu()"><i class="fas fa-shopping-cart"></i> طلباتي</a></li>
+                <li><a href="#" onclick="showDepositModal(); toggleSideMenu()"><i class="fas fa-plus-circle"></i> تعبئة رصيد</a></li>
+                <li><a href="#" onclick="logout(); toggleSideMenu()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</a></li>
             </ul>
         </div>
         
