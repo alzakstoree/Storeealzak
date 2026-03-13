@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>تأكيد الإيداع - ALZAK STORE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .confirm-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #000;
+            border-bottom: 3px solid #fbbf24;
+        }
+        .confirm-header i {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fbbf24;
+            margin-left: 15px;
+        }
+        .confirm-header h1 {
+            font-size: 20px;
+            color: #fbbf24;
+        }
+        .confirm-container {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .method-info {
+            background: #1a1a1a;
+            border: 2px solid #fbbf24;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .method-info h2 {
+            color: #fbbf24;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 10px;
+        }
+        .info-row span:first-child {
+            color: #888;
+        }
+        .info-row span:last-child {
+            color: #fbbf24;
+            direction: ltr;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fbbf24;
+        }
+        .form-group input, .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: #333;
+            border: 1px solid #fbbf24;
+            border-radius: 10px;
+            color: #fff;
+        }
+        .submit-btn {
+            width: 100%;
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .note {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirm-header">
+        <i class="fas fa-arrow-right" onclick="goBack()"></i>
+        <h1>تأكيد الإيداع</h1>
+    </div>
+
+    <div class="confirm-container" id="confirmContainer">
+        <!-- سيتم تعبئتها عبر JavaScript -->
+    </div>
+
+    <script>
+        // بيانات طرق الدفع (نفس البيانات من الصفحة السابقة)
+        const paymentMethods = [
+            {
+                name: 'شام كاش',
+                walletNumber: '053b8f0d907772543d262622121d6df2',
+                image: 'https://i.ibb.co/5XhmqrJq/Screenshot-20260313-152931.jpg',
+                accountName: 'اسحاق وسام الاسماعيل'
+            },
+            {
+                name: 'يا مرسال',
+                walletNumber: 'TDwUTu5vTi8oscYymqbyqcK9E3aZrtiuyk',
+                image: 'https://i.ibb.co/4ZcSH80M/Screenshot-20260313-152751.jpg',
+                accountName: 'ALZAK STORE'
+            },
+            {
+                name: 'ليرات',
+                walletNumber: 'L793143293',
+                image: 'https://i.ibb.co/5hm3cHSk/Screenshot-20260313-153215.jpg',
+                accountName: 'ALZAK STORE'
+            }
+        ];
+
+        // عرض معلومات طريقة الدفع المختارة
+        function displayPaymentConfirm() {
+            const methodName = localStorage.getItem('selectedPaymentMethod');
+            if (!methodName) {
+                window.location.href = 'payment-methods.html';
+                return;
+            }
+
+            const method = paymentMethods.find(m => m.name === methodName);
+            if (!method) return;
+
+            const container = document.getElementById('confirmContainer');
+            container.innerHTML = `
+                <div class="method-info">
+                    <h2>${method.name}</h2>
+                    <div class="info-row">
+                        <span>رقم المحفظة:</span>
+                        <span>${method.walletNumber}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${method.walletNumber}')">نسخ</button>
+                    </div>
+                    <div class="info-row">
+                        <span>الاسم:</span>
+                        <span>${method.accountName}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${method.accountName}')">نسخ</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>المبلغ الذي قمت بتحويله ($) (الحد الأدنى 2$)</label>
+                    <input type="number" id="depositAmount" min="2" step="0.01" placeholder="أدخل المبلغ">
+                </div>
+
+                <div class="form-group">
+                    <label>رقم العملية (Transaction ID)</label>
+                    <input type="text" id="transactionId" placeholder="أدخل رقم العملية">
+                </div>
+
+                <div class="form-group">
+                    <label>صورة الإيصال</label>
+                    <input type="file" id="receiptImage" accept="image/*">
+                </div>
+
+                <button class="submit-btn" onclick="submitDeposit()">📤 إرسال طلب الإيداع</button>
+                <div class="note">سيتم مراجعة طلبك وإضافة الرصيد بعد التأكيد</div>
+            `;
+        }
+
+        // نسخ النص
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ تم النسخ');
+            }).catch(() => {
+                alert('❌ فشل النسخ');
+            });
+        }
+
+        // إرسال طلب الإيداع
+        function submitDeposit() {
+            const methodName = localStorage.getItem('selectedPaymentMethod');
+            const amount = document.getElementById('depositAmount')?.value;
+            const transactionId = document.getElementById('transactionId')?.value;
+            const fileInput = document.getElementById('receiptImage');
+
+            if (!amount || amount < 2) {
+                alert('❌ المبلغ يجب أن يكون 2$ على الأقل');
+                return;
+            }
+
+            if (!transactionId) {
+                alert('❌ أدخل رقم العملية');
+                return;
+            }
+
+            if (!fileInput || fileInput.files.length === 0) {
+                alert('❌ ارفع صورة الإيصال');
+                return;
+            }
+
+            // رسالة واتساب
+            const msg = `💰 طلب إيداع جديد
+════════════════
+طريقة الدفع: ${methodName}
+المبلغ: ${amount}$
+رقم العملية: ${transactionId}
+════════════════`;
+
+            window.open(`https://wa.me/9630982251929?text=${encodeURIComponent(msg)}`, '_blank');
+            alert('✅ تم إرسال الطلب');
+            
+            // العودة لصفحة المحفظة بعد ثانيتين
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+
+        // العودة للصفحة السابقة
+        function goBack() {
+            window.history.back();
+        }
+
+        // تشغيل العرض عند تحميل الصفحة
+        displayPaymentConfirm();
+    </script>
+</body>
+</html>
