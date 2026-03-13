@@ -166,6 +166,59 @@ body.light-mode .menu-items a:hover {
     color: #000;
 }
 
+/* ===== معلومات المستخدم في القائمة الجانبية ===== */
+.user-info-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #fbbf24;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fbbf24;
+}
+
+.user-avatar i {
+    font-size: 30px;
+    color: #fbbf24;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 3px;
+    font-size: 14px;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #888;
+    word-break: break-all;
+}
+
+body.light-mode .user-info-header {
+    background: #fff;
+}
+
+body.light-mode .user-email {
+    color: #666;
+}
+
 /* ===== البانر ===== */
 .banner {
     width: 100%;
@@ -765,5 +818,27 @@ body.light-mode .nav-item:hover {
     
     .logo h1 {
         font-size: 16px;
+    }
+    
+    .user-info-header {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .user-avatar i {
+        font-size: 24px;
+    }
+    
+    .user-name {
+        font-size: 12px;
+    }
+    
+    .user-email {
+        font-size: 10px;
     }
 }
