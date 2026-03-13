@@ -354,45 +354,51 @@ body.light-mode .user-email {
     cursor: default;
 }
 
-/* ===== الأقسام الرئيسية (3 مربعات) ===== */
+/* ===== الأقسام الرئيسية (3 مربعات - اسم تحت الصورة) ===== */
 .main-categories {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 10px;
+    gap: 15px;
+    padding: 15px;
 }
 
 .section-card {
-    aspect-ratio: 1 / 1;
-    width: 100%;
+    background: #1a1a1a;
+    border: 2px solid #333;
     border-radius: 15px;
     overflow: hidden;
     cursor: pointer;
-    position: relative;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-card:hover {
+    border-color: #fbbf24;
+    transform: translateY(-5px);
+}
+
+.section-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
     background-size: cover;
     background-position: center;
 }
 
-.section-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 16px;
+.section-name {
+    padding: 12px;
+    text-align: center;
     font-weight: 700;
-    color: #fff;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: #fbbf24;
+    background: #111;
+    border-top: 2px solid #333;
+    font-size: 14px;
 }
 
-.section-overlay i {
+body.light-mode .section-name {
+    background: #fff;
     color: #fbbf24;
-    font-size: 20px;
+    border-top-color: #ddd;
 }
 
 /* ===== الفئات الفرعية (3 مربعات بجانب بعض - أصغر) ===== */
@@ -866,6 +872,16 @@ body.light-mode .nav-item:hover {
     .buy-btn {
         font-size: 8px;
         padding: 3px 0;
+    }
+    
+    .main-categories {
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .section-name {
+        padding: 8px;
+        font-size: 12px;
     }
     
     .payment-grid {
