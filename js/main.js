@@ -1,6 +1,7 @@
 // ==================== دوال العرض الرئيسية والعناصر المشتركة ====================
 import { defaultStoreData, loadStoreData } from './store-data.js';
-import { initAuth, currentUser } from './auth.js';
+import { initAuth, currentUser, ADMIN_EMAIL } from './auth.js';
+import { getWalletBalance } from './wallet.js';
 
 let storeData = loadStoreData();
 let currentPurchase = null;
@@ -12,6 +13,7 @@ window.onload = function() {
     showMainCategories();
     initAuth();
     updateUI();
+    updateWalletMini();
     if (typeof updateAdminMenu === 'function') updateAdminMenu();
     initSlider();
 };
@@ -25,7 +27,37 @@ window.toggleTheme = function() {
     document.body.classList.toggle('light-mode');
 };
 
-// ===== دوال السلايدر (مبسطة ومضمونة) =====
+// ===== تحديث الرصيد في الهيدر =====
+async function updateWalletMini() {
+    const walletMini = document.getElementById('walletMini');
+    if (!walletMini) return;
+    
+    if (currentUser) {
+        const balance = await getWalletBalance();
+        walletMini.textContent = balance + '$';
+    } else {
+        walletMini.textContent = '0$';
+    }
+}
+
+// ===== تحديث الملف الشخصي في القائمة الجانبية =====
+function updateMenuProfile() {
+    const menuProfile = document.getElementById('menuProfile');
+    const menuProfileName = document.getElementById('menuProfileName');
+    const menuProfileEmail = document.getElementById('menuProfileEmail');
+    
+    if (!menuProfile) return;
+    
+    if (currentUser) {
+        menuProfile.style.display = 'block';
+        if (menuProfileName) menuProfileName.textContent = currentUser.name;
+        if (menuProfileEmail) menuProfileEmail.textContent = currentUser.email;
+    } else {
+        menuProfile.style.display = 'none';
+    }
+}
+
+// ===== دوال السلايدر =====
 function initSlider() {
     const slides = document.querySelectorAll('.slide');
     const dots = document.querySelectorAll('.dot');
@@ -130,18 +162,20 @@ window.showCategories = function(sectionId) {
         <span>${section.name}</span>
     </div>`;
     
+    // استخدام grid لعرض الفئات
+    html += `<div class="categories-grid">`;
+    
     section.categories.forEach(cat => {
         html += `
-            <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')">
-                <div class="category-image" style="background-image: url('${cat.image}')">
-                    <div class="category-overlay">
-                        <h4>${cat.name}</h4>
-                    </div>
+            <div class="category-card" onclick="showProducts('${section.id}', '${cat.id}')" style="background-image: url('${cat.image}')">
+                <div class="category-overlay">
+                    <h4>${cat.name}</h4>
                 </div>
             </div>
         `;
     });
     
+    html += `</div>`;
     subContainer.innerHTML = html;
 };
 
@@ -233,6 +267,8 @@ function updateUI() {
     const loginIcon = document.getElementById('loginIcon');
     const userMenu = document.getElementById('userMenu');
     const userName = document.getElementById('userName');
+    const adminLink = document.getElementById('adminLink');
+    const adminMenuItem = document.getElementById('adminMenuItem');
     
     if (currentUser) {
         if (loginIcon) loginIcon.style.display = 'none';
@@ -240,9 +276,25 @@ function updateUI() {
             userMenu.style.display = 'flex';
             if (userName) userName.textContent = currentUser.name;
         }
+        if (adminLink) {
+            adminLink.style.display = currentUser.email === ADMIN_EMAIL ? 'block' : 'none';
+        }
+        if (adminMenuItem) {
+            adminMenuItem.style.display = currentUser.email === ADMIN_EMAIL ? 'block' : 'none';
+        }
+        
+        // تحديث الملف الشخصي في القائمة الجانبية
+        updateMenuProfile();
+        updateWalletMini();
     } else {
         if (loginIcon) loginIcon.style.display = 'block';
         if (userMenu) userMenu.style.display = 'none';
+        if (adminLink) adminLink.style.display = 'none';
+        if (adminMenuItem) adminMenuItem.style.display = 'none';
+        
+        // إخفاء الملف الشخصي
+        updateMenuProfile();
+        updateWalletMini();
     }
 }
 
@@ -260,3 +312,10 @@ setInterval(async () => {
         }
     }
 }, 5000);
+
+// تحديث الرصيد بشكل دوري
+setInterval(() => {
+    if (currentUser) {
+        updateWalletMini();
+    }
+}, 10000);
