@@ -658,7 +658,125 @@ body.light-mode .menu-items a:hover {
 #userMenu:hover .dropdown {
     display: block;
 }
+/* ===== سلايدر بسيط ===== */
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    margin: 15px 0;
+    overflow: hidden;
+    border-radius: 15px;
+}
 
+.slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    flex: 0 0 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    z-index: 2;
+}
+
+.slide-content h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #fbbf24;
+}
+
+.slide-content p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.slide-content .buy-btn {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    display: inline-block;
+}
+
+.slider-prev, .slider-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.slider-prev { left: 10px; }
+.slider-next { right: 10px; }
+
+.slider-prev:hover, .slider-next:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dot.active {
+    background: #fbbf24;
+}
+
+@media (max-width: 480px) {
+    .slider-container { height: 150px; }
+    .slide-content h3 { font-size: 16px; }
+    .slide-content p { font-size: 12px; }
+    .slider-prev, .slider-next {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+}
 .dropdown a {
     display: block;
     padding: 10px;
