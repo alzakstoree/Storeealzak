@@ -122,7 +122,7 @@ function restartSlideTimer() {
     startSlideTimer();
 }
 
-// ===== دوال الأقسام والمنتجات =====
+// ===== دوال الأقسام والمنتجات (معدلة) =====
 window.showMainCategories = function() {
     const container = document.getElementById('mainCategories');
     const subContainer = document.getElementById('subContent');
@@ -134,11 +134,9 @@ window.showMainCategories = function() {
     container.innerHTML = '';
     storeData.sections.forEach(section => {
         container.innerHTML += `
-            <div class="section-card" style="background-image: url('${section.image}')" onclick="showCategories('${section.id}')">
-                <div class="section-overlay">
-                    <i class="fas ${section.icon}"></i>
-                    <span>${section.name}</span>
-                </div>
+            <div class="section-card" onclick="showCategories('${section.id}')">
+                <div class="section-image" style="background-image: url('${section.image}')"></div>
+                <div class="section-name">${section.name}</div>
             </div>
         `;
     });
@@ -311,4 +309,4 @@ setInterval(() => {
     if (currentUser) {
         updateWalletMini();
     }
-}, 10000); 
+}, 10000);
